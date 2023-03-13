@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:\Users\chris\OneDrive\Desktop\ANTLR\ExprParser.txt by ANTLR 4.12.0
+// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\ExprParser.txt by ANTLR 4.12.0
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -129,6 +129,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitProgram(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitProgram(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -174,6 +180,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitCmds(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCmds(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -245,6 +257,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitCmd(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCmd(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -315,6 +333,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitDcl(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDcl(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -364,6 +388,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitAss(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAss(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -437,6 +467,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitStmt(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitStmt(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -528,6 +564,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitExpr(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpr(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -576,6 +618,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitOprOr(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitOprOr(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -641,6 +689,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitLogicOr(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLogicOr(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -689,6 +743,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitOprAnd(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitOprAnd(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -755,6 +815,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitLogicAnd(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLogicAnd(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -804,6 +870,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitOprEql(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitOprEql(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -882,6 +954,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitEqual(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEqual(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -933,6 +1011,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitOprBool(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitOprBool(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1035,6 +1119,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitBool(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBool(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1084,6 +1174,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitOprExpr(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitOprExpr(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1168,6 +1264,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitTerm(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTerm(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1217,6 +1319,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitOprTerm(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitOprTerm(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1308,6 +1416,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitFactor(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFactor(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1394,6 +1508,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitBlock(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBlock(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1443,6 +1563,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitCtrlStrct(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCtrlStrct(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1511,6 +1637,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitIfStmt(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIfStmt(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1576,6 +1708,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitElseIfStmt(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitElseIfStmt(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1651,6 +1789,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitElse(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitElse(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1720,6 +1864,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitLoop(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLoop(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1770,6 +1920,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitLoops(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLoops(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1842,6 +1998,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitLoopStmt(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLoopStmt(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -1898,6 +2060,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitWhileStmt(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitWhileStmt(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1961,6 +2129,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitForeachStmt(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitForeachStmt(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2020,6 +2194,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitListStmt(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitListStmt(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2072,6 +2252,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitListOpr(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitListOpr(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2173,6 +2359,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitFuncCall(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFuncCall(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2233,6 +2425,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitFuncDef(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFuncDef(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2286,6 +2484,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitFuncReturn(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFuncReturn(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2347,6 +2551,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitParamList(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitParamList(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2413,6 +2623,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitParamTail(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitParamTail(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2474,6 +2690,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitParam(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitParam(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2519,6 +2741,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitArgList(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitArgList(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -2580,6 +2808,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitArgTail(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitArgTail(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2639,6 +2873,12 @@ public partial class ExprParser : Parser {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitBoolean(this);
 		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBoolean(this);
+			else return visitor.VisitChildren(this);
+		}
 	}
 
 	[RuleVersion(0)]
@@ -2695,6 +2935,12 @@ public partial class ExprParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IExprParserListener typedListener = listener as IExprParserListener;
 			if (typedListener != null) typedListener.ExitType(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IExprParserVisitor<TResult> typedVisitor = visitor as IExprParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitType(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 

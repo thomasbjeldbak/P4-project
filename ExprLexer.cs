@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:\Users\chris\OneDrive\Desktop\ANTLR\ExprLexer.txt by ANTLR 4.12.0
+// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\ExprLexer.txt by ANTLR 4.12.0
 
 // Unreachable code detected
 #pragma warning disable 0162
