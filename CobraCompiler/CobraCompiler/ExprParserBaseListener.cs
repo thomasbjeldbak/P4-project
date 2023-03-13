@@ -21,6 +21,7 @@
 
 
 using Antlr4.Runtime.Misc;
+using CobraCompiler;
 using IErrorNode = Antlr4.Runtime.Tree.IErrorNode;
 using ITerminalNode = Antlr4.Runtime.Tree.ITerminalNode;
 using IToken = Antlr4.Runtime.IToken;

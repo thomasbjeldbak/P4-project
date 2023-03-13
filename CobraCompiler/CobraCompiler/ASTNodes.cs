@@ -1,8 +1,12 @@
-﻿using System;
+﻿using CobraCompiler;
+using System;
 
 public class ASTNodes
 {
-    internal class ProgramNode
+    internal class ASTNode
+    { 
+    }
+    internal class ProgramNode : ASTNode
     {
     }
 
@@ -40,18 +44,21 @@ public class ASTNodes
 
     //Any expression
     internal class ExpressionNode : ProgramNode
-    { 
+    {
+        public dynamic Value { get; set; }
     }
 
     //InfixExpression has a left and right side to an expression
-    internal class InfixExpressionNode : ExpressionNode
+    internal abstract class InfixExpressionNode : ExpressionNode
     {
         public ExpressionNode Left { get; set; }
         public ExpressionNode Right { get; set; }
     }
 
     //Types with values
-    internal abstract class TypeNode { }
+    internal abstract class TypeNode : ASTNode
+    {
+    }
 
     #region Types
 
@@ -172,7 +179,7 @@ public class ASTNodes
     }
 
     //"block" contains commands
-    internal class BlockNode
+    internal class BlockNode : ASTNode
     {
         public CommandNode[] Commands { get; set; }
     }

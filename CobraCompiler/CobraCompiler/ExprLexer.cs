@@ -61,9 +61,9 @@ public partial class ExprLexer : Lexer {
 	: this(input, Console.Out, Console.Error) { }
 
 	public ExprLexer(ICharStream input, TextWriter output, TextWriter errorOutput)
-	: base(input, output, errorOutput)
+	: base(input)
 	{
-		Interpreter = new LexerATNSimulator(this, _ATN, decisionToDFA, sharedContextCache);
+		Interpreter = new LexerATNSimulator(_ATN);
 	}
 
 	private static readonly string[] _LiteralNames = {
@@ -97,11 +97,11 @@ public partial class ExprLexer : Lexer {
 
 	public override string[] RuleNames { get { return ruleNames; } }
 
-	public override string[] ChannelNames { get { return channelNames; } }
+	public string[] ChannelNames { get { return channelNames; } }
 
 	public override string[] ModeNames { get { return modeNames; } }
 
-	public override int[] SerializedAtn { get { return _serializedATN; } }
+	public int[] SerializedAtn { get { return _serializedATN; } }
 
 	static ExprLexer() {
 		decisionToDFA = new DFA[_ATN.NumberOfDecisions];
@@ -207,7 +207,7 @@ public partial class ExprLexer : Lexer {
 	};
 
 	public static readonly ATN _ATN =
-		new ATNDeserializer().Deserialize(_serializedATN);
+		new ATNDeserializer().Deserialize(_serializedATN.ToString().ToArray());
 
 
 }

@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "IVPFdBmZmP2Od+DW5mbNQ7bNIcauRGU1CynGqhEhpIivm2jXh7mDNzO5jg2KPtu+22r+YCRi09AYZWP16tzryA==",
+  "dgSpecHash": "5mPPMgyORYCJXJ2NckLfmAUnmYYHz06z2xe/0Lv5+0BCYfWzy8ADNpYJ24UJegxbDmnP5IjgTuwXmO3DmLmNcQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\chris\\.nuget\\packages\\antlr4\\4.6.6\\antlr4.4.6.6.nupkg.sha512",
+    "C:\\Users\\chris\\.nuget\\packages\\antlr4.codegenerator\\4.6.6\\antlr4.codegenerator.4.6.6.nupkg.sha512",
     "C:\\Users\\chris\\.nuget\\packages\\antlr4.runtime\\4.6.6\\antlr4.runtime.4.6.6.nupkg.sha512",
     "C:\\Users\\chris\\.nuget\\packages\\microsoft.netcore.platforms\\1.0.1\\microsoft.netcore.platforms.1.0.1.nupkg.sha512",
     "C:\\Users\\chris\\.nuget\\packages\\microsoft.netcore.targets\\1.0.1\\microsoft.netcore.targets.1.0.1.nupkg.sha512",
