@@ -4,7 +4,6 @@ public class ASTNodes
 {
     internal class ProgramNode
     {
-        public CommandNode[] Commands { get; set; }
     }
 
     //abstract "Command" is either a delcaration, assignment or statement
@@ -27,17 +26,22 @@ public class ASTNodes
 
     //SKAL MÅSKE SLETTES?
     //Statement can be many things: functions, control structures etc,
-    internal abstract class StatementNode : CommandNode { }
+    internal abstract class StatementNode : CommandNode
+    {
+
+    }
 
     //Identifier has a type (which has a value) and a name
-    internal abstract class IdentifierNode
+    internal class IdentifierNode : ProgramNode
     {
         public TypeNode Type { get; set; }
         public string Name { get; set; }
     }
 
     //Any expression
-    internal class ExpressionNode { }
+    internal class ExpressionNode : ProgramNode
+    { 
+    }
 
     //InfixExpression has a left and right side to an expression
     internal class InfixExpressionNode : ExpressionNode
