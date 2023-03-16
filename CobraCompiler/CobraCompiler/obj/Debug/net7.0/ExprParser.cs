@@ -149,7 +149,7 @@ public partial class ExprParser : Parser {
 
 	[RuleVersion(0)]
 	public ProgramContext program() {
-		var _localctx = new ProgramContext(_ctx, State);
+		ProgramContext _localctx = new ProgramContext(_ctx, State);
 		EnterRule(_localctx, 0, RULE_program);
 		try {
 			EnterOuterAlt(_localctx, 1);

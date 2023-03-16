@@ -4,14 +4,14 @@ using System;
 public class ASTNodes
 {
     internal class ASTNode
-    { 
+    {
     }
-    internal class ProgramNode : ASTNode
+    internal class ProgramNode : BlockNode
     {
     }
 
     //abstract "Command" is either a delcaration, assignment or statement
-    internal abstract class CommandNode : ProgramNode { }
+    internal abstract class CommandNode : ASTNode { };
 
     //Declaration declares a variable using an expression
     internal class DeclarationNode : CommandNode
@@ -36,14 +36,14 @@ public class ASTNodes
     }
 
     //Identifier has a type (which has a value) and a name
-    internal class IdentifierNode : ProgramNode
+    internal class IdentifierNode : ASTNode
     {
         public TypeNode Type { get; set; }
         public string Name { get; set; }
     }
 
     //Any expression
-    internal class ExpressionNode : ProgramNode
+    internal class ExpressionNode : ASTNode
     {
         public dynamic Value { get; set; }
     }
@@ -124,9 +124,6 @@ public class ASTNodes
 
     #endregion
 
-    //a boolean expression
-    internal class PredicateNode : ExpressionNode { }
-
     //Abstract class for all constrol structure (they contain blocks)
     internal abstract class ControlStructureNode : StatementNode
     {
@@ -138,7 +135,7 @@ public class ASTNodes
     //"If" containing a predicate and a block
     internal class IfNode : ControlStructureNode
     {
-        public PredicateNode Predicate { get; set; }
+        public ExpressionNode Predicate { get; set; }
     }
     
     //"For loop" containing the number to count up to and a block
@@ -150,7 +147,7 @@ public class ASTNodes
     //"While loop" containing a predicate and a block
     internal class WhileNode : ControlStructureNode
     {
-        public PredicateNode Predicate { get; set; }
+        public ExpressionNode Predicate { get; set; }
     }
 
     //"Foreach loop" containing
@@ -181,7 +178,7 @@ public class ASTNodes
     //"block" contains commands
     internal class BlockNode : ASTNode
     {
-        public CommandNode[] Commands { get; set; }
+        public List<CommandNode> Commands { get; set; }
     }
 
 
