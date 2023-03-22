@@ -10,13 +10,15 @@ using System.Collections;
 using System.Reflection;
 using Antlr4.Runtime.Atn;
 using static ASTNodes;
+using static ASTNodes.ASTNode;
+using static CobraCompiler.Symbol;
 
 namespace CobraCompiler
 {
 
     public class Symbol
     {
-        public TypeNode type { get; set; }
+        public TypeEnum Type { get; set; }
         public string Name { get; set; }
 
     }
@@ -74,7 +76,7 @@ namespace CobraCompiler
 
         private void Insert(string name, TypeNode value)
         {
-            scopes.Peek().Add(name, new Symbol { Name = name, type = value });
+            scopes.Peek().Add(name, new Symbol { Name = name, Type = value.Type });
         }
 
         private Symbol Lookup(string name)

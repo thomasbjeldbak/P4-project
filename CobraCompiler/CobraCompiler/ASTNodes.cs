@@ -1,10 +1,18 @@
 ﻿using CobraCompiler;
 using System;
 using System.Linq.Expressions;
+using static CobraCompiler.Symbol;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ASTNodes
 {
+    public enum TypeEnum
+    {
+        number,
+        text,
+        boolean,
+        list,
+    }
     public abstract class ASTNode
     {
         public abstract List<ASTNode> GetChildren();
@@ -63,14 +71,13 @@ public class ASTNodes
     }
 
     //Identifier has a type (which has a value) and a name
-    internal class IdentifierNode : ASTNode
+    internal class IdentifierNode : ExpressionNode
     {
         public TypeNode Type { get; set; }
         public string Name { get; set; }
         public override List<ASTNode> GetChildren()
         {
             var children = new List<ASTNode>();
-            children.Add(Type);
             return children;
         }
     }
@@ -101,15 +108,17 @@ public class ASTNodes
     }
 
     //Types with values
-    public abstract class TypeNode : ASTNode
+    internal abstract class TypeNode : ExpressionNode
     {
+        public TypeEnum Type { get; set; }
     }
 
     #region Types
 
     internal class NumberNode : TypeNode
     {
-        public int Value { get; set; }
+        public new TypeEnum Type => TypeEnum.number;
+        public new int Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
             var children = new List<ASTNode>();
@@ -119,7 +128,8 @@ public class ASTNodes
 
     internal class TextNode : TypeNode
     {
-        public string Value { get; set; }
+        public new TypeEnum Type => TypeEnum.text;
+        public new string Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
             var children = new List<ASTNode>();
@@ -129,7 +139,8 @@ public class ASTNodes
      
     internal class BooleanNode : TypeNode
     {
-        public bool Value { get; set; }
+        public new TypeEnum Type => TypeEnum.boolean;
+        public new bool Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
             var children = new List<ASTNode>();
@@ -139,11 +150,12 @@ public class ASTNodes
 
     internal class ListNode : TypeNode
     {
-        public TypeNode[] Values { get; set; }
+        public new TypeEnum Type => TypeEnum.list;
+        public new TypeNode[] Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
             var children = new List<ASTNode>();
-            children.AddRange(Values);
+            children.AddRange(Value);
             return children;
         }
     }

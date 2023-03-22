@@ -116,7 +116,8 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             incrIndent();
 
             identifier.Name = ID.ToString();
-            identifier.Type = (TypeNode)Visit(type);
+            var typeNode = (TypeNode)Visit(type);
+            identifier.Type = typeNode;
 
             if (ass.ChildCount > 0)
             {
@@ -587,14 +588,14 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //factor: LPAREN expr RPAREN | INT | STR | ID | boolean;
     public override ASTNode VisitFactor([NotNull] ExprParser.FactorContext context)
     {
-        var expression = new ExpressionNode();
-
         var INT = context.INT();
         var ID = context.ID();
         var LPAREN = context.LPAREN();
         var RPAREN = context.RPAREN();
         var expr = context.expr();
         var boolean = context.boolean();
+
+        var expression = new ExpressionNode();
 
         if (INT != null)
         {
@@ -604,7 +605,9 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         else if (ID != null)
         {
             prettyPrint("ExpressionNode", context);
-            expression.Value = ID.ToString();
+            var identifierNode = new IdentifierNode();
+            identifierNode.Name = ID.ToString();
+            expression = identifierNode;
         }
         else if ((LPAREN != null) && 
                 (expr != null && expr.ChildCount > 0) &&
@@ -897,7 +900,8 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         {
             prettyPrint("IdentifierNode", context);
             var localVar = new IdentifierNode();
-            localVar.Type = (TypeNode)Visit(type);
+            var typeNode = (TypeNode)Visit(type);
+            localVar.Type = typeNode;
             localVar.Name = ID.ToString();
 
             prettyPrint("IdentifierNode", context);
