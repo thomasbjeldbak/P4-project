@@ -5,28 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e90b43d-a753-4899-a80c-e407c470468f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/apphost" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CobraCompiler/obj/project.packagespec.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CobraCompiler/obj/rider.project.restore.info" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/CobraCompiler.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/CobraCompiler.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/CobraCompiler.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/CobraCompiler.csproj.nuget.g.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/CobraCompiler.csproj.nuget.g.targets" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/CobraCompiler.csproj.nuget.g.targets" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.AssemblyReference.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprLexer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprLexer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprParser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprParser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprParserBaseListener.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprParserBaseListener.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprParserBaseVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprParserBaseVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprParserListener.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprParserListener.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprParserVisitor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ExprParserVisitor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CobraCompiler/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CobraCompiler/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/ASTNodes.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/ASTNodes.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/SymbolTable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/SymbolTable.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/bin/Debug/net7.0/Antlr4.Runtime.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/bin/Debug/net7.0/Antlr4.Runtime.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/bin/Debug/net7.0/CobraCompiler.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/bin/Debug/net7.0/CobraCompiler.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/bin/Debug/net7.0/CobraCompiler.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/bin/Debug/net7.0/CobraCompiler.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.Antlr4GeneratedCodeFileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.Antlr4GeneratedCodeFileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.genruntimeconfig.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.genruntimeconfig.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ref/CobraCompiler.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/ref/CobraCompiler.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/refint/CobraCompiler.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/refint/CobraCompiler.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/rider.project.restore.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/69d76bdd3574ef3632e64c735ee5f206e7cbbc9c9a28f2fc091743e99e4cdb9/Stack.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -47,6 +49,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
+    "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   },
@@ -95,7 +98,7 @@
       <workItem from="1679471548806" duration="26000" />
       <workItem from="1679471604492" duration="796000" />
       <workItem from="1679472741957" duration="665000" />
-      <workItem from="1679473448591" duration="982000" />
+      <workItem from="1679473448591" duration="6546000" />
     </task>
     <servers />
   </component>

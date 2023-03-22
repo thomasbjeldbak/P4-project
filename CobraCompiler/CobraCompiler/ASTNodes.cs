@@ -3,8 +3,12 @@ using System;
 
 public class ASTNodes
 {
-    internal class ASTNode
+    public class ASTNode
     {
+        public List<ASTNode> GetChildren()
+        {
+            
+        }
     }
 
     internal class ProgramNode : BlockNode
@@ -57,7 +61,7 @@ public class ASTNodes
     }
 
     //Types with values
-    internal abstract class TypeNode : ASTNode
+    public abstract class TypeNode : ASTNode
     {
     }
 

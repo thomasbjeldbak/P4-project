@@ -6,9 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Data.SqlClient;
-using System.Data.Metadata.Edm;
-using System.Data.Common.CommandTrees;
 using System.Collections;
+using System.Reflection;
 using Antlr4.Runtime.Atn;
 using static ASTNodes;
 
@@ -17,62 +16,74 @@ namespace CobraCompiler
 
     public class Symbol
     {
-        public enum Type
-        {
-            number, text, boolean
-        }
-
-        public Type type { get; set; }
+        public TypeNode type { get; set; }
         public string Name { get; set; }
 
     }
 
-    public class SymbolTable
+    internal class SymbolTable
     {
-        List<Symbol> symTbl = new List<Symbol>();
+        private Stack<Dictionary<string, Symbol>> scopes;
 
-        public void BuildSymbolTable(ASTNode astRoot)
+        public SymbolTable BuildSymbolTable(ASTNode astRoot)
         {
-            processNode<ASTNode>(astRoot);
+            scopes = new Stack<Dictionary<string, Symbol>>();
+            processNode(astRoot);
+            return this;
         }
 
-        public void processNode<T>(T node)
+        private void processNode(ASTNode node)
         {
-
             switch (node) {
                 case BlockNode:
                     NewScope();
                     break;
-                case IdentifierNode:
-                    Insert(node.GetType().Name, (TypeNode)node);
+                case DeclarationNode declarationNode:
+                    Insert(declarationNode.Identifier.Name, declarationNode.Identifier.Type);
                     break;
-                case ReferenceNode:
+                case IdentifierNode identifierNode:
+                    var sym = Lookup(identifierNode.Name);
+                    if (sym == null) {
+                        throw new Exception("Symbol not found");
+                    }
+                    break;
+            }
 
-                
+            // Get all children that are ASTNodes
+            foreach (var child in node.GetType().GetProperties().Where(p => p.PropertyType == typeof(ASTNode)))
+            {
+                processNode(child.GetValue(node) as ASTNode);
+            }
+            
+            if (node is BlockNode) {
+                ExitScope();
             }
 
         }
 
-        public void NewScope()
+        // create a function that creates a new scope
+        private void NewScope()
         {
-            symTbl.Add(new Dictionary<>(StringComparer.OrdinalIgnoreCase));
+            scopes.Push(new Dictionary<string, Symbol>());
         }
 
-        internal void ExitScope()
+        private void ExitScope()
         {
-            symTbl.RemoveAt(symTbl.Count - 1);
+            scopes.Pop();
         }
 
-        internal void Insert(string name, TypeNode value)
+        private void Insert(string name, TypeNode value)
         {
-            symTbl[symTbl.Count - 1][name] = value;
+            scopes.Peek().Add(name, new Symbol { Name = name, type = value });
         }
 
-        internal Symbol Lookup(string name)
+        private Symbol Lookup(string name)
         {
-            for (int i = symTbl.Count - 1; i >= 0; --i) {
-                if (symTbl[i].ContainsKey(name)) {
-                    return symTbl[i][name];
+            foreach (var scope in scopes)
+            {
+                if (scope.TryGetValue(name, out Symbol symbol))
+                {
+                    return symbol;
                 }
             }
 
