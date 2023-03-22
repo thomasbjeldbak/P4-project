@@ -5,7 +5,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ASTNodes
 {
-    internal abstract class ASTNode
+    public abstract class ASTNode
     {
         public abstract List<ASTNode> GetChildren();
     }
@@ -101,7 +101,7 @@ public class ASTNodes
     }
 
     //Types with values
-    internal abstract class TypeNode : ASTNode
+    public abstract class TypeNode : ASTNode
     {
     }
 

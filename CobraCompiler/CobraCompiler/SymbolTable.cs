@@ -50,9 +50,9 @@ namespace CobraCompiler
             }
 
             // Get all children that are ASTNodes
-            foreach (var child in node.GetType().GetProperties().Where(p => p.PropertyType == typeof(ASTNode)))
+            foreach (var child in node.GetChildren().Where(x => x is ASTNode))
             {
-                processNode(child.GetValue(node) as ASTNode);
+                processNode(child);
             }
             
             if (node is BlockNode) {
