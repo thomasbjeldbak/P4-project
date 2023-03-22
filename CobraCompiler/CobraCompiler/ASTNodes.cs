@@ -325,7 +325,8 @@ public class ASTNodes
     internal abstract class ListOperationNode : StatementNode
     {
         public IdentifierNode Identifier { get; set; }
-        public ExpressionNode Expression { get; set;
+        public ExpressionNode Expression { get; set; }
+
         public override List<ASTNode> GetChildren()
         {
             var children = new List<ASTNode>();
