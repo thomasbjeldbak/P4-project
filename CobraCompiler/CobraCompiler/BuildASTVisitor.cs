@@ -17,7 +17,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     #region PrettyPrinter Methods
     private void prettyPrint(string nodeName, ParserRuleContext context)
     {
-        Console.WriteLine($"{_indent}{nodeName}: {context.GetText()}");
+        Console.WriteLine($"{_indent}{nodeName}");
     }
 
     private void incrIndent()
@@ -961,7 +961,6 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         else
             throw new Exception();
     }
-
 
     //listStmt: ID COLON listOpr;
     public override ASTNode VisitListStmt([NotNull] ExprParser.ListStmtContext context)
