@@ -3,6 +3,7 @@ using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using CobraCompiler;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Xml.Linq;
@@ -16,7 +17,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     #region PrettyPrinter Methods
     private void prettyPrint(string nodeName, ParserRuleContext context)
     {
-        Console.WriteLine($"{_indent}{nodeName}: {context.GetText()}");
+        Console.WriteLine($"{_indent}{nodeName}");
     }
 
     private void incrIndent()
@@ -60,14 +61,14 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var outputNode = new BlockNode();
         outputNode.Commands = new List<CommandNode>();
 
+        var command = (CommandNode)Visit(cmd);
+        outputNode.Commands.Add(command);
+
         if (cmds != null && cmds.ChildCount > 0)
         {
             var cmdsNode = (BlockNode)Visit(cmds);
             outputNode.Commands.AddRange(cmdsNode.Commands);
         }
-
-        var command = (CommandNode)Visit(cmd);
-        outputNode.Commands.Add(command);
 
         return outputNode;
     }
@@ -95,38 +96,35 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //dcl: type ID ass SEMI;
     public override ASTNode VisitDcl([NotNull] ExprParser.DclContext context)
     {
+        var type = context.type();
+        var ID = context.ID();
+        var ass = context.ass();
+        var SEMI = context.SEMI();
+
         var declarationNode = new DeclarationNode();
 
         prettyPrint("DeclarationNode", context);
         incrIndent();
 
-        var identifier = new IdentifierNode();
-        prettyPrint("IdentifierNode", context);
-        incrIndent();
-
-        identifier.Name = context.ID().ToString();
-
-        TypeNode type;
-
-        switch (context.type().children[0].ToString())
+        if ((type != null) &&
+            (ID != null) &&
+            (ass != null) &&
+            (SEMI != null))
         {
-            case ("number"):
-                prettyPrint("NumberNode", context);
-                type = new NumberNode();
-                identifier.Type = type;
-                break;
-            case ("boolean"):
-                prettyPrint("BooleanNode", context);
-                type = new BooleanNode();
-                identifier.Type = type;
-                break;
+            var identifier = new IdentifierNode();
+            prettyPrint("IdentifierNode", context);
+            incrIndent();
+
+            identifier.Name = ID.ToString();
+            identifier.Type = (TypeNode)Visit(type);
+
+            if (ass.ChildCount > 0)
+            {
+                declarationNode.Expression = (ExpressionNode)Visit(ass);
+            }
+
+            declarationNode.Identifier = identifier;
         }
-        decrIndent();
-
-        ASTNode expression = Visit(context.ass());
-
-        declarationNode.Expression = (ExpressionNode)expression;
-        declarationNode.Identifier = identifier;
 
         decrIndent();
         return declarationNode;
@@ -172,11 +170,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         }
         else if (ctrlStrct != null && ctrlStrct.ChildCount > 0)
         {
-            Visit(ctrlStrct);
+            outputNode = Visit(ctrlStrct);
         }
         else if (listStmt != null && listStmt.ChildCount > 0)
         {
-            Visit(listStmt);
+            outputNode = Visit(listStmt);
         }
         else if (funcDef != null && funcDef.ChildCount > 0)
         {
@@ -190,7 +188,6 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         else
             throw new Exception();
 
-        decrIndent();
         return outputNode;
     }
 
@@ -634,13 +631,20 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var outputNode = new BlockNode();
 
         if ((LCURLY != null) &&
-            (cmds != null && cmds.ChildCount > 0) &&
+            (cmds != null) &&
             (RCURLY != null))
         {
-            return Visit(cmds);
+            prettyPrint("BlockNode", context);
+            incrIndent();
+
+            if (cmds.ChildCount > 0)
+                outputNode = (BlockNode)Visit(cmds);
         }
         else
             throw new Exception();
+
+        decrIndent();
+        return outputNode;
     }
 
     //ctrlStrct: ifStmt | loop;
@@ -678,14 +682,370 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             (expr != null && expr.ChildCount > 0) &&
             (RPAREN != null))
         {
-            var blockNode = (BlockNode)Visit(block);
-            var predicateNode = (ExpressionNode)Visit(expr);
-            outputNode.Block = blockNode;
-            outputNode.Predicate = predicateNode;
+            prettyPrint("IfNode", context);
+            incrIndent();
+
+            outputNode.Condition = (ExpressionNode)Visit(expr);
+            outputNode.Block = (BlockNode)Visit(block);
+
+            if (elseIfStmt != null && elseIfStmt.ChildCount > 0)
+            {
+                var ifNode = (IfNode)Visit(elseIfStmt);
+                outputNode.ElseIfs = ifNode.ElseIfs;
+            }
+        }
+        else
+            throw new Exception();
+        
+        decrIndent();
+        return outputNode;
+    }
+
+    //ElseIfStmt: ELSE IF LPAREN expr RPAREN block elseIfStmt | else | /*epsilon*/; 
+    public override ASTNode VisitElseIfStmt([NotNull] ExprParser.ElseIfStmtContext context)
+    {
+        var ELSE = context.ELSE();
+        var IF = context.IF();
+        var LPAREN = context.LPAREN();
+        var expr = context.expr();
+        var RPAREN = context.RPAREN();
+        var block = context.block();
+        var elseIfStmt = context.elseIfStmt();
+        var @else = context.@else();
+
+        var outputNode = new IfNode();
+        outputNode.ElseIfs = new List<ElseNode>();
+
+        var elseIfNode = new ElseIfNode();
+        var elseNode = new ElseNode();
+
+        if (@else != null && @else.ChildCount > 0)
+        {
+            prettyPrint("ElseNode", context);
+            incrIndent();
+
+            elseNode = (ElseNode)Visit(@else);
+            outputNode.ElseIfs.Add(elseNode);
+            decrIndent();
+        }
+        else if ((ELSE != null) &&
+            (IF != null) &&
+            (LPAREN != null) &&
+            (expr != null && expr.ChildCount > 0) &&
+            (RPAREN != null))
+        {
+            prettyPrint("ElseIfNode", context);
+            incrIndent();
+
+            elseIfNode.Condition = (ExpressionNode)Visit(expr);
+            elseIfNode.Block = (BlockNode)Visit(block);
+            outputNode.ElseIfs.Add(elseIfNode);
+            
+            if (elseIfStmt != null && elseIfStmt.ChildCount > 0)
+            {
+                decrIndent();
+                var ifNode = (IfNode)Visit(elseIfStmt);
+                outputNode.ElseIfs.AddRange(ifNode.ElseIfs);
+            }
+        }
+
+        return outputNode;
+    }
+
+    //else: ELSE block | /*epsilon*/;
+    public override ASTNode VisitElse([NotNull] ExprParser.ElseContext context)
+    {
+        var ELSE = context.ELSE();
+        var block = context.block();
+
+        var outputNode = new ElseNode();
+
+        if ((ELSE != null) &&
+            (block != null))
+        {
+            outputNode.Block = (BlockNode)Visit(block);
         }
         else
             throw new Exception();
 
         return outputNode;
+    }
+
+    //loop: REPEAT loops;
+    public override ASTNode VisitLoop([NotNull] ExprParser.LoopContext context)
+    {
+        var REPEAT = context.REPEAT();
+        var loops = context.loops();
+
+        if ((REPEAT != null) &&
+            (loops != null) && loops.ChildCount > 0)
+        {
+            return Visit(loops);
+        }
+        else
+            throw new Exception();
+    }
+
+    //loops: loopStmt | whileStmt | foreachStmt;
+    public override ASTNode VisitLoops([NotNull] ExprParser.LoopsContext context)
+    {
+        var loopStmt = context.loopStmt();
+        var whileStmt = context.whileStmt();
+        var foreachStmt = context.foreachStmt();
+
+        if (loopStmt != null)
+        {
+            return Visit(loopStmt);
+        }
+        else if (whileStmt != null)
+        {
+            return Visit(whileStmt);
+        }
+        else if (foreachStmt != null)
+        {
+            return Visit(foreachStmt);
+        }
+        else
+            throw new Exception();
+    }
+
+    //loopStmt: LPAREN expr RPAREN TIMES block;
+    public override ASTNode VisitLoopStmt([NotNull] ExprParser.LoopStmtContext context)
+    {
+        var LPAREN = context.LPAREN();
+        var expr = context.expr();
+        var RPAREN = context.RPAREN();
+        var TIMES = context.TIMES();
+        var block = context.block();
+
+        var outputNode = new RepeatNode();
+
+        prettyPrint("RepeatNode", context);
+        incrIndent();
+
+        if ((LPAREN != null) &&
+            (expr != null) &&
+            (RPAREN != null) &&
+            (TIMES != null) &&
+            (block != null))
+        {
+            outputNode.Block = (BlockNode)Visit(block);
+            outputNode.Expression = (ExpressionNode)Visit(expr); 
+        }
+        else
+            throw new Exception();
+
+        decrIndent();
+        return outputNode;
+    }
+
+    //whileStmt: WHILE LPAREN expr RPAREN block;
+    public override ASTNode VisitWhileStmt([NotNull] ExprParser.WhileStmtContext context)
+    {
+        var WHILE = context.WHILE();
+        var LPAREN = context.LPAREN();
+        var expr = context.expr();
+        var RPAREN = context.RPAREN();
+        var block = context.block();
+
+        var outputNode = new WhileNode();
+
+        prettyPrint("WhileNode", context);
+        incrIndent();
+
+        if ((WHILE != null) &&
+            (LPAREN != null) &&
+            (expr != null) &&
+            (RPAREN != null) &&
+            (block != null))
+        {
+            outputNode.Condition = (ExpressionNode)Visit(expr);
+            outputNode.Block = (BlockNode)Visit(block);
+        }
+        else
+            throw new Exception();
+
+        decrIndent();
+        return outputNode;
+    }
+
+    //foreachStmt: FOREACH LPAREN type ID IN ID RPAREN block;
+    public override ASTNode VisitForeachStmt([NotNull] ExprParser.ForeachStmtContext context)
+    {
+        var FOREACH = context.FOREACH();
+        var LPAREN = context.LPAREN();
+        var type = context.type();
+        var ID = context.ID(0);
+        var IN = context.IN();
+        var ID2 = context.ID(1);
+        var RPAREN = context.RPAREN();
+        var block = context.block();
+
+        var outputNode = new ForeachNode();
+
+        prettyPrint("ForeachNode", context);
+        incrIndent();
+
+        if ((FOREACH != null) &&
+            (LPAREN != null) &&
+            (type != null) &&
+            (ID != null) &&
+            (IN != null) &&
+            (ID2 != null) &&
+            (RPAREN != null) &&
+            (block != null))
+        {
+            prettyPrint("IdentifierNode", context);
+            var localVar = new IdentifierNode();
+            localVar.Type = (TypeNode)Visit(type);
+            localVar.Name = ID.ToString();
+
+            prettyPrint("IdentifierNode", context);
+            var identifierNode = new IdentifierNode();
+            identifierNode.Type = new ListNode();
+            identifierNode.Name = ID2.ToString();
+
+            outputNode.List = identifierNode;
+            outputNode.LocalVariable = localVar;
+            outputNode.Block = (BlockNode)Visit(block);
+        }
+        else
+            throw new Exception();
+        decrIndent();
+        return outputNode;
+    }
+
+    //type: BOOL | TEXT | NUM | LIST LPAREN type RPAREN;
+    public override ASTNode VisitType([NotNull] ExprParser.TypeContext context)
+    {
+        var BOOl = context.BOOL();
+        var TEXT = context.TEXT();
+        var NUM = context.NUM();
+        var LIST = context.LIST();
+        var LPAREN = context.LPAREN();
+        var type = context.type();
+        var RPAREN = context.RPAREN();
+
+        if (BOOl != null)
+        {
+            prettyPrint("BooleanNode",context);
+            var outputNode = new BooleanNode();
+            decrIndent();
+            return outputNode;
+        }
+        else if (TEXT != null)
+        {
+            prettyPrint("TextNode", context);
+            var outputNode = new TextNode();
+            decrIndent();
+            return outputNode;
+        }
+        else if (NUM != null)
+        {
+            prettyPrint("NumberNode", context);
+            var outputNode = new NumberNode();
+            decrIndent();
+            return outputNode;
+        }
+        else if ((LIST != null) &&
+                 (LPAREN != null) &&
+                 (type != null) &&
+                 (RPAREN != null))
+        {
+            prettyPrint("ListNode", context);
+            var outputNode = new ListNode();
+            decrIndent();
+            return outputNode;
+
+        }
+        else
+            throw new Exception();
+    }
+
+    //listStmt: ID COLON listOpr;
+    public override ASTNode VisitListStmt([NotNull] ExprParser.ListStmtContext context)
+    {
+        var ID = context.ID();
+        var COLON = context.COLON();
+        var listOpr = context.listOpr();
+
+        ListOperationNode outputNode;
+
+        if (ID != null && COLON != null && listOpr != null)
+        {
+            var identifierNode = new IdentifierNode();
+            identifierNode.Name = ID.ToString();
+            identifierNode.Type = new ListNode();
+
+            outputNode = (ListOperationNode)Visit(listOpr);
+            outputNode.Identifier = identifierNode;
+
+            incrIndent();
+            prettyPrint("IdentifierNode", context);
+            decrIndent();
+        }
+        else
+            throw new Exception();
+
+        return outputNode;
+    }
+
+    //listOpr: LISTADD LPAREN expr RPAREN | LISTDEL LPAREN expr RPAREN | LISTIDXOF LPAREN expr RPAREN | LISTVALOF LPAREN expr RPAREN;
+    public override ASTNode VisitListOpr([NotNull] ExprParser.ListOprContext context)
+    {
+        var LISTADD = context.LISTADD();
+        var LPAREN = context.LPAREN();
+        var expr = context.expr();
+        var RPAREN = context.RPAREN();
+        var LISTDEL = context.LISTDEL();
+        var LISTIDXOF = context.LISTIDXOF();
+        var LISTVALOF = context.LISTVALOF();
+
+        ListOperationNode outputNode;
+
+        if (LPAREN != null && expr != null && RPAREN != null)
+        {
+            if (LISTADD != null)
+            {
+                prettyPrint("ListAddNode", context);
+                incrIndent();
+
+                outputNode = new ListAddNode();
+                outputNode.Expression = (ExpressionNode)Visit(expr);
+            }
+            else if (LISTDEL != null)
+            {
+                prettyPrint("ListDeleteNode", context);
+                incrIndent();
+
+                outputNode = new ListDeleteNode();
+                outputNode.Expression = (ExpressionNode)Visit(expr);
+            }
+            else if (LISTIDXOF != null)
+            {
+                prettyPrint("ListIndexOfNode", context);
+                incrIndent();
+
+                outputNode = new ListIndexOfNode();
+                outputNode.Expression = (ExpressionNode)Visit(expr);
+            }
+            else if (LISTVALOF != null)
+            {
+                prettyPrint("ListValueOfNode", context);
+                incrIndent();
+
+                outputNode = new ListValueOfNode();
+                outputNode.Expression = (ExpressionNode)Visit(expr);
+            }
+            else
+                throw new Exception();
+        }
+        else
+            throw new Exception();
+
+        decrIndent();
+        return outputNode;
+            
+            
     }
 }

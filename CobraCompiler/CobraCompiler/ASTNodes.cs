@@ -6,6 +6,7 @@ public class ASTNodes
     internal class ASTNode
     {
     }
+
     internal class ProgramNode : BlockNode
     {
     }
@@ -135,25 +136,35 @@ public class ASTNodes
     //"If" containing a predicate and a block
     internal class IfNode : ControlStructureNode
     {
-        public ExpressionNode Predicate { get; set; }
+        public ExpressionNode Condition { get; set; }
+        public List<ElseNode> ElseIfs { get; set; }
+    }
+
+    internal class ElseNode : ControlStructureNode 
+    {
+    }
+
+    internal class ElseIfNode : ElseNode
+    {
+        public ExpressionNode Condition { get; set; }
     }
     
     //"For loop" containing the number to count up to and a block
     internal class RepeatNode : ControlStructureNode
     {
-        public int CountTo { get; set; }
+        public ExpressionNode Expression { get; set; }
     }
     
     //"While loop" containing a predicate and a block
     internal class WhileNode : ControlStructureNode
     {
-        public ExpressionNode Predicate { get; set; }
+        public ExpressionNode Condition { get; set; }
     }
 
     //"Foreach loop" containing
     internal class ForeachNode : ControlStructureNode
     {
-        public ListNode List { get; set; }
+        public IdentifierNode List { get; set; }
         public IdentifierNode LocalVariable { get; set; }
     }
 
@@ -181,5 +192,28 @@ public class ASTNodes
         public List<CommandNode> Commands { get; set; }
     }
 
+    internal abstract class ListOperationNode : StatementNode
+    {
+        public IdentifierNode Identifier { get; set; }
+        public ExpressionNode Expression { get; set; }
+    }
+    internal class ListAddNode : ListOperationNode
+    {
 
+    }
+
+    internal class ListDeleteNode : ListOperationNode
+    {
+
+    }
+
+    internal class ListValueOfNode : ListOperationNode
+    {
+
+    }
+
+    internal class ListIndexOfNode : ListOperationNode
+    {
+
+    }
 }
