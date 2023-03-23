@@ -30,11 +30,11 @@ namespace CobraCompiler
         public SymbolTable BuildSymbolTable(ASTNode astRoot)
         {
             scopes = new Stack<Dictionary<string, Symbol>>();
-            processNode(astRoot);
+            ProcessNode(astRoot);
             return this;
         }
 
-        private void processNode(ASTNode node)
+        private void ProcessNode(ASTNode node)
         {
             switch (node) {
                 case BlockNode:
@@ -54,7 +54,7 @@ namespace CobraCompiler
             // Get all children that are ASTNodes
             foreach (var child in node.GetChildren().Where(x => x is ASTNode))
             {
-                processNode(child);
+                ProcessNode(child);
             }
             
             if (node is BlockNode) {
