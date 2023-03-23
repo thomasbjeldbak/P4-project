@@ -83,7 +83,7 @@ public class ASTNodes
     }
 
     //Any expression
-    internal class ExpressionNode : ASTNode
+    internal abstract class ExpressionNode : ASTNode
     {
         public dynamic Value { get; set; }
         public override List<ASTNode> GetChildren()

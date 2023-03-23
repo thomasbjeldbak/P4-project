@@ -589,39 +589,51 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     public override ASTNode VisitFactor([NotNull] ExprParser.FactorContext context)
     {
         var INT = context.INT();
+        var STR = context.STR();
         var ID = context.ID();
         var LPAREN = context.LPAREN();
         var RPAREN = context.RPAREN();
         var expr = context.expr();
         var boolean = context.boolean();
 
-        var expression = new ExpressionNode();
+        ExpressionNode expression;
 
         if (INT != null)
         {
-            prettyPrint("ExpressionNode", context);
-            expression.Value = int.Parse(INT.ToString());
+            prettyPrint("NumberNode", context);
+            var numberNode = new NumberNode();
+            numberNode.Value = int.Parse(INT.ToString());
+            return numberNode;
         }
         else if (ID != null)
         {
-            prettyPrint("ExpressionNode", context);
+            prettyPrint("IdentifierNode", context);
             var identifierNode = new IdentifierNode();
             identifierNode.Name = ID.ToString();
-            expression = identifierNode;
+            return identifierNode;
         }
-        else if ((LPAREN != null) && 
+        else if ((LPAREN != null) &&
                 (expr != null && expr.ChildCount > 0) &&
                 (RPAREN != null))
         {
-            expression = (ExpressionNode)Visit(expr);
+            return (ExpressionNode)Visit(expr);
         }
         else if (boolean != null)
         {
-            prettyPrint("ExpressionNode", context);
-            expression.Value = bool.Parse(boolean.ToString());
+            prettyPrint("booleanNode", context);
+            var booleanNode = new BooleanNode();
+            booleanNode.Value = bool.Parse(boolean.ToString());
+            return booleanNode;
         }
-
-        return expression;
+        else if (STR != null)
+        {
+            prettyPrint("TextNode", context);
+            var textNode = new TextNode();
+            textNode.Value = STR.ToString();
+            return textNode;
+        }
+        else
+            throw new Exception();
     }
 
     //block: LCURLY cmds RCURLY;
