@@ -19,3 +19,4 @@ CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.genruntimeconfig.cach
 CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.pdb
 CobraCompiler/CobraCompiler/obj/rider.project.restore.info
 .vs
+.idea
