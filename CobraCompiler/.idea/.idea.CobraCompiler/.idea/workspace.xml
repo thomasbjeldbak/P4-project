@@ -4,7 +4,22 @@
     <projectFile>CobraCompiler/CobraCompiler.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e90b43d-a753-4899-a80c-e407c470468f" name="Changes" comment="" />
+    <list default="true" id="9e90b43d-a753-4899-a80c-e407c470468f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CobraCompiler/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CobraCompiler/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/Data.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/ExprParser_.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/bin/Debug/net7.0/CobraCompiler.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/bin/Debug/net7.0/CobraCompiler.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/bin/Debug/net7.0/CobraCompiler.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/bin/Debug/net7.0/CobraCompiler.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.Antlr4GeneratedCodeFileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.Antlr4GeneratedCodeFileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.genruntimeconfig.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.genruntimeconfig.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/Debug/net7.0/CobraCompiler.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CobraCompiler/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/CobraCompiler/obj/rider.project.restore.info" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -83,6 +98,9 @@
       <workItem from="1679471604492" duration="796000" />
       <workItem from="1679472741957" duration="665000" />
       <workItem from="1679473448591" duration="6546000" />
+      <workItem from="1679559354290" duration="399000" />
+      <workItem from="1679560575033" duration="145000" />
+      <workItem from="1679560737417" duration="681000" />
     </task>
     <servers />
   </component>
