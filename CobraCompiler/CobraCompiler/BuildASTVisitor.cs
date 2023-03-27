@@ -621,8 +621,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         else if (boolean != null)
         {
             prettyPrint("booleanNode", context);
-            var booleanNode = new BooleanNode();
-            booleanNode.Value = bool.Parse(boolean.ToString());
+            var booleanNode = Visit(boolean);
             return booleanNode;
         }
         else if (STR != null)
@@ -634,6 +633,28 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         }
         else
             throw new Exception();
+    }
+
+    //boolean: TRUE | FALSE; 
+    public override ASTNode VisitBoolean([NotNull] ExprParser.BooleanContext context)
+    {
+        var TRUE = context.TRUE();
+        var FALSE = context.FALSE();
+
+        var outputNode = new BooleanNode();
+
+        if (TRUE != null)
+        {
+            outputNode.Value = true;
+        }
+        else if (FALSE != null)
+        {
+            outputNode.Value = false;
+        }
+        else
+            throw new Exception();
+
+        return outputNode;
     }
 
     //block: LCURLY cmds RCURLY;

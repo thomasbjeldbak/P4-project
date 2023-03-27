@@ -117,7 +117,7 @@ public class ASTNodes
 
     internal class NumberNode : TypeNode
     {
-        public new TypeEnum Type => TypeEnum.number;
+        public NumberNode() { Type = TypeEnum.number; }
         public new int Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -128,7 +128,7 @@ public class ASTNodes
 
     internal class TextNode : TypeNode
     {
-        public new TypeEnum Type => TypeEnum.text;
+        public TextNode() { Type = TypeEnum.text; }
         public new string Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -139,7 +139,7 @@ public class ASTNodes
      
     internal class BooleanNode : TypeNode
     {
-        public new TypeEnum Type => TypeEnum.boolean;
+        public BooleanNode() { Type = TypeEnum.boolean; }
         public new bool Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -150,7 +150,7 @@ public class ASTNodes
 
     internal class ListNode : TypeNode
     {
-        public new TypeEnum Type => TypeEnum.list;
+        public ListNode() { Type = TypeEnum.list; }
         public new TypeNode[] Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
