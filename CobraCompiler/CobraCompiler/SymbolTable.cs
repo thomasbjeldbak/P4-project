@@ -25,11 +25,11 @@ namespace CobraCompiler
 
     internal class SymbolTable
     {
-        private Stack<Dictionary<string, Symbol>> scopes;
+        private Stack<Dictionary<string, Symbol?>> scopes;
 
         public SymbolTable BuildSymbolTable(ASTNode astRoot)
         {
-            scopes = new Stack<Dictionary<string, Symbol>>();
+            scopes = new Stack<Dictionary<string, Symbol?>>();
             ProcessNode(astRoot);
             return this;
         }
@@ -66,7 +66,7 @@ namespace CobraCompiler
         // create a function that creates a new scope
         private void NewScope()
         {
-            scopes.Push(new Dictionary<string, Symbol>());
+            scopes.Push(new Dictionary<string, Symbol?>());
         }
 
         private void ExitScope()
@@ -79,11 +79,11 @@ namespace CobraCompiler
             scopes.Peek().Add(name, new Symbol { Name = name, Type = value.Type });
         }
 
-        private Symbol Lookup(string name)
+        private Symbol? Lookup(string name)
         {
             foreach (var scope in scopes)
             {
-                if (scope.TryGetValue(name, out Symbol symbol))
+                if (scope.TryGetValue(name, out Symbol? symbol))
                 {
                     return symbol;
                 }
