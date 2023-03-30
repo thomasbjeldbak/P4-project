@@ -31,7 +31,7 @@ public class ASTNodes
         }
     }
 
-    //abstract "Command" is either a delcaration, assignment or statement
+    //abstract "Command" is either a declaration, assignment or statement
     internal abstract class CommandNode : ASTNode 
     {
     };
@@ -52,7 +52,7 @@ public class ASTNodes
     }
 
     //Spørg hjælpelærer :)
-    //Assignement contains reference to declaration and an expression
+    //Assignment contains reference to declaration and an expression
     internal class AssignNode : CommandNode
     {
         public IdentifierNode Identifier { get; set; }
@@ -305,7 +305,7 @@ public class ASTNodes
 
     #endregion
 
-    //"Function call" has arguments and a reference to funciton declaration
+    //"Function call" has arguments and a reference to function declaration
     internal class FunctionCallNode : StatementNode
     {
         public FunctionDeclarationNode Function { get; set; }
@@ -319,7 +319,7 @@ public class ASTNodes
         }
     }
 
-    //"Function delcaration" has a type to return, parameters and a block
+    //"Function declaration" has a type to return, parameters and a block
     internal class FunctionDeclarationNode : StatementNode
     {
         public string Name { get; set; }

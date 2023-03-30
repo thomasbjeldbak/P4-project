@@ -29,18 +29,17 @@ namespace CobraCompiler
                 switch (cmd)
                 {
                     case DeclarationNode declarationNode:
-                        visitDeclarationNode(declarationNode);
+                        VisitDeclarationNode(declarationNode);
                         break;
                     case StatementNode statementNode:
-                        visitStatementNode(statementNode);
+                        VisitStatementNode(statementNode);
                         break;
                     case AssignNode assignNode:
-                        visitAssignNode(assignNode);
+                        VisitAssignNode(assignNode);
                         break;
                     default:
-                        throw new Exception($"Command wasn't valid");
+                        throw new Exception($"Command was not valid");
                 }
-                
             }
         }
 
@@ -81,12 +80,12 @@ namespace CobraCompiler
             }
         }
 
-        internal void visitAssignNode(AssignNode node)
+        internal void VisitAssignNode(AssignNode node)
         {
 
         }
 
-        internal TypeEnum visitExpressionNode(ExpressionNode node)
+        private TypeEnum VisitExpressionNode(ExpressionNode node)
         {
             TypeEnum type;
             switch (node)
@@ -123,40 +122,40 @@ namespace CobraCompiler
             switch (node)
             {
                 case AdditionNode additionNode:
-                    type = visitAdditionNode(additionNode);
+                    type = VisitAdditionNode(additionNode);
                     break;
                 case SubtractionNode subtractionNode:
-                    type = visitSubtractionNode(subtractionNode);
+                    type = VisitSubtractionNode(subtractionNode);
                     break;
                 case MultiplicationNode multiplicationNode:
-                    type = visitMultiplicationNode(multiplicationNode);
+                    type = VisitMultiplicationNode(multiplicationNode);
                     break;
                 case DivisionNode divideNode:
-                    type = visitDivisionNode(divideNode);
+                    type = VisitDivisionNode(divideNode);
                     break;
                 case AndNode andNode:
-                    type = visitAndNode(andNode);
+                    type = VisitAndNode(andNode);
                     break;
                 case OrNode orNode:
-                    type = visitOrNode(orNode);
+                    type = VisitOrNode(orNode);
                     break;
                 case EqualNode equalNode:
-                    type = visitEqualNode(equalNode);
+                    type = VisitEqualNode(equalNode);
                     break;
                 case NotEqualNode notEqualNode:
-                    type = visitNotEqualNode(notEqualNode);
+                    type = VisitNotEqualNode(notEqualNode);
                     break;
                 case GreaterNode greaterNode:
-                    type = visitGreaterNode(greaterNode);
+                    type = VisitGreaterNode(greaterNode);
                     break;
                 case LessNode lessNode:
-                    type = visitLessNode(lessNode);
+                    type = VisitLessNode(lessNode);
                     break;
                 case GreaterEqualNode greaterEqualNode:
-                    type = visitGreaterEqualNode(greaterEqualNode);
+                    type = VisitGreaterEqualNode(greaterEqualNode);
                     break;
                 case LessEqualNode lessEqualNode:
-                    type = visitLessEqualNode(lessEqualNode);
+                    type = VisitLessEqualNode(lessEqualNode);
                     break;
                 default:
                     throw new Exception();
@@ -168,8 +167,8 @@ namespace CobraCompiler
         #region Visit TypeNodes
         internal TypeEnum visitAdditionNode(AdditionNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
@@ -186,10 +185,10 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitSubtractionNode(SubtractionNode node)
+        private TypeEnum VisitSubtractionNode(SubtractionNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
@@ -206,10 +205,10 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitMultiplicationNode(MultiplicationNode node)
+        private TypeEnum VisitMultiplicationNode(MultiplicationNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
@@ -226,10 +225,10 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitDivisionNode(DivisionNode node)
+        private TypeEnum VisitDivisionNode(DivisionNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
@@ -246,10 +245,10 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitAndNode(AndNode node)
+        private TypeEnum VisitAndNode(AndNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
@@ -263,10 +262,10 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitOrNode(OrNode node)
+        private TypeEnum VisitOrNode(OrNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
@@ -280,10 +279,10 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitEqualNode(EqualNode node)
+        private TypeEnum VisitEqualNode(EqualNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
@@ -297,10 +296,10 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitNotEqualNode(NotEqualNode node)
+        private TypeEnum VisitNotEqualNode(NotEqualNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
@@ -314,10 +313,10 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitGreaterNode(GreaterNode node)
+        private TypeEnum VisitGreaterNode(GreaterNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
@@ -331,10 +330,10 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitLessNode(LessNode node)
+        private TypeEnum VisitLessNode(LessNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
@@ -367,8 +366,8 @@ namespace CobraCompiler
 
         internal TypeEnum visitLessEqualNode(LessEqualNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            TypeEnum leftType = VisitExpressionNode(node.Left);
+            TypeEnum rightType = VisitExpressionNode(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)

@@ -62,8 +62,7 @@ namespace CobraCompiler
                     }
                     break;
             }
-
-            // Get all children that are ASTNodes
+            
             foreach (var child in node.GetChildren().Where(x => x is ASTNode))
             {
                 ProcessNode(child);
@@ -73,7 +72,6 @@ namespace CobraCompiler
             {
                 ExitScope();
             }
-
         }
 
         // create a function that creates a new scope
