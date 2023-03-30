@@ -25,8 +25,8 @@ namespace CobraCompiler
                 var cst = parser.program();
                 var ast = new BuildASTVisitor().VisitProgram(cst);
                 var st = new SymbolTable().BuildSymbolTable(ast);
-                new TypeChecker(st).visitProgramNode((ProgramNode)ast);
-
+                new TypeChecker(st).visitBlockNode((ProgramNode)ast);
+                Console.WriteLine("DONE!");
                 //var value = new EvaluateExpressionVisitor().Visit(ast);
 
                 //Console.WriteLine("= {0}", value);

@@ -117,7 +117,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
             identifier.Name = ID.ToString();
             var typeNode = (TypeNode)Visit(type);
-            identifier.Type = typeNode;
+            identifier.TypeNode = typeNode;
 
             if (ass.ChildCount > 0)
             {
@@ -931,15 +931,18 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             (RPAREN != null) &&
             (block != null))
         {
-            prettyPrint("IdentifierNode", context);
-            var localVar = new IdentifierNode();
+            prettyPrint("DeclarationNode", context);
+            var localVar = new DeclarationNode();
             var typeNode = (TypeNode)Visit(type);
-            localVar.Type = typeNode;
-            localVar.Name = ID.ToString();
+            var localVarIdentifier = new IdentifierNode();
+            localVarIdentifier.TypeNode = typeNode;
+            localVarIdentifier.Name = ID.ToString();
+            localVar.Identifier = localVarIdentifier;
 
             prettyPrint("IdentifierNode", context);
             var identifierNode = new IdentifierNode();
-            identifierNode.Type = new ListNode();
+            var listNode = new ListNode(typeNode.Type);
+            identifierNode.TypeNode = listNode;
             identifierNode.Name = ID2.ToString();
 
             outputNode.List = identifierNode;
@@ -990,7 +993,9 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
                  (RPAREN != null))
         {
             prettyPrint("ListNode", context);
-            var outputNode = new ListNode();
+            incrIndent();
+            var listType = (TypeNode)Visit(type);
+            var outputNode = new ListNode(listType.Type);
             decrIndent();
             return outputNode;
 
@@ -1012,7 +1017,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         {
             var identifierNode = new IdentifierNode();
             identifierNode.Name = ID.ToString();
-            identifierNode.Type = new ListNode();
+            identifierNode.TypeNode = new ListNode(TypeEnum.list_object);
 
             outputNode = (ListOperationNode)Visit(listOpr);
             outputNode.Identifier = identifierNode;

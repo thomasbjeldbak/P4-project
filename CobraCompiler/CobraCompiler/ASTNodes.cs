@@ -11,7 +11,10 @@ public class ASTNodes
         number,
         text,
         boolean,
-        list,
+        list_object,
+        list_number,
+        list_text,
+        list_boolean,
     }
     public abstract class ASTNode
     {
@@ -73,7 +76,7 @@ public class ASTNodes
     //Identifier has a type (which has a value) and a name
     internal class IdentifierNode : ExpressionNode
     {
-        public TypeNode Type { get; set; }
+        public TypeNode TypeNode { get; set; }
         public string Name { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -117,7 +120,10 @@ public class ASTNodes
 
     internal class NumberNode : TypeNode
     {
-        public NumberNode() { Type = TypeEnum.number; }
+        public NumberNode() 
+        {
+            Type = new TypeEnum();
+        }
         public new int Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -128,7 +134,10 @@ public class ASTNodes
 
     internal class TextNode : TypeNode
     {
-        public TextNode() { Type = TypeEnum.text; }
+        public TextNode()
+        {
+            Type = new TypeEnum();
+        }
         public new string Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -139,7 +148,10 @@ public class ASTNodes
      
     internal class BooleanNode : TypeNode
     {
-        public BooleanNode() { Type = TypeEnum.boolean; }
+        public BooleanNode()
+        {
+            Type = new TypeEnum();
+        }
         public new bool Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -150,7 +162,10 @@ public class ASTNodes
 
     internal class ListNode : TypeNode
     {
-        public ListNode() { Type = TypeEnum.list; }
+        public ListNode(TypeEnum listType)
+        {
+            Type = listType;
+        }
         public new TypeNode[] Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -277,7 +292,7 @@ public class ASTNodes
     internal class ForeachNode : ControlStructureNode
     {
         public IdentifierNode List { get; set; }
-        public IdentifierNode LocalVariable { get; set; }
+        public DeclarationNode LocalVariable { get; set; }
         public override List<ASTNode> GetChildren()
         {
             var children = new List<ASTNode>();
@@ -329,7 +344,10 @@ public class ASTNodes
         public override List<ASTNode> GetChildren()
         {
             var children = new List<ASTNode>();
-            children.AddRange(Commands);
+            
+            if (Commands != null)
+                children.AddRange(Commands);
+            
             return children;
         }
     }

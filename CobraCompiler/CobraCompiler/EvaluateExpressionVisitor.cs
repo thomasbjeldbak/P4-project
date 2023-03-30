@@ -36,7 +36,7 @@ namespace CobraCompiler
 
         public override int Visit(IdentifierNode node)
         {
-            return Visit(node.Type);
+            return Visit(node.TypeNode);
         }
 
         public override int Visit(DeclarationNode node)

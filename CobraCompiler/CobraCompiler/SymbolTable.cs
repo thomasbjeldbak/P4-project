@@ -18,9 +18,8 @@ namespace CobraCompiler
 
     public class Symbol
     {
-        public TypeEnum Type { get; set; }
         public string Name { get; set; }
-
+        public TypeEnum Type { get; set; }
     }
 
     public class Scope
@@ -54,7 +53,7 @@ namespace CobraCompiler
                     NewScope(blockNode);
                     break;
                 case DeclarationNode declarationNode:
-                    Insert(declarationNode.Identifier.Name, declarationNode.Identifier.Type.Type);
+                    Insert(declarationNode.Identifier.Name, declarationNode.Identifier.TypeNode.Type);
                     break;
                 case IdentifierNode identifierNode:
                     var sym = Lookup(identifierNode.Name, _currentBlock);
@@ -95,9 +94,12 @@ namespace CobraCompiler
             _stackScopes.Pop();
         }
 
-        private void Insert(string name, TypeEnum value)
+        private void Insert(string name, TypeEnum type)
         {
-            _stackScopes.Peek().Symbols.Add(name, new Symbol { Name = name, Type = value });
+            _stackScopes.Peek().Symbols.Add(name, new Symbol 
+            { 
+                Name = name, Type = type,
+            });
         }
 
         public Symbol? Lookup(string name, BlockNode blockNode)
