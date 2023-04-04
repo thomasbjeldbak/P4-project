@@ -36,20 +36,20 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //program: cmds;
     public override ASTNode VisitProgram([NotNull] ExprParser.ProgramContext context)
     {
-        var cmds = context.cmds();
+            var cmds = context.cmds();
 
-        var programNode = new ProgramNode();
+            var programNode = new ProgramNode();
 
-        prettyPrint("ProgramNode", context);
-        incrIndent();
+            prettyPrint("ProgramNode", context);
+            incrIndent();
 
-        if (cmds != null)
-        {
-            var blockNode = (BlockNode)Visit(cmds);
-            programNode.Commands = blockNode.Commands;
-        }
+            if (cmds != null)
+            {
+                var blockNode = (BlockNode)Visit(cmds);
+                programNode.Commands = blockNode.Commands;
+            }
 
-        return programNode;
+            return programNode;
     }
 
     //cmds: cmd cmds | /*epsilon*/;
@@ -632,7 +632,14 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             return textNode;
         }
         else
-            throw new Exception();
+        {
+            throw new SyntaxException(context.Start.Line, context.Start.Column);
+            var startToken = context.Start;
+            int line = startToken.Line;
+            int column = startToken.Column;
+            throw new ParsingException(line, column, "Missing factor");
+        }
+
     }
 
     //boolean: TRUE | FALSE; 

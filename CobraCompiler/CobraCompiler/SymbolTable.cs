@@ -58,7 +58,7 @@ namespace CobraCompiler
                 case IdentifierNode identifierNode:
                     var sym = Lookup(identifierNode.Name, _currentBlock);
                     if (sym == null) {
-                        throw new Exception("Symbol not found");
+                        throw new SymbolNotFoundException(identifierNode.Name);
                     }
                     break;
             }
@@ -113,10 +113,9 @@ namespace CobraCompiler
                         return symbol;
                     }
                 }
-
+                
                 scope = scope.Parent;
             }
-
             return null;
         }
     }

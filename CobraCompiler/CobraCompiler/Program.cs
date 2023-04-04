@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Tree.Xpath;
 using static ASTNodes;
 
 namespace CobraCompiler
@@ -20,23 +21,25 @@ namespace CobraCompiler
                 var tokenStream = new CommonTokenStream(lexer);
                 var parser = new ExprParser(tokenStream);
 
-                //try
-                //{
-                var cst = parser.program();
-                var ast = new BuildASTVisitor().VisitProgram(cst);
-                var st = new SymbolTable().BuildSymbolTable(ast);
-                new TypeChecker(st).visitBlockNode((ProgramNode)ast);
-                Console.WriteLine("DONE!");
-                //var value = new EvaluateExpressionVisitor().Visit(ast);
+                try
+                {
+                    var cst = parser.program();
+                    var ast = new BuildASTVisitor().VisitProgram(cst);
+                    var st = new SymbolTable().BuildSymbolTable(ast);
+                    new TypeChecker(st).visitBlockNode((ProgramNode)ast);
+                    Console.WriteLine("DONE!");
+                    //var value = new EvaluateExpressionVisitor().Visit(ast);
 
-                //Console.WriteLine("= {0}", value);
-                //}
-                //catch (Exception ex)
-                //{
-                //    Console.WriteLine(ex.Message);
-                //}
-
-                //Console.WriteLine();
+                    //Console.WriteLine("= {0}", value);
+                }
+                catch (SyntaxException ex)
+                {
+                    Console.WriteLine($"SyntaxError: Line{ex.Line} column{ex.Column}: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
     }
