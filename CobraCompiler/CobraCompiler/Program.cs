@@ -22,8 +22,7 @@ namespace CobraCompiler
                 var parser = new ExprParser(tokenStream);
                 
                 parser.RemoveErrorListeners(); // remove the default ConsoleErrorListener
-                parser.AddErrorListener(new ErrorHandler()); // set your ErrorHandler as the error listener
- 
+                parser.AddErrorListener(new ErrorHandler()); // set your ErrorHandler as the error listener'
                 
                 try
                 {
@@ -35,13 +34,10 @@ namespace CobraCompiler
                     //var value = new EvaluateExpressionVisitor().Visit(ast);
                     //Console.WriteLine("= {0}", value);
                 }
-                catch (SyntaxException ex)
-                {
-                    Console.WriteLine($"SyntaxError: Line{ex.Line} column{ex.Column}: {ex.Message}");
-                }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                    Environment.Exit(1);
                 }
             }
         }
