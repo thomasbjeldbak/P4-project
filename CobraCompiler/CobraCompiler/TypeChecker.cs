@@ -350,7 +350,7 @@ namespace CobraCompiler
 
             type = (TypeEnum)leftType;
 
-            if (isList(type))
+            if (!isList(type))
                 throw new Exception();
 
             return type;
