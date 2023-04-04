@@ -12,19 +12,24 @@ using static ASTNodes;
 
 internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 {
+    //Contains indents for the pretty printer
     private string _indent;
 
     #region PrettyPrinter Methods
+
+    //Pretty prints a node and what text is currently in the context
     private void prettyPrint(string nodeName, ParserRuleContext context)
     {
         Console.WriteLine($"{_indent}{nodeName}");
     }
 
+    //Increment identing for pretty printer
     private void incrIndent()
     {
         _indent += "\t";
     }
 
+    //Decrement indenting for pretty printer
     private void decrIndent()
     {
         _indent = _indent.Substring(0, _indent.Length - 1);
@@ -32,13 +37,25 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
     #endregion
 
+    //ExprParserBaseVisitor handles visiting the nodes as long as
+    //the correct context is given to the 'Visit' function
+
+    //All context belonging to the node in the parser being visited is
+    //intialized at the beginning of the function.
+    //If an OutputNode is intialized, this node i also the one being returned
+    //What will be explained in each function is what is visited, and what the
+    //returned node is used for
+
 
     //program: cmds;
     public override ASTNode VisitProgram([NotNull] ExprParser.ProgramContext context)
     {
+        //outputNode = ProgramNode
+        //visit(cmds) -> returns BlockNode.
+        //  The BlockNodes commands is assigned to the programNodes commands
         var cmds = context.cmds();
 
-        var programNode = new ProgramNode();
+        var outputNode = new ProgramNode();
 
         prettyPrint("ProgramNode", context);
         incrIndent();
@@ -46,15 +63,20 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (cmds != null)
         {
             var blockNode = (BlockNode)Visit(cmds);
-            programNode.Commands = blockNode.Commands;
+            outputNode.Commands = blockNode.Commands;
         }
 
-        return programNode;
+        return outputNode;
     }
 
     //cmds: cmd cmds | /*epsilon*/;
     public override ASTNode VisitCmds([NotNull] ExprParser.CmdsContext context)
     {
+        //outputNode = BlockNode
+        //visit(cmd) -> returns a CommandNode. This node is
+        //  assigned to the BlockNodes Commands
+        //visit(cmds) -> returns A BlockNode. This nodes commands
+        //  is assigned to the outputNodes Commands
         var cmd = context.cmd();
         var cmds = context.cmds();
 
@@ -76,6 +98,8 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //cmd: stmt | dcl;
     public override ASTNode VisitCmd([NotNull] ExprParser.CmdContext context)
     {
+        //returns either a StatementNode or a DeclarationNode
+        //visit(stmt), visit(dcl) -> visits them if they aren't null and returns the result
         var stmt = context.stmt();
         var dcl = context.dcl();
 
@@ -96,12 +120,17 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //dcl: type ID ass SEMI;
     public override ASTNode VisitDcl([NotNull] ExprParser.DclContext context)
     {
+        //outputNode = DelcarationNode
+        //visit(type) -> gets TypeNode
+        //visit(ass) -> gets ExpressionNode
+        //Type and Expression is assigned to an identifierNode
+        //The identifierNode is assigned to the OutputNode
         var type = context.type();
         var ID = context.ID();
         var ass = context.ass();
         var SEMI = context.SEMI();
 
-        var declarationNode = new DeclarationNode();
+        var outputNode = new DeclarationNode();
 
         prettyPrint("DeclarationNode", context);
         incrIndent();
@@ -117,29 +146,38 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
             identifier.Name = ID.ToString();
             var typeNode = (TypeNode)Visit(type);
-            identifier.Type = typeNode;
+            identifier.TypeNode = typeNode;
 
             if (ass.ChildCount > 0)
             {
-                declarationNode.Expression = (ExpressionNode)Visit(ass);
+                outputNode.Expression = (ExpressionNode)Visit(ass);
             }
 
-            declarationNode.Identifier = identifier;
+            outputNode.Identifier = identifier;
         }
 
         decrIndent();
-        return declarationNode;
+        return outputNode;
     }
 
     //ass: ASSIGN expr | /*epsilon*/;
     public override ASTNode VisitAss([NotNull] ExprParser.AssContext context)
     {
+        //visit(expr) -> gets ExpressionNode and returns it
         return Visit(context.expr());
     }
 
     //stmt: ID ASSIGN expr SEMI | ctrlStrct | listStmt SEMI | funcDef | funcCall SEMI;
     public override ASTNode VisitStmt([NotNull] ExprParser.StmtContext context)
     {
+        //outputNode = StatementNode
+        //Visit(expr) -> Get ExpressionNode
+        //  ExpressionNode and ID is assigned to an AssignNode which is returned
+        //Visit(ctrlStrct) -> Gets and returns a ControlStructureNode
+        //Visit(listStmt) -> Gets and returns a ListOperationNode
+        //Visit(funcDef) -> Gets and returns a FunctionDefinitionNode
+        //Visit(funcCall) -> Gets and returns a FunctionCallNode
+
         var ID = context.ID();
         var ASSIGN = context.ASSIGN();
         var expr = context.expr();
@@ -149,7 +187,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var funcDef = context.funcDef();
         var funcCall = context.funcCall();
 
-        ASTNode outputNode = null;
+        StatementNode outputNode = null;
 
         if ((ID != null) && 
             (ASSIGN != null) &&
@@ -171,11 +209,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         }
         else if (ctrlStrct != null && ctrlStrct.ChildCount > 0)
         {
-            outputNode = Visit(ctrlStrct);
+            outputNode = (StatementNode)Visit(ctrlStrct);
         }
         else if (listStmt != null && listStmt.ChildCount > 0)
         {
-            outputNode = Visit(listStmt);
+            outputNode = (StatementNode)Visit(listStmt);
         }
         else if (funcDef != null && funcDef.ChildCount > 0)
         {
@@ -195,6 +233,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //expr: logicOr oprOr;
     public override ASTNode VisitExpr([NotNull] ExprParser.ExprContext context)
     {
+        //Returns an ExpressionNode
+        //Visit(oprOr) -> Gets InfixExpression (with a right-side)
+        //Visit(logicOr) -> If an oprOr exists, Get ExpressionNode and assigns it
+        //to the left side of an expression. Else get and return ExpressionNode
+
         var logicOr = context.logicOr();
         var oprOr = context.oprOr();
 
@@ -215,6 +258,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //oprOr: OR logicOr oprOr | /*epsilon*/;
     public override ASTNode VisitOprOr([NotNull] ExprParser.OprOrContext context)
     {
+        //Returns an InfixExpression
+        //Visit(oprOr) -> Gets a InfixExpression (with a right-side)
+        //Visit(logicOr) -> Gets an ExpressionNode and assigns it
+        //to the left-side of the InfixExpression.
+        //This Infix Expression is assigned to the right-side of another InfixExpression
+        //which is returned
+
         var oprOr = context.oprOr();
         var logicOr = context.logicOr();
         var OR = context.OR();
@@ -254,6 +304,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //logicOr: logicAnd oprAnd;
     public override ASTNode VisitLogicOr([NotNull] ExprParser.LogicOrContext context)
     {
+        //Returns an ExpressionNode
+        //Visit(oprAnd) -> Gets InfixExpression (with a right-side)
+        //Visit(logicAnd) -> If an oprAnd exists, Get ExpressionNode and assigns it
+        //to the left side of an expression. Else get and return ExpressionNode
+
         var logicAnd = context.logicAnd();
         var oprAnd = context.oprAnd();
 
@@ -274,6 +329,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //oprAnd: AND logicAnd oprAnd | /*epsilon*/; 
     public override ASTNode VisitOprAnd([NotNull] ExprParser.OprAndContext context)
     {
+        //Returns an InfixExpression
+        //Visit(oprAnd) -> Gets a InfixExpression (with a right-side)
+        //Visit(logicAnd) -> Gets an ExpressionNode and assigns it
+        //to the left-side of the InfixExpression.
+        //This Infix Expression is assigned to the right-side of another InfixExpression
+        //which is returned
+
         var oprAnd = context.oprAnd();
         var logicAnd = context.logicAnd();
         var AND = context.AND();
@@ -316,6 +378,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //logicAnd: equal oprEql;
     public override ASTNode VisitLogicAnd([NotNull] ExprParser.LogicAndContext context)
     {
+        //Returns an ExpressionNode
+        //Visit(oprEql) -> Gets InfixExpression (with a right-side)
+        //Visit(equal) -> If an oprEql exists, Get ExpressionNode and assigns it
+        //to the left side of an expression. Else get and return ExpressionNode
+
         var equal = context.equal();
         var oprEql = context.oprEql();
 
@@ -336,6 +403,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //oprEql: EQUAL equal oprEql | NOT equal oprEql | /*epsilon*/;
     public override ASTNode VisitOprEql([NotNull] ExprParser.OprEqlContext context)
     {
+        //Returns an InfixExpression
+        //Visit(oprEql) -> Gets a InfixExpression (with a right-side)
+        //Visit(equal) -> Gets an ExpressionNode and assigns it
+        //to the left-side of the InfixExpression.
+        //This Infix Expression is assigned to the right-side of another InfixExpression
+        //which is returned
+
         var oprEql = context.oprEql();
         var equal = context.equal();
         var EQUAL = context.EQUAL();
@@ -381,6 +455,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //equal: bool oprBool;
     public override ASTNode VisitEqual([NotNull] ExprParser.EqualContext context)
     {
+        //Returns an ExpressionNode
+        //Visit(oprBool) -> Gets InfixExpression (with a right-side)
+        //Visit(@bool) -> If an oprBool exists, Get ExpressionNode and assigns it
+        //to the left side of an expression. Else get and return ExpressionNode
+
         var @bool = context.@bool();
         var oprBool = context.oprBool();
 
@@ -401,6 +480,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //oprBool: GREAT bool oprBool | LESS bool oprBool | GREATEQL bool oprBool| LESSEQL bool oprBool | /*epsilon*/;
     public override ASTNode VisitOprBool([NotNull] ExprParser.OprBoolContext context)
     {
+        //Returns an InfixExpression
+        //Visit(oprBool) -> Gets a InfixExpression (with a right-side)
+        //Visit(@bool) -> Gets an ExpressionNode and assigns it
+        //to the left-side of the InfixExpression.
+        //This Infix Expression is assigned to the right-side of another InfixExpression
+        //which is returned
+
         var oprBool = context.oprBool();
         var @bool = context.@bool();
         var GREAT = context.GREAT();
@@ -458,6 +544,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //bool: term oprExpr;
     public override ASTNode VisitBool([NotNull] ExprParser.BoolContext context)
     {
+        //Returns an ExpressionNode
+        //Visit(oprExpr) -> Gets InfixExpression (with a right-side)
+        //Visit(term) -> If an oprExpr exists, Get ExpressionNode and assigns it
+        //to the left side of an expression. Else get and return ExpressionNode
+
         var term = context.term();
         var oprExpr = context.oprExpr();
 
@@ -478,6 +569,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //oprExpr: ADD term oprExpr | SUB term oprExpr | /*epsilon*/;
     public override ASTNode VisitOprExpr([NotNull] ExprParser.OprExprContext context)
     {
+        //Returns an InfixExpression
+        //Visit(oprExpr) -> Gets a InfixExpression (with a right-side)
+        //Visit(term) -> Gets an ExpressionNode and assigns it
+        //to the left-side of the InfixExpression.
+        //This Infix Expression is assigned to the right-side of another InfixExpression
+        //which is returned
+
         var oprExpr = context.oprExpr();
         var term = context.term();
         var ADD = context.ADD();
@@ -523,6 +621,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //term: factor oprTerm;
     public override ASTNode VisitTerm([NotNull] ExprParser.TermContext context)
     {
+        //Returns an ExpressionNode
+        //Visit(oprTerm) -> Gets InfixExpression (with a right-side)
+        //Visit(factor) -> If an oprTerm exists, Get ExpressionNode and assigns it
+        //to the left side of an expression. Else get and return ExpressionNode
+
         var factor = context.factor();
         var oprTerm = context.oprTerm();
 
@@ -543,6 +646,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //oprTerm: MUL factor oprTerm | DIV factor oprTerm | /*epsilon*/; 
     public override ASTNode VisitOprTerm([NotNull] ExprParser.OprTermContext context)
     {
+        //Returns an InfixExpression
+        //Visit(oprTerm) -> Gets a InfixExpression (with a right-side)
+        //Visit(factor) -> Gets an ExpressionNode and assigns it
+        //to the left-side of the InfixExpression.
+        //This Infix Expression is assigned to the right-side of another InfixExpression
+        //which is returned
+
         var oprTerm = context.oprTerm();
         var factor = context.factor();
         var MUL = context.MUL();
@@ -588,6 +698,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //factor: LPAREN expr RPAREN | INT | STR | ID | boolean;
     public override ASTNode VisitFactor([NotNull] ExprParser.FactorContext context)
     {
+        //Returns an ExpressionNode
+        //Visit(expr) -> Get and return ExpressionNode
+        //Visit(boolean) -> Get and return BooleanNode
+        //If ID != null -> Get and return IdentifierNode
+        //If INT != null -> Get and return NumberNode
+        //If STR != null -> Get and return TextNode
+
         var INT = context.INT();
         var STR = context.STR();
         var ID = context.ID();
@@ -621,8 +738,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         else if (boolean != null)
         {
             prettyPrint("booleanNode", context);
-            var booleanNode = new BooleanNode();
-            booleanNode.Value = bool.Parse(boolean.ToString());
+            var booleanNode = Visit(boolean);
             return booleanNode;
         }
         else if (STR != null)
@@ -636,9 +752,38 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             throw new Exception();
     }
 
+    //boolean: TRUE | FALSE; 
+    public override ASTNode VisitBoolean([NotNull] ExprParser.BooleanContext context)
+    {
+        //outputNode = BooleanNode
+        //If TRUE != null -> set value to true
+        //If FALSE != null -> set value to false
+
+        var TRUE = context.TRUE();
+        var FALSE = context.FALSE();
+
+        var outputNode = new BooleanNode();
+
+        if (TRUE != null)
+        {
+            outputNode.Value = true;
+        }
+        else if (FALSE != null)
+        {
+            outputNode.Value = false;
+        }
+        else
+            throw new Exception();
+
+        return outputNode;
+    }
+
     //block: LCURLY cmds RCURLY;
     public override ASTNode VisitBlock([NotNull] ExprParser.BlockContext context)
     {
+        //outputNode = BlockNode
+        //Visit(cmds) -> Gets and returns BlockNode
+
         var LCURLY = context.LCURLY();
         var cmds = context.cmds();
         var RCURLY = context.RCURLY();
@@ -665,6 +810,9 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //ctrlStrct: ifStmt | loop;
     public override ASTNode VisitCtrlStrct([NotNull] ExprParser.CtrlStrctContext context)
     {
+        //Visit(ifStmt) -> Get and return IfNode
+        //Visit(loop) -> Get and return ControlStructureNode
+
         var ifStmt = context.ifStmt();
         var loop = context.loop();
 
@@ -683,6 +831,12 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //ifStmt: IF LPAREN expr RPAREN block elseIfStmt; 
     public override ASTNode VisitIfStmt([NotNull] ExprParser.IfStmtContext context)
     {
+        //outputNode = IfNode
+        //Visit(expr) -> Get ExpressionNode, assign it to IfNode
+        //Visit(block) -> Get BlockNode, assign it to IfNode
+        //Visit(elseIfStmt) -> Get IfNode, and assign the IfNodes ElseIfs, to
+        //the outputNodes ElseIfs
+
         var IF = context.IF();
         var LPAREN = context.LPAREN();
         var expr = context.expr();
@@ -719,6 +873,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //ElseIfStmt: ELSE IF LPAREN expr RPAREN block elseIfStmt | else | /*epsilon*/; 
     public override ASTNode VisitElseIfStmt([NotNull] ExprParser.ElseIfStmtContext context)
     {
+        //outputNode = IfNode
+        //Visit(@else) -> Get ElseNode, and Add to outputNodes ElseIfs
+        //Visit(elseIfStmt) -> Get IfNode, and Add IfNodes ElseIfs to
+        //the outputNodes ElseIfs
+
         var ELSE = context.ELSE();
         var IF = context.IF();
         var LPAREN = context.LPAREN();
@@ -770,6 +929,9 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //else: ELSE block | /*epsilon*/;
     public override ASTNode VisitElse([NotNull] ExprParser.ElseContext context)
     {
+        //outputNode = ElseNode
+        //visit(block) -> get BlockNoded and assign to outputNode
+
         var ELSE = context.ELSE();
         var block = context.block();
 
@@ -789,6 +951,8 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //loop: REPEAT loops;
     public override ASTNode VisitLoop([NotNull] ExprParser.LoopContext context)
     {
+        //Visit(loops) -> Get and return ControlStructureNode
+
         var REPEAT = context.REPEAT();
         var loops = context.loops();
 
@@ -804,6 +968,10 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //loops: loopStmt | whileStmt | foreachStmt;
     public override ASTNode VisitLoops([NotNull] ExprParser.LoopsContext context)
     {
+        //Visit(loopSmt) -> Get and return RepeatNode
+        //Visit(whileStmt) -> Get and return WhileNode
+        //Visit(foreachStmt) -> Get and return ForeachNode
+
         var loopStmt = context.loopStmt();
         var whileStmt = context.whileStmt();
         var foreachStmt = context.foreachStmt();
@@ -827,6 +995,10 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //loopStmt: LPAREN expr RPAREN TIMES block;
     public override ASTNode VisitLoopStmt([NotNull] ExprParser.LoopStmtContext context)
     {
+        //outputNode = RepeatNode
+        //Visit(Block) -> Get BlockNode and assign to outputNode
+        //Visit(expr) -> Get ExpressionNode and assign to outputNode
+
         var LPAREN = context.LPAREN();
         var expr = context.expr();
         var RPAREN = context.RPAREN();
@@ -857,6 +1029,10 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //whileStmt: WHILE LPAREN expr RPAREN block;
     public override ASTNode VisitWhileStmt([NotNull] ExprParser.WhileStmtContext context)
     {
+        //outputNode = WhileNode
+        //Visit(expr) -> Get ExpressionNode and assign to outputNode
+        //Visit(block) -> Get BlockNode and assign to outputNode
+
         var WHILE = context.WHILE();
         var LPAREN = context.LPAREN();
         var expr = context.expr();
@@ -887,6 +1063,16 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //foreachStmt: FOREACH LPAREN type ID IN ID RPAREN block;
     public override ASTNode VisitForeachStmt([NotNull] ExprParser.ForeachStmtContext context)
     {
+        //outputNode = ForeachNode
+        //Visit(type) -> Get TypeNode
+        //ID != null -> Set Name of IdentifierNode of local variable.
+        //Assign TypeNode and IdentifierNode to a DeclarationNode
+        //ID2 != null -> Set name of IdentifierNode of list
+        //  Set type of this identifer to List.
+        //Assign IdentifierNode to ouputNode (as list)
+        //Assign DeclarationNode to outputNode (as local variable)
+        //Visit(block) -> Get BlockNode and assign to outputNode
+
         var FOREACH = context.FOREACH();
         var LPAREN = context.LPAREN();
         var type = context.type();
@@ -910,15 +1096,18 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             (RPAREN != null) &&
             (block != null))
         {
-            prettyPrint("IdentifierNode", context);
-            var localVar = new IdentifierNode();
+            prettyPrint("DeclarationNode", context);
+            var localVar = new DeclarationNode();
             var typeNode = (TypeNode)Visit(type);
-            localVar.Type = typeNode;
-            localVar.Name = ID.ToString();
+            var localVarIdentifier = new IdentifierNode();
+            localVarIdentifier.TypeNode = typeNode;
+            localVarIdentifier.Name = ID.ToString();
+            localVar.Identifier = localVarIdentifier;
 
             prettyPrint("IdentifierNode", context);
             var identifierNode = new IdentifierNode();
-            identifierNode.Type = new ListNode();
+            var listNode = new ListNode(typeNode.Type);
+            identifierNode.TypeNode = listNode;
             identifierNode.Name = ID2.ToString();
 
             outputNode.List = identifierNode;
@@ -934,6 +1123,12 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //type: BOOL | TEXT | NUM | LIST LPAREN type RPAREN;
     public override ASTNode VisitType([NotNull] ExprParser.TypeContext context)
     {
+        //BOOl != null -> Return empty BooleanNode
+        //TEXT != null -> Return empty TextNode
+        //NUM != null -> Return empty NumberNode
+        //LIST != null -> Get empty ListNode
+            //Visit(type) -> Get TypeNode and assign its Type to ListNode
+
         var BOOl = context.BOOL();
         var TEXT = context.TEXT();
         var NUM = context.NUM();
@@ -969,7 +1164,9 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
                  (RPAREN != null))
         {
             prettyPrint("ListNode", context);
-            var outputNode = new ListNode();
+            incrIndent();
+            var listType = (TypeNode)Visit(type);
+            var outputNode = new ListNode(listType.Type);
             decrIndent();
             return outputNode;
 
@@ -981,6 +1178,12 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //listStmt: ID COLON listOpr;
     public override ASTNode VisitListStmt([NotNull] ExprParser.ListStmtContext context)
     {
+        //outputNode = ListOperationNode
+        //Visit(listOpr) -> Get ListOperationNode and assing outputNode to it
+        //ID != null -> Set Name of an IdentifierNode
+        //Set TypeNode of IdentifierNode to ListNode
+        //Assign IdentifierNode to outputNode
+
         var ID = context.ID();
         var COLON = context.COLON();
         var listOpr = context.listOpr();
@@ -991,7 +1194,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         {
             var identifierNode = new IdentifierNode();
             identifierNode.Name = ID.ToString();
-            identifierNode.Type = new ListNode();
+            identifierNode.TypeNode = new ListNode(TypeEnum.list_object);
 
             outputNode = (ListOperationNode)Visit(listOpr);
             outputNode.Identifier = identifierNode;
@@ -1009,6 +1212,9 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
     //listOpr: LISTADD LPAREN expr RPAREN | LISTDEL LPAREN expr RPAREN | LISTIDXOF LPAREN expr RPAREN | LISTVALOF LPAREN expr RPAREN;
     public override ASTNode VisitListOpr([NotNull] ExprParser.ListOprContext context)
     {
+        //outputNode = ListOperationNode
+        //Visit(expr) -> Get ExpressionNode and assign to outputNode
+
         var LISTADD = context.LISTADD();
         var LPAREN = context.LPAREN();
         var expr = context.expr();
