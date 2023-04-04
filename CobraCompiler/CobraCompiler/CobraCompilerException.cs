@@ -7,15 +7,17 @@ namespace CobraCompiler;
 
 public class ErrorHandler : BaseErrorListener, IAntlrErrorListener<IToken>
 {
-    private readonly List<string> errorMessages = new();
-
-    public IReadOnlyList<string> ErrorMessages => errorMessages;
+    private readonly List<string> _syntaxSyntaxErrorMessages = new();
+    public IReadOnlyList<string> SyntaxErrorMessages => _syntaxSyntaxErrorMessages; 
+    
+    private readonly List<string> _symbolErrorMessages = new();
+    public List<string> SymbolErrorMessages => _symbolErrorMessages;
 
     public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine,
         string message, RecognitionException e)
     {
         var error = $"Error: {message} at line {line}, position {charPositionInLine}. Caused by {offendingSymbol.Text}.";
-        errorMessages.Add(error);
+        _syntaxSyntaxErrorMessages.Add(error);
 
         //throw new Exception(error);
     }

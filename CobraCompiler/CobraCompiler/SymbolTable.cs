@@ -37,7 +37,12 @@ namespace CobraCompiler
         private Dictionary<BlockNode, Scope> _scopes;
         private Stack<Scope> _stackScopes;
         private BlockNode _currentBlock;
+        private ErrorHandler symbolErrorhandler;
 
+        public SymbolTable(ErrorHandler errorHandler)
+        {
+            symbolErrorhandler = errorHandler;
+        }
         public SymbolTable BuildSymbolTable(ASTNode astRoot)
         {
             _scopes = new Dictionary<BlockNode, Scope>();
@@ -58,7 +63,8 @@ namespace CobraCompiler
                 case IdentifierNode identifierNode:
                     var sym = Lookup(identifierNode.Name, _currentBlock);
                     if (sym == null) {
-                        throw new SymbolNotFoundException(identifierNode.Name);
+                        var error = $"Error: {identifierNode.Name} is not found. Declare your variable before use.";
+                        symbolErrorhandler.SymbolErrorMessages.Add(error);
                     }
                     break;
             }

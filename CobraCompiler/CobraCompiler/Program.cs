@@ -26,46 +26,30 @@ namespace CobraCompiler
                 parser.AddErrorListener(errorHandler); // set your ErrorHandler as the error listener'
                 
                 var cst = parser.program();
-                    if (errorHandler.ErrorMessages.Count > 0)
+                if (errorHandler.SyntaxErrorMessages.Count > 0)
+                {
+                    Console.WriteLine("Syntax errors:");
+                    foreach (var errorMessage in errorHandler.SyntaxErrorMessages)
                     {
-                        Console.WriteLine("Syntax errors:");
-                        foreach (var errorMessage in errorHandler.ErrorMessages)
-                        {
-                            Console.WriteLine(errorMessage);
-                        }
-                        Environment.Exit(1);
+                        Console.WriteLine(errorMessage);
                     }
+                    Environment.Exit(1);
+                }
 
-                    try
-                    {
-                    var ast = new BuildASTVisitor().VisitProgram(cst);
+                var ast = new BuildASTVisitor().VisitProgram(cst);
+                var st = new SymbolTable(errorHandler).BuildSymbolTable(ast);
+                if (errorHandler.SymbolErrorMessages.Count > 0)                                     
+                {                                                                                   
+                    Console.WriteLine("Symbol errors:");                                            
+                    foreach (var errorMessage in errorHandler.SymbolErrorMessages)                  
+                    {                                                                               
+                        Console.WriteLine(errorMessage);                                            
                     }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    
-                    try
-                    {
-                    var st = new SymbolTable().BuildSymbolTable(ast);
-                    }
-                    catch (Exception ex.Message)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    
-                    try
-                    {
-                    new TypeChecker(st).visitBlockNode((ProgramNode)ast);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        throw;
-                    }
-                    Console.WriteLine("DONE!");
+                }                                                                                   
+                new TypeChecker(st).visitBlockNode((ProgramNode)ast);
+                
+                Console.WriteLine("DONE!");
                 }
             }
         }
     }
-}
