@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 using static ASTNodes;
 
 namespace CobraCompiler
@@ -30,10 +31,23 @@ namespace CobraCompiler
                 new TypeChecker(st).Visit((ProgramNode)ast); //AST, Symbol Table -> TypeChecker
 
 
-                #region codeGeneration
+                #region CodeGeneration
+                var sb = new StringBuilder();
+                sb.AppendLine("static void Main(string[] args)");
+                sb.AppendLine("{");
+                sb = new Emitter(sb , st).Visit((ProgramNode)ast);
+                sb.AppendLine("}");
+
+
+                File.WriteAllText("../GeneratedProgram.txt", sb.ToString());
+
+                #endregion
+
+                #region ILCodeGeneration
+
                 // Create an assembly and module to hold the generated code
-                var method = new DynamicMethod("MyMethod", typeof(int), Type.EmptyTypes);
-                var ilGenerator = method.GetILGenerator();
+                //var method = new DynamicMethod("MyMethod", typeof(int), Type.EmptyTypes);
+                //var ilGenerator = method.GetILGenerator();
                 #region newTestCode
                 //var assemblyName = new AssemblyName("MyAssembly");
                 //var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndCollect);
@@ -64,18 +78,17 @@ namespace CobraCompiler
                 //int result = myMethod();
                 #endregion
 
-
                 #region OldCode
-                var em = new Emitter(ilGenerator, st).Visit((ProgramNode)ast);
+                //var em = new ILEmitter(ilGenerator, st).Visit((ProgramNode)ast);
 
-                // Emit a return opcode
-                ilGenerator.Emit(OpCodes.Ret);
+                //// Emit a return opcode
+                //ilGenerator.Emit(OpCodes.Ret);
 
-                // Create a delegate for the dynamic method
-                var myMethod = (Func<int>)method.CreateDelegate(typeof(Func<int>));
+                //// Create a delegate for the dynamic method
+                //var myMethod = (Func<int>)method.CreateDelegate(typeof(Func<int>));
 
-                // Invoke the delegate to execute the generated code
-                int result = myMethod();
+                //// Invoke the delegate to execute the generated code
+                //int result = myMethod();
                 #endregion
 
                 #endregion
