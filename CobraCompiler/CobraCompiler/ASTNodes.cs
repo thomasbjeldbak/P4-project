@@ -57,11 +57,14 @@ public class ASTNodes
         }
     }
 
+    //Statement can be many things: functions, control structures etc,
+    internal abstract class StatementNode : CommandNode { }
+
     //Assignment contains reference to declaration and an expression
     //Identifier = Expression;
     //(A clear distinction between this and declarationNode
     //needs to be made for the symbol table)
-    internal class AssignNode : CommandNode
+    internal class AssignNode : StatementNode
     {
         public IdentifierNode Identifier { get; set; }
         public ExpressionNode Expression { get; set; }
@@ -73,9 +76,6 @@ public class ASTNodes
             return children;
         }
     }
-
-    //Statement can be many things: functions, control structures etc,
-    internal abstract class StatementNode : CommandNode { }
 
     //Identifier has a type and a name
     //Type Name;
@@ -252,7 +252,8 @@ public class ASTNodes
         }
     }
 
-    //Else is the 'Else If' and therefore doesn't need a Condition
+    //Else doesn't need a Condition
+    //Else {Block}
     internal class ElseNode : ControlStructureNode 
     {
         public override List<ASTNode> GetChildren()
@@ -263,7 +264,8 @@ public class ASTNodes
         }
     }
 
-    //All other Else
+    //ElseIf has a condition and is an ElseNode
+    //Else If (Condition) {Block}
     internal class ElseIfNode : ElseNode
     {
         public ExpressionNode Condition { get; set; }
@@ -277,6 +279,7 @@ public class ASTNodes
     }
     
     //"For loop" containing the number to count up to and a block
+    //Repeat (Expression) {Block}
     internal class RepeatNode : ControlStructureNode
     {
         public ExpressionNode Expression { get; set; }
@@ -289,7 +292,8 @@ public class ASTNodes
         }
     }
     
-    //"While loop" containing a predicate and a block
+    //"While loop" containing a Condition and a block
+    //Repeat While (Condtion) {Block}
     internal class WhileNode : ControlStructureNode
     {
         public ExpressionNode Condition { get; set; }
@@ -303,6 +307,7 @@ public class ASTNodes
     }
 
     //"Foreach loop" containing
+    //Repeat For each (DeclarationNode in List) {Block}
     internal class ForeachNode : ControlStructureNode
     {
         public IdentifierNode List { get; set; }
@@ -320,6 +325,7 @@ public class ASTNodes
     #endregion
 
     //"Function call" has arguments and a reference to function declaration
+    //Call Name
     internal class FunctionCallNode : StatementNode
     {
         public FunctionDeclarationNode Function { get; set; }
@@ -334,6 +340,7 @@ public class ASTNodes
     }
 
     //"Function declaration" has a type to return, parameters and a block
+    //Function Name (Parameters) ReturnType {Block}
     internal class FunctionDeclarationNode : StatementNode
     {
         public string Name { get; set; }
@@ -352,6 +359,7 @@ public class ASTNodes
     }
 
     //"block" contains commands
+    //{Block}
     internal class BlockNode : ASTNode
     {
         public List<CommandNode> Commands { get; set; }
@@ -366,6 +374,8 @@ public class ASTNodes
         }
     }
 
+    //Abstract class for all listOperations
+    //e.g. Identifier:[ADD](Expression);
     internal abstract class ListOperationNode : StatementNode
     {
         public IdentifierNode Identifier { get; set; }
@@ -379,23 +389,15 @@ public class ASTNodes
             return children;
         }
     }
-    internal class ListAddNode : ListOperationNode
-    {
 
-    }
+    #region List Operations
+    internal class ListAddNode : ListOperationNode { }
 
-    internal class ListDeleteNode : ListOperationNode
-    {
+    internal class ListDeleteNode : ListOperationNode { }
 
-    }
+    internal class ListValueOfNode : ListOperationNode { }
 
-    internal class ListValueOfNode : ListOperationNode
-    {
+    internal class ListIndexOfNode : ListOperationNode { }
 
-    }
-
-    internal class ListIndexOfNode : ListOperationNode
-    {
-
-    }
+    #endregion
 }
