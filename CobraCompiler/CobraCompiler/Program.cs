@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using System.Reflection.Emit;
 using static ASTNodes;
 
 namespace CobraCompiler
@@ -26,6 +27,25 @@ namespace CobraCompiler
                 var ast = new BuildASTVisitor().VisitProgram(cst); //parse tree -> AST
                 var st = new SymbolTable().BuildSymbolTable(ast); //AST -> Symbol Table
                 new TypeChecker(st).Visit((ProgramNode)ast); //AST, Symbol Table -> TypeChecker
+
+                #region codeGeneration
+                // Create a dynamic method to hold the generated code
+                var method = new DynamicMethod("MyMethod", typeof(int), Type.EmptyTypes);
+                var ilGenerator = method.GetILGenerator();
+
+
+                var em = new Emitter(ilGenerator, st).Visit((ProgramNode)ast);
+
+                // Emit a return opcode
+                ilGenerator.Emit(OpCodes.Ret);
+
+                // Create a delegate for the dynamic method
+                var myMethod = (Func<int>)method.CreateDelegate(typeof(Func<int>));
+
+                // Invoke the delegate to execute the generated code
+                int result = myMethod();
+                #endregion
+
                 Console.WriteLine("DONE!");
                 //var value = new EvaluateExpressionVisitor().Visit(ast);
 
