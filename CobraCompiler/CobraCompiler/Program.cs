@@ -20,7 +20,11 @@ namespace CobraCompiler
                 var lexer = new ExprLexer(inputStream);
                 var tokenStream = new CommonTokenStream(lexer);
                 var parser = new ExprParser(tokenStream);
-
+                
+                parser.RemoveErrorListeners(); // remove the default ConsoleErrorListener
+                parser.AddErrorListener(new ErrorHandler()); // set your ErrorHandler as the error listener
+ 
+                
                 try
                 {
                     var cst = parser.program();
@@ -29,7 +33,6 @@ namespace CobraCompiler
                     new TypeChecker(st).visitBlockNode((ProgramNode)ast);
                     Console.WriteLine("DONE!");
                     //var value = new EvaluateExpressionVisitor().Visit(ast);
-
                     //Console.WriteLine("= {0}", value);
                 }
                 catch (SyntaxException ex)

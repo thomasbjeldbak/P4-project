@@ -32,7 +32,7 @@ namespace CobraCompiler
         public Scope Parent { get; set; }
     }
 
-    internal class SymbolTable
+    public class SymbolTable
     {
         private Dictionary<BlockNode, Scope> _scopes;
         private Stack<Scope> _stackScopes;

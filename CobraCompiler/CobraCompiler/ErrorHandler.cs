@@ -5,11 +5,17 @@ using Antlr4.Runtime.Sharpen;
 
 namespace CobraCompiler;
 
-public class ErrorListener : IAntlrErrorListener<CommonToken>
+public class ErrorHandler : BaseErrorListener, IAntlrErrorListener<IToken>
 {
-    public void SyntaxError(IRecognizer recognizer, CommonToken offendingSymbol, int line, int charPositionInLine, string message, RecognitionException e)
+    public void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine,
+        string message, RecognitionException e)
     {
-        // Handle syntax errors
+        var error =
+            $"Syntax Error: {message} at line {line}, position {charPositionInLine}. Caused by {offendingSymbol.Text}.";
+        Console.Error.WriteLine(error);
+
+        // You could also throw an exception to stop parsing
+        // throw new CobraCompilerException(error);
     }
 
     public void ReportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, bool exact, BitSet ambigAlts, ATNConfigSet configs)
