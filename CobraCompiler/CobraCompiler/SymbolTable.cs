@@ -26,9 +26,9 @@ namespace CobraCompiler
     {
         public Scope() 
         {
-            Symbols = new Dictionary<string, Symbol?>();
+            Symbols = new Dictionary<string, Symbol>();
         }
-        public Dictionary<string, Symbol?> Symbols { get; set; }
+        public Dictionary<string, Symbol> Symbols { get; set; }
         public Scope Parent { get; set; }
     }
 
