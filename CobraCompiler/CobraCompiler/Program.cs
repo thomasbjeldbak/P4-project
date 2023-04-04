@@ -19,13 +19,19 @@ namespace CobraCompiler
                 var lexer = new ExprLexer(inputStream);
                 var tokenStream = new CommonTokenStream(lexer);
                 var parser = new ExprParser(tokenStream);
+                
+                parser.RemoveErrorListeners(); // remove the default ConsoleErrorListener
+                parser.AddErrorListener(new ErrorHandler()); // set your ErrorHandler as the error listener
+ 
 
                 //try
                 //{
                 var cst = parser.program();
                 var ast = new BuildASTVisitor().VisitProgram(cst);
                 var st = new SymbolTable().BuildSymbolTable(ast);
+                
                 new TypeChecker(st).visitBlockNode((ProgramNode)ast);
+                
                 Console.WriteLine("DONE!");
                 //var value = new EvaluateExpressionVisitor().Visit(ast);
 

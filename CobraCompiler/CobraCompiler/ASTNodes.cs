@@ -32,7 +32,7 @@ public class ASTNodes
     }
 
     //abstract "Command" is either a declaration, assignment or statement
-    internal abstract class CommandNode : ASTNode 
+    public abstract class CommandNode : ASTNode 
     {
     };
 
@@ -338,7 +338,7 @@ public class ASTNodes
     }
 
     //"block" contains commands
-    internal class BlockNode : ASTNode
+    public class BlockNode : ASTNode
     {
         public List<CommandNode> Commands { get; set; }
         public override List<ASTNode> GetChildren()

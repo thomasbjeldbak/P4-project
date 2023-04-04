@@ -9,6 +9,19 @@ namespace CobraCompiler
 {
     internal class EvaluateExpressionVisitor : ASTVisitor<int>
     {
+        public EvaluateExpressionVisitor(ErrorHandler errorHandler)
+        {
+            throw new NotImplementedException();
+            
+            //In addition to computing the result of an expression, the evaluator can also perform other tasks such as
+            //validating the correctness of the expression or detecting errors. For example, the evaluator could detect
+            //divide-by-zero errors or type errors, such as trying to add a number to a string.
+
+            //In the example program we have been discussing, the EvaluateExpressionVisitor class is responsible for
+            //computing the value of the expression represented by the AST. However, you could modify this class to
+            //perform other tasks as well, such as detecting errors or validating the correctness of the expression.
+        }
+
         public override int Visit(AdditionNode node)
         {
             return Visit(node.Left) + Visit(node.Right);
