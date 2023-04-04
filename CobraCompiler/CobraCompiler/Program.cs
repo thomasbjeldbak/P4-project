@@ -3,7 +3,7 @@ using static ASTNodes;
 
 namespace CobraCompiler
 {
-    internal class Program
+    internal abstract class Program
     {
         static void Main(string[] args)
         {
@@ -22,11 +22,11 @@ namespace CobraCompiler
 
                 //try
                 //{
-                var cst = parser.program();
-                var ast = new BuildASTVisitor().VisitProgram(cst);
-
-                var st = new SymbolTable().BuildSymbolTable(ast);
-
+                var cst = parser.program(); //CFG -> parse tree 
+                var ast = new BuildASTVisitor().VisitProgram(cst); //parse tree -> AST
+                var st = new SymbolTable().BuildSymbolTable(ast); //AST -> Symbol Table
+                new TypeChecker(st).Visit((ProgramNode)ast); //AST, Symbol Table -> TypeChecker
+                Console.WriteLine("DONE!");
                 //var value = new EvaluateExpressionVisitor().Visit(ast);
 
                 //Console.WriteLine("= {0}", value);

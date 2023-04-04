@@ -18,18 +18,30 @@ namespace CobraCompiler
 
     public class Symbol
     {
-        public TypeEnum Type { get; set; }
         public string Name { get; set; }
+        public TypeEnum Type { get; set; }
+    }
 
+    public class Scope
+    {
+        public Scope() 
+        {
+            Symbols = new Dictionary<string, Symbol>();
+        }
+        public Dictionary<string, Symbol> Symbols { get; set; }
+        public Scope Parent { get; set; }
     }
 
     internal class SymbolTable
     {
-        private Stack<Dictionary<string, Symbol?>> scopes;
+        private Dictionary<BlockNode, Scope> _scopes;
+        private Stack<Scope> _stackScopes;
+        private BlockNode _currentBlock;
 
         public SymbolTable BuildSymbolTable(ASTNode astRoot)
         {
-            scopes = new Stack<Dictionary<string, Symbol?>>();
+            _scopes = new Dictionary<BlockNode, Scope>();
+            _stackScopes = new Stack<Scope>();
             ProcessNode(astRoot);
             return this;
         }
@@ -37,56 +49,72 @@ namespace CobraCompiler
         private void ProcessNode(ASTNode node)
         {
             switch (node) {
-                case BlockNode:
-                    NewScope();
+                case BlockNode blockNode:
+                    NewScope(blockNode);
                     break;
                 case DeclarationNode declarationNode:
-                    Insert(declarationNode.Identifier.Name, declarationNode.Identifier.Type);
+                    Insert(declarationNode.Identifier.Name, declarationNode.Identifier.TypeNode.Type);
                     break;
                 case IdentifierNode identifierNode:
-                    var sym = Lookup(identifierNode.Name);
+                    var sym = Lookup(identifierNode.Name, _currentBlock);
                     if (sym == null) {
                         throw new Exception("Symbol not found");
                     }
                     break;
             }
-
-            // Get all children that are ASTNodes
+            
             foreach (var child in node.GetChildren().Where(x => x is ASTNode))
             {
                 ProcessNode(child);
             }
             
-            if (node is BlockNode) {
+            if (node is BlockNode) 
+            {
                 ExitScope();
             }
-
         }
 
         // create a function that creates a new scope
-        private void NewScope()
+        private void NewScope(BlockNode blockNode)
         {
-            scopes.Push(new Dictionary<string, Symbol?>());
+            var scope = new Scope();
+
+            if (_stackScopes.Count > 0)
+                scope.Parent= _stackScopes.Peek();
+
+            _scopes.Add(blockNode, scope);
+            _stackScopes.Push(scope);
+            _currentBlock = blockNode;
         }
 
         private void ExitScope()
         {
-            scopes.Pop();
+            _stackScopes.Pop();
         }
 
-        private void Insert(string name, TypeNode value)
+        private void Insert(string name, TypeEnum type)
         {
-            scopes.Peek().Add(name, new Symbol { Name = name, Type = value.Type });
+            _stackScopes.Peek().Symbols.Add(name, new Symbol 
+            { 
+                Name = name, Type = type,
+            });
         }
 
-        private Symbol? Lookup(string name)
+        public Symbol? Lookup(string name, BlockNode blockNode)
         {
-            foreach (var scope in scopes)
+            var scope = _scopes[blockNode];
+
+            while (scope != null)
             {
-                if (scope.TryGetValue(name, out Symbol? symbol))
+                foreach (var symbol in scope.Symbols.Values)
                 {
-                    return symbol;
+                    if (symbol.Name == name)
+                    {
+                        return symbol;
+                    }
                 }
+
+                scope = scope.Parent;
             }
 
             return null;

@@ -6,18 +6,26 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ASTNodes
 {
-    public enum TypeEnum
+    public enum TypeEnum //All possible types
     {
         number,
         text,
         boolean,
-        list,
+        list_object,
+        list_number,
+        list_text,
+        list_boolean,
     }
-    public abstract class ASTNode
+
+    //All abstract nodes cannot directly be a node in the generated AST tree
+    public abstract class ASTNode //A general class for all AST Nodes
     {
+        //A function for retrieving the properties (children) of the node
+        //Is used for the symbol table
         public abstract List<ASTNode> GetChildren();
     }
 
+    //ProgramNode (the start node)
     internal class ProgramNode : BlockNode
     {
         public override List<ASTNode> GetChildren()
@@ -28,12 +36,13 @@ public class ASTNodes
         }
     }
 
-    //abstract "Command" is either a delcaration, assignment or statement
+    //abstract "Command" is either a declaration, assignment or statement
     internal abstract class CommandNode : ASTNode 
     {
     };
 
     //Declaration declares a variable using an expression
+    //Type Identifier = Expression;
     internal class DeclarationNode : CommandNode
     {
         public IdentifierNode Identifier { get; set; }
@@ -48,8 +57,10 @@ public class ASTNodes
         }
     }
 
-    //Spørg hjælpelærer :)
-    //Assignement contains reference to declaration and an expression
+    //Assignment contains reference to declaration and an expression
+    //Identifier = Expression;
+    //(A clear distinction between this and declarationNode
+    //needs to be made for the symbol table)
     internal class AssignNode : CommandNode
     {
         public IdentifierNode Identifier { get; set; }
@@ -63,17 +74,15 @@ public class ASTNodes
         }
     }
 
-    //SKAL MÅSKE SLETTES?
     //Statement can be many things: functions, control structures etc,
-    internal abstract class StatementNode : CommandNode
-    {
+    internal abstract class StatementNode : CommandNode { }
 
-    }
-
-    //Identifier has a type (which has a value) and a name
+    //Identifier has a type and a name
+    //Type Name;
+    //An Identifer can be used as an expression e.g. 'if ( IdentifierNode ) { }'
     internal class IdentifierNode : ExpressionNode
     {
-        public TypeNode Type { get; set; }
+        public TypeNode TypeNode { get; set; }
         public string Name { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -82,7 +91,8 @@ public class ASTNodes
         }
     }
 
-    //Any expression
+    //Any expression can have a value (except infixExpressions shouldn't have)
+    //e.g. if (true) {}
     internal abstract class ExpressionNode : ASTNode
     {
         public dynamic Value { get; set; }
@@ -93,7 +103,8 @@ public class ASTNodes
         }
     }
 
-    //InfixExpression has a left and right side to an expression
+    //InfixExpression has a left and right side
+    //e.g. Left + Right
     internal abstract class InfixExpressionNode : ExpressionNode
     {
         public ExpressionNode Left { get; set; }
@@ -107,17 +118,21 @@ public class ASTNodes
         }
     }
 
-    //Types with values
+    //Types (with values)
     internal abstract class TypeNode : ExpressionNode
     {
         public TypeEnum Type { get; set; }
     }
 
+    //Each TypeNode overrides the 'Value' from expression
+    //They also intialize if a TypeEnum of their correct type
     #region Types
-
     internal class NumberNode : TypeNode
     {
-        public new TypeEnum Type => TypeEnum.number;
+        public NumberNode() 
+        {
+            Type = TypeEnum.number;
+        }
         public new int Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -128,7 +143,10 @@ public class ASTNodes
 
     internal class TextNode : TypeNode
     {
-        public new TypeEnum Type => TypeEnum.text;
+        public TextNode()
+        {
+            Type = TypeEnum.text;
+        }
         public new string Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -139,7 +157,10 @@ public class ASTNodes
      
     internal class BooleanNode : TypeNode
     {
-        public new TypeEnum Type => TypeEnum.boolean;
+        public BooleanNode()
+        {
+            Type = TypeEnum.boolean;
+        }
         public new bool Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -150,7 +171,10 @@ public class ASTNodes
 
     internal class ListNode : TypeNode
     {
-        public new TypeEnum Type => TypeEnum.list;
+        public ListNode(TypeEnum listType)
+        {
+            Type = listType;
+        }
         public new TypeNode[] Value { get; set; }
         public override List<ASTNode> GetChildren()
         {
@@ -162,6 +186,8 @@ public class ASTNodes
 
     #endregion
 
+    //Each InfixExpression has a left & right side e.g. Left + Right
+    //Left and right is also expressions
     #region InfixExpressions
 
     //RightExpression + LeftExpression
@@ -202,7 +228,7 @@ public class ASTNodes
 
     #endregion
 
-    //Abstract class for all constrol structure (they contain blocks)
+    //Abstract class for all constrol structure (they all contain blocks)
     internal abstract class ControlStructureNode : StatementNode
     {
         public BlockNode Block { get; set; }
@@ -210,7 +236,8 @@ public class ASTNodes
 
     #region Control Structures
 
-    //"If" containing a predicate and a block
+    //"If" containing a condition, block and a list of all elseNodes
+    //If (Condition) {Block} Else-if (Condition) {Block}... Else {Block}
     internal class IfNode : ControlStructureNode
     {
         public ExpressionNode Condition { get; set; }
@@ -225,6 +252,7 @@ public class ASTNodes
         }
     }
 
+    //Else is the 'Else If' and therefore doesn't need a Condition
     internal class ElseNode : ControlStructureNode 
     {
         public override List<ASTNode> GetChildren()
@@ -235,6 +263,7 @@ public class ASTNodes
         }
     }
 
+    //All other Else
     internal class ElseIfNode : ElseNode
     {
         public ExpressionNode Condition { get; set; }
@@ -277,7 +306,7 @@ public class ASTNodes
     internal class ForeachNode : ControlStructureNode
     {
         public IdentifierNode List { get; set; }
-        public IdentifierNode LocalVariable { get; set; }
+        public DeclarationNode LocalVariable { get; set; }
         public override List<ASTNode> GetChildren()
         {
             var children = new List<ASTNode>();
@@ -290,7 +319,7 @@ public class ASTNodes
 
     #endregion
 
-    //"Function call" has arguments and a reference to funciton declaration
+    //"Function call" has arguments and a reference to function declaration
     internal class FunctionCallNode : StatementNode
     {
         public FunctionDeclarationNode Function { get; set; }
@@ -304,7 +333,7 @@ public class ASTNodes
         }
     }
 
-    //"Function delcaration" has a type to return, parameters and a block
+    //"Function declaration" has a type to return, parameters and a block
     internal class FunctionDeclarationNode : StatementNode
     {
         public string Name { get; set; }
@@ -329,7 +358,10 @@ public class ASTNodes
         public override List<ASTNode> GetChildren()
         {
             var children = new List<ASTNode>();
-            children.AddRange(Commands);
+            
+            if (Commands != null)
+                children.AddRange(Commands);
+            
             return children;
         }
     }
