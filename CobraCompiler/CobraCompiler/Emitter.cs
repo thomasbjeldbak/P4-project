@@ -67,15 +67,20 @@ namespace CobraCompiler
         {
             Console.WriteLine("GIGA");
             var symbol = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
-            var test = ConvertType(symbol.Type);
-            var local = _ilGenerator.DeclareLocal(typeof(int));
+            //var test = ConvertType(symbol.Type);
+            var local = _ilGenerator.DeclareLocal(ConvertType(symbol.Type));
 
             _locals[node.Identifier.Name] = local;
 
             if (node.Expression != null)
             {
                 Visit(node.Expression);
+                _ilGenerator.Emit(OpCodes.Dup);
                 _ilGenerator.Emit(OpCodes.Stloc, local);
+            }
+            else
+            {
+                _ilGenerator.Emit(OpCodes.Ldc_I4_0);
             }
 
             return _ilGenerator;
