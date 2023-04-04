@@ -9,7 +9,10 @@ namespace CobraCompiler
 {
     internal class TypeChecker : ASTVisitor<TypeEnum?>
     {
+        //The TypeChecker Needs the symbolTable to lookUp the types of the variables
         private readonly SymbolTable _symbolTable;
+
+        //Each time we enter a scope, we update the current block
         private BlockNode _currentBlock;
 
         public TypeChecker(SymbolTable symbolTable) 
@@ -17,8 +20,10 @@ namespace CobraCompiler
             _symbolTable = symbolTable;
         }
 
+        //BlockNode -> Commands
         public override TypeEnum? Visit(BlockNode node)
         {
+            //Visits all of it's commands
             _currentBlock = node;
 
             if (node.Commands == null)
@@ -31,11 +36,11 @@ namespace CobraCompiler
                     case DeclarationNode declarationNode:
                         Visit(declarationNode);
                         break;
-                    case StatementNode statementNode:
-                        Visit(statementNode);
-                        break;
                     case AssignNode assignNode:
                         Visit(assignNode);
+                        break;
+                    case StatementNode statementNode:
+                        Visit(statementNode);
                         break;
                     default:
                         throw new Exception($"Command was not valid");
@@ -44,8 +49,12 @@ namespace CobraCompiler
             return null;
         }
 
+        //DeclarationNode -> IdentifierNode, Expression
         public override TypeEnum? Visit(DeclarationNode node)
         {
+            //Gets symbol for identifier & Visits expression
+            //Check if Identifier Type matches expression
+
             Symbol symbol = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
 
             if (node.Expression != null)
@@ -62,6 +71,8 @@ namespace CobraCompiler
 
         public override TypeEnum? Visit(StatementNode node)
         {
+            //Visits based on the type of StatementNode
+
             switch (node)
             {
                 case IfNode ifNode:
@@ -82,8 +93,12 @@ namespace CobraCompiler
             return null;
         }
 
+        //AssignNode -> Identifier, Expression
         public override TypeEnum? Visit(AssignNode node)
         {
+            //Gets symbol for identifier & Visits expression
+            //Check if Identifier Type matches expression
+
             Symbol symbol = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
 
             if (node.Expression != null)
@@ -99,6 +114,8 @@ namespace CobraCompiler
 
         public override TypeEnum? Visit(ExpressionNode node)
         {
+            //Visits based on the type of ExpressionNode
+
             TypeEnum? type;
             switch (node)
             {
@@ -130,6 +147,8 @@ namespace CobraCompiler
 
         public override TypeEnum? Visit(InfixExpressionNode node)
         {
+            //Visits based on the type of InfixExpressionNode
+
             TypeEnum? type;
             switch (node)
             {
@@ -177,8 +196,13 @@ namespace CobraCompiler
         }
 
         #region Visit TypeNodes
+
+        //AdditionNode -> Left, Right
         public override TypeEnum? Visit(AdditionNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for Addition
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -197,8 +221,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //SubtractionNode -> Left, Right
         public override TypeEnum? Visit(SubtractionNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for Subtraction
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -217,8 +245,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //MultiplicationNode -> Left, Right
         public override TypeEnum? Visit(MultiplicationNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for Multiplication
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -237,8 +269,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //DivisionNode -> Left, Right
         public override TypeEnum? Visit(DivisionNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for Division
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -257,8 +293,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //AndNode -> Left, Right
         public override TypeEnum? Visit(AndNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for AndNode
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -274,8 +314,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //OrNode -> Left, Right
         public override TypeEnum? Visit(OrNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for OrNode
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -291,8 +335,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //EqualNode -> Left, Right
         public override TypeEnum? Visit(EqualNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for EqualNode
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -308,8 +356,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //NotEquaNode -> Left, Right
         public override TypeEnum? Visit(NotEqualNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for NotEqualNode
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -325,8 +377,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //GreaterNode -> Left, Right
         public override TypeEnum? Visit(GreaterNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for GreaterNode
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -342,8 +398,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //LessNode -> Left, Right
         public override TypeEnum? Visit(LessNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for LessNode
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -359,8 +419,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //GreaterEqualNode -> Left, Right
         public override TypeEnum? Visit(GreaterEqualNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for EqualNode
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -376,8 +440,12 @@ namespace CobraCompiler
             return type;
         }
 
+        //LessEqualNode -> Left, Right
         public override TypeEnum? Visit(LessEqualNode node)
         {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for LessEqualNode
+
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
@@ -395,8 +463,13 @@ namespace CobraCompiler
 
         #endregion
 
+        //IfNode -> Condition, Block, ElseIfs
         public override TypeEnum? Visit(IfNode node)
         {
+            //Visit Condition & Block
+            //If any - visit ElseIfs and/Or Else
+            //Check if Condition type is boolean
+
             TypeEnum? type = Visit(node.Condition);
             
             if (node.Block != null)
@@ -423,8 +496,12 @@ namespace CobraCompiler
             return null;
         }
 
+        //ElseIfNode -> Condition, Block
         public override TypeEnum? Visit(ElseIfNode node)
         {
+            //Visit Condition & Block
+            //Check if Condition type is boolean
+
             TypeEnum? type = Visit(node.Condition);
             
             if (node.Block != null)
@@ -436,16 +513,22 @@ namespace CobraCompiler
             return null;
         }
 
+        //ElseNode -> Block
         public override TypeEnum? Visit(ElseNode node)
         {
+            //Visit Block
+
             if (node.Block != null)
                 Visit(node.Block);
 
             return null;
         }
 
+        //RepeatNode -> Expression, Block
         public override TypeEnum? Visit(RepeatNode node)
         {
+            //Visit Expression & Block
+            //Check if Expression type is Number
             TypeEnum? type = Visit(node.Expression);
             
             if (node.Block != null)
@@ -457,8 +540,12 @@ namespace CobraCompiler
             return null;
         }
 
+        //WhileNode -> Condition, Block
         public override TypeEnum? Visit(WhileNode node)
         {
+            //Visit Condition & Block
+            //Check if Condition type is boolean
+
             TypeEnum? type = Visit(node.Condition);
 
             if (node.Block != null)
@@ -470,8 +557,14 @@ namespace CobraCompiler
             return null;
         }
 
+        //ForeachNode -> DeclarationNode, IdentifierNode, Block
         public override TypeEnum? Visit(ForeachNode node)
         {
+            //Visit LocalVariable & Block
+            //Get symbol for Identifier in symboltable
+            //Check if identifier is list
+            //Check if list inner type matches Local Variable type
+
             TypeEnum? localVarType = Visit(node.LocalVariable);
             Symbol list = _symbolTable.Lookup(node.List.Name, _currentBlock);
 
@@ -488,6 +581,8 @@ namespace CobraCompiler
 
         public override TypeEnum? Visit(ListOperationNode node)
         {
+            //Visits based on type of ListOperationNode
+
             switch (node)
             {
                 case ListAddNode listAddNode:
@@ -509,8 +604,14 @@ namespace CobraCompiler
             return null;
         }
 
+        //ListAddNode -> IdentifierNode, Expression
         public override TypeEnum? Visit(ListAddNode node)
         {
+            //Visits Expression
+            //Get symbol for Identifier in Symboltable
+            //Check if the identifier is a list
+            //Check if list inner type matches Expression
+
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
             TypeEnum? type = Visit(node.Expression);
 
@@ -523,8 +624,14 @@ namespace CobraCompiler
             return null;
         }
 
+        //ListDeleteNode -> IdentifierNode, Expression
         public override TypeEnum? Visit(ListDeleteNode node)
         {
+            //Visits Expression
+            //Get symbol for Identifier in Symboltable
+            //Check if the identifier is a list
+            //Check if expression is a number
+
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
             TypeEnum? type = Visit(node.Expression);
 
@@ -537,8 +644,14 @@ namespace CobraCompiler
             return null;
         }
 
+        //ListValueOfNode -> IdentifierNode, Expression
         public override TypeEnum? Visit(ListValueOfNode node)
         {
+            //Visits Expression
+            //Get symbol for Identifier in Symboltable
+            //Check if the identifier is a list
+            //Check if Expression is type number
+
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
             TypeEnum? type = Visit(node.Expression);
 
@@ -551,8 +664,14 @@ namespace CobraCompiler
             return null;
         }
 
+        //ListIndexOfNode -> IdentifierNode, Expression
         public override TypeEnum? Visit(ListIndexOfNode node)
         {
+            //Visits Expression
+            //Get symbol for Identifier in Symboltable
+            //Check if the identifier is a list
+            //Check if list inner type matches Expression
+
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
             TypeEnum? type = Visit(node.Expression);
 
@@ -566,6 +685,9 @@ namespace CobraCompiler
         }
 
         #region List helper functions
+
+        //Takes TypeEnum (list_[TYPE]) and returns the Type
+        //e.g. list_number -> return number
         private TypeEnum getListType(TypeEnum listType)
         {
             switch (listType)
@@ -581,6 +703,9 @@ namespace CobraCompiler
             }
         }
 
+        //Checks if TypeEnum is a list
+        //e.g. list_number -> return true,
+        //  number -> return false;
         private bool isList(TypeEnum listType)
         {
             switch (listType)
