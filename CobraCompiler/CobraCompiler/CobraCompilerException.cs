@@ -7,15 +7,17 @@ namespace CobraCompiler;
 
 public class ErrorHandler : BaseErrorListener, IAntlrErrorListener<IToken>
 {
-    public void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine,
+    private readonly List<string> errorMessages = new();
+
+    public IReadOnlyList<string> ErrorMessages => errorMessages;
+
+    public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine,
         string message, RecognitionException e)
     {
-        var error =
-            $"Syntax Error: {message} at line {line}, position {charPositionInLine}. Caused by {offendingSymbol.Text}.";
-        throw new Exception(error);
+        var error = $"Error: {message} at line {line}, position {charPositionInLine}. Caused by {offendingSymbol.Text}.";
+        errorMessages.Add(error);
 
-        // You could also throw an exception to stop parsing
-        // throw new CobraCompilerException(error);
+        //throw new Exception(error);
     }
     
     public void ReportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, bool exact, BitSet ambigAlts, ATNConfigSet configs)
