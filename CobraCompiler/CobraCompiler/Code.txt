@@ -1,1 +1,3 @@
-number hej = 3;
+number hej = 2;
+text ti = "ti";
+if (hej and ti){}

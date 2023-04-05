@@ -11,13 +11,14 @@ namespace CobraCompiler
     {
         //The TypeChecker Needs the symbolTable to lookUp the types of the variables
         private readonly SymbolTable _symbolTable;
-
+        private ErrorHandler typeErrorhandler;
         //Each time we enter a scope, we update the current block
         private BlockNode _currentBlock;
 
-        public TypeChecker(SymbolTable symbolTable) 
+        public TypeChecker(SymbolTable symbolTable, ErrorHandler errorHandler) 
         {
             _symbolTable = symbolTable;
+            typeErrorhandler = errorHandler;
         }
 
         //BlockNode -> Commands
@@ -62,9 +63,11 @@ namespace CobraCompiler
                 TypeEnum? exprNode = Visit(node.Expression);
 
                 if (symbol.Type != exprNode)
-                    throw new Exception($"Initialization of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}");
+                {
+                    var error = $"Error: Initialization of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}.";
+                    typeErrorhandler.TypeErrorMessages.Add(error);
+                }
             }
-
             return symbol.Type;
 
         }
@@ -106,7 +109,10 @@ namespace CobraCompiler
                 TypeEnum? exprNode = Visit(node.Expression);
 
                 if (symbol.Type != exprNode)
-                    throw new Exception($"Assignment of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}");
+                {
+                    var error = $"Error: Assignment of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}.";
+                    typeErrorhandler.TypeErrorMessages.Add(error);
+                }
             }
 
             return symbol.Type;
@@ -208,15 +214,24 @@ namespace CobraCompiler
             TypeEnum type;
 
             if (leftType != rightType)
-                throw new Exception();
-
+            {
+                var error = $"Error: Addition of {leftType} '{rightType}' does not match.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
+            
             type = (TypeEnum)leftType;
 
             if (type == TypeEnum.boolean) 
-                throw new Exception();
+            {
+                var error = $"Error: Addition of type boolean is not allowed.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             if (isList(type))
-                throw new Exception();
+            {
+                var error = $"Error: Addition of type list is not allowed.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return type;
         }
@@ -231,17 +246,26 @@ namespace CobraCompiler
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
-            if (leftType != rightType)
-                throw new Exception();
+            if (leftType != rightType)            
+            {
+                var error = $"Error: Subtraction of {leftType} '{rightType}' does not match.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             type = (TypeEnum)leftType;
 
             if (type == TypeEnum.boolean)
-                throw new Exception();
+            {
+                var error = $"Error: Subtraction of type boolean is not allowed.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             if (isList(type))
-                throw new Exception();
-
+            {
+                var error = $"Error: Subtraction of type list is not allowed.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
+            
             return type;
         }
 
@@ -256,15 +280,24 @@ namespace CobraCompiler
             TypeEnum type;
 
             if (leftType != rightType)
-                throw new Exception();
+            {
+                var error = $"Error: Multiplication of {leftType} '{rightType}' does not match.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             type = (TypeEnum)leftType;
 
             if (type == TypeEnum.boolean)
-                throw new Exception();
+            {
+                var error = $"Error: Multiplication of type boolean is not allowed.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             if (isList(type))
-                throw new Exception();
+            {
+                var error = $"Error: Multiplication of type list is not allowed.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return type;
         }
@@ -280,15 +313,24 @@ namespace CobraCompiler
             TypeEnum type;
 
             if (leftType != rightType)
-                throw new Exception();
+            {
+                var error = $"Error: Division of {leftType} '{rightType}' does not match.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             type = (TypeEnum)leftType;
 
             if (type == TypeEnum.boolean)
-                throw new Exception();
+            {
+                var error = $"Error: Division of type boolean is not allowed.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             if (isList(type))
-                throw new Exception();
+            {
+                var error = $"Error: Division of type list is not allowed.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return type;
         }
@@ -304,14 +346,20 @@ namespace CobraCompiler
             TypeEnum type;
 
             if (leftType != rightType)
-                throw new Exception();
+            {
+                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic AND expression.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             type = (TypeEnum)leftType;
 
             if (type != TypeEnum.boolean)
-                throw new Exception();
+            {
+                var error = $"Error: Type '{type}' does not match type 'boolean' in the logic AND expression";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         //OrNode -> Left, Right
@@ -325,14 +373,20 @@ namespace CobraCompiler
             TypeEnum type;
 
             if (leftType != rightType)
-                throw new Exception();
+            {
+                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic OR expression.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             type = (TypeEnum)leftType;
 
             if (type != TypeEnum.boolean)
-                throw new Exception();
+            {
+                var error = $"Error: Type '{type}' does not match type 'boolean' in the logic OR expression.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         //EqualNode -> Left, Right
@@ -346,14 +400,19 @@ namespace CobraCompiler
             TypeEnum type;
 
             if (leftType != rightType)
-                throw new Exception();
+            {
+                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic equal expression.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             type = (TypeEnum)leftType;
 
-            if (!isList(type))
-                throw new Exception();
+            if (!isList(type)){
+                var error = $"Error: Type '{type}' is not allowed in boolean expressions.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         //NotEqualNode -> Left, Right
@@ -374,7 +433,7 @@ namespace CobraCompiler
             if (isList(type))
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         //GreaterNode -> Left, Right
@@ -394,7 +453,7 @@ namespace CobraCompiler
             if (type != TypeEnum.number)
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         //LessNode -> Left, Right
@@ -415,7 +474,7 @@ namespace CobraCompiler
             if (type != TypeEnum.number)
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         //GreaterEqualNode -> Left, Right
@@ -436,7 +495,7 @@ namespace CobraCompiler
             if (type != TypeEnum.number)
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         //LessEqualNode -> Left, Right
@@ -457,7 +516,7 @@ namespace CobraCompiler
             if (type != TypeEnum.number)
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         #endregion

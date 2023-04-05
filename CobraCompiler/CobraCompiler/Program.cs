@@ -50,8 +50,16 @@ namespace CobraCompiler
                         Console.WriteLine(errorMessage);
                     }
                 }
-                new TypeChecker(st).Visit((ProgramNode)ast);
-
+                new TypeChecker(st, errorHandler).Visit((ProgramNode)ast);
+                if (errorHandler.TypeErrorMessages.Count > 0)
+                {
+                    Console.WriteLine("Type errors:");
+                    foreach (var errorMessage in errorHandler.TypeErrorMessages)
+                    {
+                        Console.WriteLine(errorMessage);
+                    }
+                }
+    
                 Console.WriteLine("DONE!");
         
         }

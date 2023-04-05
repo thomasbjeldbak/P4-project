@@ -12,6 +12,9 @@ public class ErrorHandler : BaseErrorListener, IAntlrErrorListener<IToken>
     
     private readonly List<string> _symbolErrorMessages = new();
     public List<string> SymbolErrorMessages => _symbolErrorMessages;
+    
+    private readonly List<string> _typeErrorMessages = new();
+    public List<string> TypeErrorMessages => _typeErrorMessages;
 
     public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine,
         string message, RecognitionException e)
@@ -36,12 +39,4 @@ public class ErrorHandler : BaseErrorListener, IAntlrErrorListener<IToken>
     {
         // Handle context sensitivity errors
     }
-}
-
-public class SymbolNotFoundException : Exception
-{
-    public SymbolNotFoundException(string name)
-        : base($"SymbolNotFoundException: Symbol '{name}' not found.")
-    {
-    } 
 }
