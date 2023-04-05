@@ -4359,32 +4359,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\chris\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/Users/charlotte/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj",
+      "projectUniqueName": "/Users/charlotte/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
       "projectName": "CobraCompiler",
-      "projectPath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj",
-      "packagesPath": "C:\\Users\\chris\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\obj\\",
+      "projectPath": "/Users/charlotte/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
+      "packagesPath": "/Users/charlotte/.nuget/packages/",
+      "outputPath": "/Users/charlotte/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\chris\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/charlotte/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "http://teamcity.monogame.net/guestAuth/app/nuget/feed/_Root/default/v3/index.json": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4430,16 +4422,8 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.100/RuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1803",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "You are running the 'restore' operation with an 'HTTP' source, 'http://teamcity.monogame.net/guestAuth/app/nuget/feed/_Root/default/v3/index.json'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source."
-    }
-  ]
+  }
 }
