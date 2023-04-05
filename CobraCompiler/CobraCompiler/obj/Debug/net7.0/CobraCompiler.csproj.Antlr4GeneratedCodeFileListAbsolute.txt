@@ -1,6 +1,6 @@
-D:\Git Projects\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprLexer.cs
-D:\Git Projects\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParser.cs
-D:\Git Projects\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserListener.cs
-D:\Git Projects\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseListener.cs
-D:\Git Projects\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserVisitor.cs
-D:\Git Projects\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseVisitor.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprLexer.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParser.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserListener.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseListener.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserVisitor.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseVisitor.cs

@@ -84,7 +84,45 @@ namespace CobraCompiler {
 
         public override StringBuilder Visit(ExpressionNode node)
         {
-            throw new NotImplementedException();
+            TypeEnum? type;
+
+            switch (node)
+            {
+                case InfixExpressionNode infixExpressionNode:
+                    Visit(infixExpressionNode);
+                    break;
+                case IdentifierNode identifierNode:
+                    _stringBuilder.Append(identifierNode.Value.ToString());
+                    break;
+                case NumberNode numberNode:
+                    _stringBuilder.Append(numberNode.Value.ToString());
+                    break;
+                case TextNode textNode:
+                    _stringBuilder.Append("\"" + textNode.Value.ToString() + "\"");
+                    break;
+                case BooleanNode booleanNode:
+                    _stringBuilder.Append(booleanNode.Value.ToString());
+                    break;
+                case ListNode listNode:
+                    //_stringBuilder.Append("new List<");
+                    //_stringBuilder.Append(_typeAlias[ConvertType(listNode.Type)]);
+                    //_stringBuilder.Append("> { ");
+                    //for (int i = 0; i < listNode.Values.Count; i++)
+                    //{
+                    //    Visit(listNode.Values[i]);
+                    //    if (i < listNode.Values.Count - 1)
+                    //    {
+                    //        _builder.Append(", ");
+                    //    }
+                    //}
+                    //_stringBuilder.Append(" }");
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    throw new Exception($"ExpressionNode type not valid");
+            }
+
+            return _stringBuilder;
         }
 
         public override StringBuilder Visit(InfixExpressionNode node)
