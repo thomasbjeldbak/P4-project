@@ -715,7 +715,7 @@ namespace CobraCompiler
                 case TypeEnum.list_boolean:
                     return true;
                 default:
-                    throw new Exception();
+                    return false;
             }
         }
 
