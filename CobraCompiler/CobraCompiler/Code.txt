@@ -1,1 +1,1 @@
-number hej = 2 + 3;
+number hej = 3;

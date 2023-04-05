@@ -8,14 +8,16 @@ namespace CobraCompiler
     {
         static void Main(string[] args)
         {
-            var exprText = File.ReadAllText("..\\..\\..\\code.txt");
+            var exprText = File.ReadAllText("../../../code.txt");
 
             if (string.IsNullOrWhiteSpace(exprText))
             {
                 Console.Write("> ");
                 exprText = Console.ReadLine();
 
-                if (string.IsNullOrWhiteSpace(exprText))
+            }
+
+            if (string.IsNullOrWhiteSpace(exprText))
                     return;
 
                 var inputStream = new AntlrInputStream(new StringReader(exprText));
@@ -51,7 +53,7 @@ namespace CobraCompiler
                 new TypeChecker(st).Visit((ProgramNode)ast);
 
                 Console.WriteLine("DONE!");
-            }
+        
         }
     }
 }
