@@ -356,7 +356,7 @@ namespace CobraCompiler
             return type;
         }
 
-        //NotEquaNode -> Left, Right
+        //NotEqualNode -> Left, Right
         public override TypeEnum? Visit(NotEqualNode node)
         {
             //Visits left and right side and gets their type
@@ -385,12 +385,11 @@ namespace CobraCompiler
 
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
-            TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = (TypeEnum)leftType;
+            var type = (TypeEnum)leftType;
 
             if (type != TypeEnum.number)
                 throw new Exception();
