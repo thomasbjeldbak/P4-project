@@ -19,52 +19,83 @@ namespace CobraCompiler {
             _symbolTable = symbolTable;
         }
 
-
-        public override StringBuilder Visit(BlockNode node)
+        public override StringBuilder Visit(ProgramNode node)
         {
             _currentBlock = node;
-            _stringBuilder.AppendLine("{");
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine("using System;");
+            stringBuilder.AppendLine("static void Main(string[] args)");
+            stringBuilder.AppendLine("{");
 
-            foreach(var command in node.Commands)
+            foreach (var command in node.Commands)
             {
-                switch(command)
+                switch (command)
                 {
                     case DeclarationNode declarationNode:
-                        Visit(declarationNode);
+                        stringBuilder.Append(Visit(declarationNode));
                         break;
                     case StatementNode statementNode:
-                        Visit(statementNode);
+                        stringBuilder.Append(Visit(statementNode));
                         break;
                     case AssignNode assignNode:
-                        Visit(assignNode);
+                        stringBuilder.Append(Visit(assignNode));
                         break;
                     default:
                         throw new Exception($"Command was not valid");
                 }
             }
 
-            _stringBuilder.AppendLine("}");
+            stringBuilder.AppendLine("}");
 
-            return _stringBuilder;
+            return stringBuilder;
+        }
+        public override StringBuilder Visit(BlockNode node)
+        {
+            _currentBlock = node;
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine("{");
+
+            foreach(var command in node.Commands)
+            {
+                switch(command)
+                {
+                    case DeclarationNode declarationNode:
+                        stringBuilder.Append(Visit(declarationNode));
+                        break;
+                    case StatementNode statementNode:
+                        stringBuilder.Append(Visit(statementNode));
+                        break;
+                    case AssignNode assignNode:
+                        stringBuilder.Append(Visit(assignNode));
+                        break;
+                    default:
+                        throw new Exception($"Command was not valid");
+                }
+            }
+
+            stringBuilder.AppendLine("}");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(DeclarationNode node)
         {
             var symbol = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+            var stringBuilder = new StringBuilder();
 
-            _stringBuilder.Append(_typeAlias[ConvertType(symbol.Type)]);
-            _stringBuilder.Append(' ');
-            _stringBuilder.Append(node.Identifier.Name);
+            stringBuilder.Append(_typeAlias[ConvertType(symbol.Type)]);
+            stringBuilder.Append(' ');
+            stringBuilder.Append(node.Identifier.Name);
 
             if(node.Expression != null)
             {
-                _stringBuilder.Append(" = ");
-                Visit(node.Expression);
+                stringBuilder.Append(" = ");
+                stringBuilder.Append(Visit(node.Expression));
             }
 
-            _stringBuilder.AppendLine(";");
+            stringBuilder.AppendLine(";");
 
-            return _stringBuilder;
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(StatementNode node)
@@ -74,34 +105,35 @@ namespace CobraCompiler {
 
         public override StringBuilder Visit(AssignNode node)
         {
-            _stringBuilder.Append(node.Identifier.Name);
-            _stringBuilder.Append(" = ");
-            Visit(node.Expression);
-            _stringBuilder.AppendLine(";");
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(node.Identifier.Name);
+            stringBuilder.Append(" = ");
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.AppendLine(";");
             
-            return _stringBuilder;
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ExpressionNode node)
         {
-            TypeEnum? type;
+            var stringBuilder = new StringBuilder();
 
             switch (node)
             {
                 case InfixExpressionNode infixExpressionNode:
-                    Visit(infixExpressionNode);
+                    stringBuilder.Append(Visit(infixExpressionNode));
                     break;
                 case IdentifierNode identifierNode:
-                    _stringBuilder.Append(identifierNode.Value.ToString());
+                    stringBuilder.Append(identifierNode.Value.ToString());
                     break;
                 case NumberNode numberNode:
-                    _stringBuilder.Append(numberNode.Value.ToString());
+                    stringBuilder.Append(numberNode.Value.ToString());
                     break;
                 case TextNode textNode:
-                    _stringBuilder.Append("\"" + textNode.Value.ToString() + "\"");
+                    stringBuilder.Append(textNode.Value.ToString());
                     break;
                 case BooleanNode booleanNode:
-                    _stringBuilder.Append(booleanNode.Value.ToString());
+                    stringBuilder.Append(booleanNode.Value.ToString());
                     break;
                 case ListNode listNode:
                     //_stringBuilder.Append("new List<");
@@ -122,12 +154,61 @@ namespace CobraCompiler {
                     throw new Exception($"ExpressionNode type not valid");
             }
 
-            return _stringBuilder;
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(InfixExpressionNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append("(");
+            stringBuilder.Append(Visit(node.Left));
+
+            switch (node)
+            {
+                case AdditionNode additionNode:
+                    stringBuilder.Append(Visit(additionNode));
+                    break;
+                case SubtractionNode subtractionNode:
+                    stringBuilder.Append(Visit(subtractionNode));
+                    break;
+                case MultiplicationNode multiplicationNode:
+                    stringBuilder.Append(Visit(multiplicationNode));
+                    break;
+                case DivisionNode divideNode:
+                    stringBuilder.Append(Visit(divideNode));
+                    break;
+                case AndNode andNode:
+                    stringBuilder.Append(Visit(andNode));
+                    break;
+                case OrNode orNode:
+                    stringBuilder.Append(Visit(orNode));
+                    break;
+                case EqualNode equalNode:
+                    stringBuilder.Append(Visit(equalNode));
+                    break;
+                case NotEqualNode notEqualNode:
+                    stringBuilder.Append(Visit(notEqualNode));
+                    break;
+                case GreaterNode greaterNode:
+                    stringBuilder.Append(Visit(greaterNode));
+                    break;
+                case LessNode lessNode:
+                    stringBuilder.Append(Visit(lessNode));
+                    break;
+                case GreaterEqualNode greaterEqualNode:
+                    stringBuilder.Append(Visit(greaterEqualNode));
+                    break;
+                case LessEqualNode lessEqualNode:
+                    stringBuilder.Append(Visit(lessEqualNode));
+                    break;
+                default:
+                    throw new Exception();
+            }
+
+            stringBuilder.Append(Visit(node.Right));
+            stringBuilder.Append(")");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(IfNode node)
@@ -187,22 +268,34 @@ namespace CobraCompiler {
 
         public override StringBuilder Visit(AdditionNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" + ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(SubtractionNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" - ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(MultiplicationNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" * ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(DivisionNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" / ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(AndNode node)
@@ -275,6 +368,7 @@ namespace CobraCompiler {
             return type;
 
         }
+
 
         // This is the set of types from the C# keyword list.
         static Dictionary<Type, string> _typeAlias = new Dictionary<Type, string>

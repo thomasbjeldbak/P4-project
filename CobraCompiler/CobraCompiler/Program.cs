@@ -33,10 +33,9 @@ namespace CobraCompiler
 
                 #region CodeGeneration
                 var sb = new StringBuilder();
-                sb.AppendLine("static void Main(string[] args)");
-                sb.AppendLine("{");
+                //sb.AppendLine("{");
                 sb = new Emitter(sb , st).Visit((ProgramNode)ast);
-                sb.AppendLine("}");
+                //sb.AppendLine("}");
 
 
                 File.WriteAllText("../GeneratedProgram.txt", sb.ToString());

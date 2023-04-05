@@ -1,6 +1,7 @@
+using System;
 static void Main(string[] args)
 {
-{
-int hej = 6;
-}
+int hej = (2 + (3 * 5));
+string sovs = "mmmmm";
+bool test = False;
 }

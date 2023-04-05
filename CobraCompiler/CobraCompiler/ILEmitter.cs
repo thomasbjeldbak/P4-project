@@ -229,6 +229,11 @@ namespace CobraCompiler
             throw new NotImplementedException();
         }
 
+        public override ILGenerator Visit(ProgramNode node)
+        {
+            throw new NotImplementedException();
+        }
+
         private Type ConvertType(TypeEnum inputType)
         {
             Type type = null;

@@ -17,6 +17,32 @@ namespace CobraCompiler
             _symbolTable = symbolTable;
         }
 
+        public override TypeEnum? Visit(ProgramNode node)
+        {
+            _currentBlock = node;
+
+            if (node.Commands == null)
+                return null;
+
+            foreach (var cmd in node.Commands)
+            {
+                switch (cmd)
+                {
+                    case DeclarationNode declarationNode:
+                        Visit(declarationNode);
+                        break;
+                    case StatementNode statementNode:
+                        Visit(statementNode);
+                        break;
+                    case AssignNode assignNode:
+                        Visit(assignNode);
+                        break;
+                    default:
+                        throw new Exception($"Command was not valid");
+                }
+            }
+            return null;
+        }
         public override TypeEnum? Visit(BlockNode node)
         {
             _currentBlock = node;
@@ -565,6 +591,7 @@ namespace CobraCompiler
             return null;
         }
 
+
         #region List helper functions
         private TypeEnum getListType(TypeEnum listType)
         {
@@ -590,7 +617,7 @@ namespace CobraCompiler
                 case TypeEnum.list_boolean:
                     return true;
                 default:
-                    throw new Exception();
+                    return false;
             }
         }
 
