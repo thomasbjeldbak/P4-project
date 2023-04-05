@@ -7,9 +7,12 @@ using static ASTNodes;
 
 namespace CobraCompiler
 {
-    internal class TypeChecker
+    internal class TypeChecker : ASTVisitor<TypeEnum?>
     {
+        //The TypeChecker Needs the symbolTable to lookUp the types of the variables
         private readonly SymbolTable _symbolTable;
+
+        //Each time we enter a scope, we update the current block
         private BlockNode _currentBlock;
 
         public TypeChecker(SymbolTable symbolTable) 
@@ -17,39 +20,46 @@ namespace CobraCompiler
             _symbolTable = symbolTable;
         }
 
-        internal void visitBlockNode(BlockNode node)
+        //BlockNode -> Commands
+        public override TypeEnum? Visit(BlockNode node)
         {
+            //Visits all of it's commands
             _currentBlock = node;
 
             if (node.Commands == null)
-                return;
+                return null;
 
             foreach (var cmd in node.Commands)
             {
                 switch (cmd)
                 {
                     case DeclarationNode declarationNode:
-                        visitDeclarationNode(declarationNode);
-                        break;
-                    case StatementNode statementNode:
-                        visitStatementNode(statementNode);
+                        Visit(declarationNode);
                         break;
                     case AssignNode assignNode:
-                        visitAssignNode(assignNode);
+                        Visit(assignNode);
+                        break;
+                    case StatementNode statementNode:
+                        Visit(statementNode);
                         break;
                     default:
                         throw new Exception($"Command was not valid");
                 }
             }
+            return null;
         }
 
-        internal TypeEnum visitDeclarationNode(DeclarationNode node)
+        //DeclarationNode -> IdentifierNode, Expression
+        public override TypeEnum? Visit(DeclarationNode node)
         {
+            //Gets symbol for identifier & Visits expression
+            //Check if Identifier Type matches expression
+
             Symbol symbol = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
 
             if (node.Expression != null)
             {
-                TypeEnum exprNode = visitExpressionNode(node.Expression);
+                TypeEnum? exprNode = Visit(node.Expression);
 
                 if (symbol.Type != exprNode)
                     throw new Exception($"Initialization of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}");
@@ -59,39 +69,58 @@ namespace CobraCompiler
 
         }
 
-        internal void visitStatementNode(StatementNode node)
+        public override TypeEnum? Visit(StatementNode node)
         {
+            //Visits based on the type of StatementNode
+
             switch (node)
             {
                 case IfNode ifNode:
-                    visitIfNode(ifNode);
+                    Visit(ifNode);
                     break;
                 case RepeatNode repeatNode:
-                    visitRepeatNode(repeatNode);
+                    Visit(repeatNode);
                     break;
                 case WhileNode whileNode:
-                    visitWhileNode(whileNode);
+                    Visit(whileNode);
                     break;
                 case ListOperationNode listOperationNode:
-                    visitListOperationNode(listOperationNode);
+                    Visit(listOperationNode);
                     break;
                 default:
                     throw new Exception();
             }
+            return null;
         }
 
-        internal void visitAssignNode(AssignNode node)
+        //AssignNode -> Identifier, Expression
+        public override TypeEnum? Visit(AssignNode node)
         {
+            //Gets symbol for identifier & Visits expression
+            //Check if Identifier Type matches expression
 
+            Symbol symbol = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+
+            if (node.Expression != null)
+            {
+                TypeEnum? exprNode = Visit(node.Expression);
+
+                if (symbol.Type != exprNode)
+                    throw new Exception($"Assignment of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}");
+            }
+
+            return symbol.Type;
         }
 
-        private TypeEnum visitExpressionNode(ExpressionNode node)
+        public override TypeEnum? Visit(ExpressionNode node)
         {
-            TypeEnum type;
+            //Visits based on the type of ExpressionNode
+
+            TypeEnum? type;
             switch (node)
             {
                 case InfixExpressionNode infixExpressionNode:
-                    type = visitInfixExpressionNode(infixExpressionNode);
+                    type = Visit(infixExpressionNode);
                     break;
                 case IdentifierNode identifierNode:
                     Symbol symbol = _symbolTable.Lookup(identifierNode.Name, _currentBlock);
@@ -116,46 +145,48 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitInfixExpressionNode(InfixExpressionNode node)
+        public override TypeEnum? Visit(InfixExpressionNode node)
         {
-            TypeEnum type;
+            //Visits based on the type of InfixExpressionNode
+
+            TypeEnum? type;
             switch (node)
             {
                 case AdditionNode additionNode:
-                    type = visitAdditionNode(additionNode);
+                    type = Visit(additionNode);
                     break;
                 case SubtractionNode subtractionNode:
-                    type = visitSubtractionNode(subtractionNode);
+                    type = Visit(subtractionNode);
                     break;
                 case MultiplicationNode multiplicationNode:
-                    type = visitMultiplicationNode(multiplicationNode);
+                    type = Visit(multiplicationNode);
                     break;
                 case DivisionNode divideNode:
-                    type = visitDivisionNode(divideNode);
+                    type = Visit(divideNode);
                     break;
                 case AndNode andNode:
-                    type = visitAndNode(andNode);
+                    type = Visit(andNode);
                     break;
                 case OrNode orNode:
-                    type = visitOrNode(orNode);
+                    type = Visit(orNode);
                     break;
                 case EqualNode equalNode:
-                    type = visitEqualNode(equalNode);
+                    type = Visit(equalNode);
                     break;
                 case NotEqualNode notEqualNode:
-                    type = visitNotEqualNode(notEqualNode);
+                    type = Visit(notEqualNode);
                     break;
                 case GreaterNode greaterNode:
-                    type = visitGreaterNode(greaterNode);
+                    type = Visit(greaterNode);
                     break;
                 case LessNode lessNode:
-                    type = visitLessNode(lessNode);
+                    type = Visit(lessNode);
                     break;
                 case GreaterEqualNode greaterEqualNode:
-                    type = visitGreaterEqualNode(greaterEqualNode);
+                    type = Visit(greaterEqualNode);
                     break;
                 case LessEqualNode lessEqualNode:
-                    type = visitLessEqualNode(lessEqualNode);
+                    type = Visit(lessEqualNode);
                     break;
                 default:
                     throw new Exception();
@@ -163,18 +194,23 @@ namespace CobraCompiler
 
             return type;
         }
- 
+
         #region Visit TypeNodes
-        internal TypeEnum visitAdditionNode(AdditionNode node)
+
+        //AdditionNode -> Left, Right
+        public override TypeEnum? Visit(AdditionNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for Addition
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
+            type = (TypeEnum)leftType;
 
             if (type == TypeEnum.boolean) 
                 throw new Exception();
@@ -185,16 +221,20 @@ namespace CobraCompiler
             return type;
         }
 
-        private TypeEnum visitSubtractionNode(SubtractionNode node)
+        //SubtractionNode -> Left, Right
+        public override TypeEnum? Visit(SubtractionNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for Subtraction
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
+            type = (TypeEnum)leftType;
 
             if (type == TypeEnum.boolean)
                 throw new Exception();
@@ -205,16 +245,20 @@ namespace CobraCompiler
             return type;
         }
 
-        private TypeEnum visitMultiplicationNode(MultiplicationNode node)
+        //MultiplicationNode -> Left, Right
+        public override TypeEnum? Visit(MultiplicationNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for Multiplication
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
+            type = (TypeEnum)leftType;
 
             if (type == TypeEnum.boolean)
                 throw new Exception();
@@ -225,16 +269,20 @@ namespace CobraCompiler
             return type;
         }
 
-        private TypeEnum visitDivisionNode(DivisionNode node)
+        //DivisionNode -> Left, Right
+        public override TypeEnum? Visit(DivisionNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for Division
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
+            type = (TypeEnum)leftType;
 
             if (type == TypeEnum.boolean)
                 throw new Exception();
@@ -245,16 +293,20 @@ namespace CobraCompiler
             return type;
         }
 
-        private TypeEnum visitAndNode(AndNode node)
+        //AndNode -> Left, Right
+        public override TypeEnum? Visit(AndNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for AndNode
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
+            type = (TypeEnum)leftType;
 
             if (type != TypeEnum.boolean)
                 throw new Exception();
@@ -262,16 +314,20 @@ namespace CobraCompiler
             return type;
         }
 
-        private TypeEnum visitOrNode(OrNode node)
+        //OrNode -> Left, Right
+        public override TypeEnum? Visit(OrNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for OrNode
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
+            type = (TypeEnum)leftType;
 
             if (type != TypeEnum.boolean)
                 throw new Exception();
@@ -279,16 +335,41 @@ namespace CobraCompiler
             return type;
         }
 
-        private TypeEnum visitEqualNode(EqualNode node)
+        //EqualNode -> Left, Right
+        public override TypeEnum? Visit(EqualNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for EqualNode
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
+            type = (TypeEnum)leftType;
+
+            if (!isList(type))
+                throw new Exception();
+
+            return type;
+        }
+
+        //NotEquaNode -> Left, Right
+        public override TypeEnum? Visit(NotEqualNode node)
+        {
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for NotEqualNode
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
+            TypeEnum type;
+
+            if (leftType != rightType)
+                throw new Exception();
+
+            type = (TypeEnum)leftType;
 
             if (isList(type))
                 throw new Exception();
@@ -296,33 +377,20 @@ namespace CobraCompiler
             return type;
         }
 
-        private TypeEnum visitNotEqualNode(NotEqualNode node)
+        //GreaterNode -> Left, Right
+        public override TypeEnum? Visit(GreaterNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for GreaterNode
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
-
-            if (isList(type))
-                throw new Exception();
-
-            return type;
-        }
-
-        private TypeEnum visitGreaterNode(GreaterNode node)
-        {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
-            TypeEnum type;
-
-            if (leftType != rightType)
-                throw new Exception();
-
-            type = leftType;
+            type = (TypeEnum)leftType;
 
             if (type != TypeEnum.number)
                 throw new Exception();
@@ -330,16 +398,20 @@ namespace CobraCompiler
             return type;
         }
 
-        private TypeEnum visitLessNode(LessNode node)
+        //LessNode -> Left, Right
+        public override TypeEnum? Visit(LessNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for LessNode
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
+            type = (TypeEnum)leftType;
 
             if (type != TypeEnum.number)
                 throw new Exception();
@@ -347,16 +419,20 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitGreaterEqualNode(GreaterEqualNode node)
+        //GreaterEqualNode -> Left, Right
+        public override TypeEnum? Visit(GreaterEqualNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for EqualNode
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
+            type = (TypeEnum)leftType;
 
             if (type != TypeEnum.number)
                 throw new Exception();
@@ -364,16 +440,20 @@ namespace CobraCompiler
             return type;
         }
 
-        internal TypeEnum visitLessEqualNode(LessEqualNode node)
+        //LessEqualNode -> Left, Right
+        public override TypeEnum? Visit(LessEqualNode node)
         {
-            TypeEnum leftType = visitExpressionNode(node.Left);
-            TypeEnum rightType = visitExpressionNode(node.Right);
+            //Visits left and right side and gets their type
+            //Check if the types match, and that they are of valid typing for LessEqualNode
+
+            TypeEnum? leftType = Visit(node.Left);
+            TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
 
             if (leftType != rightType)
                 throw new Exception();
 
-            type = leftType;
+            type = (TypeEnum)leftType;
 
             if (type != TypeEnum.number)
                 throw new Exception();
@@ -383,22 +463,27 @@ namespace CobraCompiler
 
         #endregion
 
-        internal void visitIfNode(IfNode node)
+        //IfNode -> Condition, Block, ElseIfs
+        public override TypeEnum? Visit(IfNode node)
         {
-            TypeEnum type = visitExpressionNode(node.Condition);
+            //Visit Condition & Block
+            //If any - visit ElseIfs and/Or Else
+            //Check if Condition type is boolean
+
+            TypeEnum? type = Visit(node.Condition);
             
             if (node.Block != null)
-                visitBlockNode(node.Block);
+                Visit(node.Block);
 
             foreach (var @else in node.ElseIfs)
             {
                 switch (@else)
                 {
                     case ElseIfNode elseIf:
-                        visitElseIfNode(elseIf);
+                        Visit(elseIf);
                         break;
                     case ElseNode:
-                        visitElseNode(@else);
+                        Visit(@else);
                         break;
                     default:
                         throw new Exception();
@@ -407,132 +492,202 @@ namespace CobraCompiler
 
             if (type != TypeEnum.boolean)
                 throw new Exception();
+
+            return null;
         }
 
-        internal void visitElseIfNode(ElseIfNode node)
+        //ElseIfNode -> Condition, Block
+        public override TypeEnum? Visit(ElseIfNode node)
         {
-            TypeEnum type = visitExpressionNode(node.Condition);
+            //Visit Condition & Block
+            //Check if Condition type is boolean
+
+            TypeEnum? type = Visit(node.Condition);
             
             if (node.Block != null)
-                visitBlockNode(node.Block);
+                Visit(node.Block);
 
             if (type != TypeEnum.boolean)
                 throw new Exception();
+
+            return null;
         }
 
-        internal void visitElseNode(ElseNode node)
+        //ElseNode -> Block
+        public override TypeEnum? Visit(ElseNode node)
         {
+            //Visit Block
+
             if (node.Block != null)
-                visitBlockNode(node.Block);
+                Visit(node.Block);
+
+            return null;
         }
-        
-        internal void visitRepeatNode(RepeatNode node)
+
+        //RepeatNode -> Expression, Block
+        public override TypeEnum? Visit(RepeatNode node)
         {
-            TypeEnum type = visitExpressionNode(node.Expression);
+            //Visit Expression & Block
+            //Check if Expression type is Number
+            TypeEnum? type = Visit(node.Expression);
             
             if (node.Block != null)
-                visitBlockNode(node.Block);
+                Visit(node.Block);
 
             if (type != TypeEnum.number)
                 throw new Exception();
+
+            return null;
         }
 
-        internal void visitWhileNode(WhileNode node)
+        //WhileNode -> Condition, Block
+        public override TypeEnum? Visit(WhileNode node)
         {
-            TypeEnum type = visitExpressionNode(node.Condition);
+            //Visit Condition & Block
+            //Check if Condition type is boolean
+
+            TypeEnum? type = Visit(node.Condition);
 
             if (node.Block != null)
-                visitBlockNode(node.Block);
+                Visit(node.Block);
 
             if (type != TypeEnum.boolean)
                 throw new Exception();
+
+            return null;
         }
 
-        internal void visitForeachNode(ForeachNode node)
+        //ForeachNode -> DeclarationNode, IdentifierNode, Block
+        public override TypeEnum? Visit(ForeachNode node)
         {
-            TypeEnum localVarType = visitDeclarationNode(node.LocalVariable);
+            //Visit LocalVariable & Block
+            //Get symbol for Identifier in symboltable
+            //Check if identifier is list
+            //Check if list inner type matches Local Variable type
+
+            TypeEnum? localVarType = Visit(node.LocalVariable);
             Symbol list = _symbolTable.Lookup(node.List.Name, _currentBlock);
 
-            visitBlockNode(node.Block);
+            Visit(node.Block);
 
             if (!isList(list.Type))
                 throw new Exception();
 
             if (getListType(list.Type) != localVarType)
                 throw new Exception();
+
+            return null;
         }
 
-        internal void visitListOperationNode(ListOperationNode node)
+        public override TypeEnum? Visit(ListOperationNode node)
         {
+            //Visits based on type of ListOperationNode
+
             switch (node)
             {
                 case ListAddNode listAddNode:
-                    visitListAddNode(listAddNode);
+                    Visit(listAddNode);
                     break;
                 case ListDeleteNode listDeleteNode:
-                    visitListDeleteNode(listDeleteNode);
+                    Visit(listDeleteNode);
                     break;
                 case ListValueOfNode listValueOfNode:
-                    visitListValueOfNode(listValueOfNode);
+                    Visit(listValueOfNode);
                     break;
                 case ListIndexOfNode listIndexOfNode:
-                    visitListIndexOfNode(listIndexOfNode);
+                    Visit(listIndexOfNode);
                     break;
                 default:
                     throw new Exception();
             }
+
+            return null;
         }
 
-        internal void visitListAddNode(ListAddNode node)
+        //ListAddNode -> IdentifierNode, Expression
+        public override TypeEnum? Visit(ListAddNode node)
         {
+            //Visits Expression
+            //Get symbol for Identifier in Symboltable
+            //Check if the identifier is a list
+            //Check if list inner type matches Expression
+
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
-            TypeEnum type = visitExpressionNode(node.Expression);
+            TypeEnum? type = Visit(node.Expression);
 
             if (!isList(list.Type))
                 throw new Exception();
 
             if (getListType(list.Type) != type)
                 throw new Exception();
+
+            return null;
         }
 
-        internal void visitListDeleteNode(ListDeleteNode node)
+        //ListDeleteNode -> IdentifierNode, Expression
+        public override TypeEnum? Visit(ListDeleteNode node)
         {
+            //Visits Expression
+            //Get symbol for Identifier in Symboltable
+            //Check if the identifier is a list
+            //Check if expression is a number
+
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
-            TypeEnum type = visitExpressionNode(node.Expression);
+            TypeEnum? type = Visit(node.Expression);
 
             if (!isList(list.Type))
                 throw new Exception();
 
             if (type != TypeEnum.number)
                 throw new Exception();
+
+            return null;
         }
 
-        internal void visitListValueOfNode(ListValueOfNode node)
+        //ListValueOfNode -> IdentifierNode, Expression
+        public override TypeEnum? Visit(ListValueOfNode node)
         {
+            //Visits Expression
+            //Get symbol for Identifier in Symboltable
+            //Check if the identifier is a list
+            //Check if Expression is type number
+
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
-            TypeEnum type = visitExpressionNode(node.Expression);
+            TypeEnum? type = Visit(node.Expression);
 
             if (!isList(list.Type))
                 throw new Exception();
 
             if (type != TypeEnum.number)
                 throw new Exception();
+
+            return null;
         }
 
-        internal void visitListIndexOfNode(ListIndexOfNode node)
+        //ListIndexOfNode -> IdentifierNode, Expression
+        public override TypeEnum? Visit(ListIndexOfNode node)
         {
+            //Visits Expression
+            //Get symbol for Identifier in Symboltable
+            //Check if the identifier is a list
+            //Check if list inner type matches Expression
+
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
-            TypeEnum type = visitExpressionNode(node.Expression);
+            TypeEnum? type = Visit(node.Expression);
 
             if (!isList(list.Type))
                 throw new Exception();
 
             if (getListType(list.Type) != type)
                 throw new Exception();
-        }
 
+            return null;
+        }
 
         #region List helper functions
+
+        //Takes TypeEnum (list_[TYPE]) and returns the Type
+        //e.g. list_number -> return number
         private TypeEnum getListType(TypeEnum listType)
         {
             switch (listType)
@@ -548,6 +703,9 @@ namespace CobraCompiler
             }
         }
 
+        //Checks if TypeEnum is a list
+        //e.g. list_number -> return true,
+        //  number -> return false;
         private bool isList(TypeEnum listType)
         {
             switch (listType)
@@ -557,7 +715,7 @@ namespace CobraCompiler
                 case TypeEnum.list_boolean:
                     return true;
                 default:
-                    throw new Exception();
+                    return false;
             }
         }
 
