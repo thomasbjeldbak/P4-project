@@ -1,15 +1,16 @@
 using System;
 static void Main(string[] args)
 {
-int i = 10;
-int j = 5;
-bool v;
-if((i < j))
+if((10 < 5))
 {
-v = true;
+int f = 10;
+}
+else if((10 > 5))
+{
+bool s = true;
 }
 else
 {
-v = false;
+bool k = false;
 }
 }

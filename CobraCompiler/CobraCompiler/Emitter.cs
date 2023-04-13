@@ -113,6 +113,9 @@ namespace CobraCompiler {
                 case WhileNode whileNode:
                     stringBuilder.Append(Visit(whileNode));
                     break;
+                case ForeachNode foreachNode:
+                    stringBuilder.Append(Visit(foreachNode));
+                    break;
                 case ListOperationNode listOperationNode:
                     stringBuilder.Append(Visit(listOperationNode));
                     break;
@@ -247,9 +250,19 @@ namespace CobraCompiler {
             stringBuilder.Append(Visit(node.Block));
 
             //Generate code for the else if blocks - may also be an else block
-            foreach (var elseIf in node.ElseIfs)
+            foreach (var @else in node.ElseIfs)
             {
-                stringBuilder.Append(Visit(elseIf));
+                switch (@else)
+                {
+                    case ElseIfNode elseIf:
+                        stringBuilder.Append(Visit(elseIf));
+                        break;
+                    case ElseNode:
+                        stringBuilder.Append(Visit(@else));
+                        break;
+                    default:
+                        throw new Exception();
+                }
             }
 
             return stringBuilder;
@@ -281,6 +294,9 @@ namespace CobraCompiler {
         public override StringBuilder Visit(RepeatNode node)
         {
             throw new NotImplementedException();
+            // Generate code for the repeat block
+            //_stringBuilder.AppendLine("do");
+            //Visit(node.Block);
         }
 
         public override StringBuilder Visit(WhileNode node)

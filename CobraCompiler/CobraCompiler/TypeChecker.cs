@@ -102,6 +102,9 @@ namespace CobraCompiler
                 case ListOperationNode listOperationNode:
                     Visit(listOperationNode);
                     break;
+                case ForeachNode foreachNode:
+                    Visit(foreachNode);
+                    break;
                 default:
                     throw new Exception();
             }
