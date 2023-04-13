@@ -4359,19 +4359,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/eshes/.nuget/packages/": {}
+    "/Users/charlotte/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
+      "projectUniqueName": "/Users/charlotte/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
       "projectName": "CobraCompiler",
-      "projectPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
-      "packagesPath": "/Users/eshes/.nuget/packages/",
-      "outputPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/obj/",
+      "projectPath": "/Users/charlotte/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
+      "packagesPath": "/Users/charlotte/.nuget/packages/",
+      "outputPath": "/Users/charlotte/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/eshes/.nuget/NuGet/NuGet.Config"
+        "/Users/charlotte/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"

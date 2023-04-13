@@ -4,7 +4,6 @@ using Antlr4.Runtime.Dfa;
 using Antlr4.Runtime.Sharpen;
 
 namespace CobraCompiler;
-
 public class ErrorHandler : BaseErrorListener, IAntlrErrorListener<IToken>
 {
     private readonly List<string> _syntaxSyntaxErrorMessages = new();

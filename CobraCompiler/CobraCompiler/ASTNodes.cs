@@ -173,7 +173,12 @@ public class ASTNodes
     {
         public ListNode(TypeEnum listType)
         {
-            Type = listType;
+            if (listType is TypeEnum.number)
+                Type = TypeEnum.list_number;
+            else if (listType is TypeEnum.text)
+                Type = TypeEnum.list_text;
+            else if (listType is TypeEnum.boolean)
+                Type = TypeEnum.list_boolean; 
         }
         public new TypeNode[] Value { get; set; }
         public override List<ASTNode> GetChildren()

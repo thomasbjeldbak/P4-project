@@ -3,5 +3,5 @@ text ti = "ti";
 boolean y = true;
 boolean p = false;
 list (number) k; 
-number h = y - hej;
-boolean x = y + p;
+list (number) i;
+if(1){}
