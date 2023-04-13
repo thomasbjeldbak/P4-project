@@ -133,7 +133,7 @@ namespace CobraCompiler {
                     stringBuilder.Append(textNode.Value.ToString()); //R To.String ikke irrellevant i den her?
                     break;
                 case BooleanNode booleanNode:
-                    stringBuilder.Append(booleanNode.Value.ToString());
+                    stringBuilder.Append(booleanNode.Value.ToString().ToLower());
                     break;
                 case ListNode listNode:
                     //_stringBuilder.Append("new List<");
