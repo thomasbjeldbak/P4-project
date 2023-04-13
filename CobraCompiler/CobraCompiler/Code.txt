@@ -1,3 +1,7 @@
 number hej = 2;
 text ti = "ti";
-if (hej and ti){}
+boolean y = true;
+boolean p = false;
+list (number) k; 
+number h = y - hej;
+boolean x = y + p;
