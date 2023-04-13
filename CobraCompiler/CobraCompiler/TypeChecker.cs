@@ -273,17 +273,15 @@ namespace CobraCompiler
 
             if (leftType != rightType)
             {
-                var error = $"Error: Multiplication of {leftType} '{rightType}' does not match.";
+                var error = $"Error: Multiplication of '{leftType}' and '{rightType}' does not match.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
-
-            if (leftType == TypeEnum.boolean)
+            else if (leftType == TypeEnum.boolean)
             {
                 var error = $"Error: Multiplication of type boolean is not allowed.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
-
-            if (isList(leftType))
+            else if (isList(leftType))
             {
                 var error = $"Error: Multiplication of type list is not allowed.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
@@ -301,28 +299,23 @@ namespace CobraCompiler
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
             TypeEnum type;
-
             if (leftType != rightType)
             {
-                var error = $"Error: Division of {leftType} '{rightType}' does not match.";
+                var error = $"Error: Division of '{leftType}' and '{rightType}' does not match.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
-
-            type = (TypeEnum)leftType;
-
-            if (type == TypeEnum.boolean)
+            else if (leftType == TypeEnum.boolean)
             {
-                var error = $"Error: Division of type boolean is not allowed.";
+                var error = $"Error: Division of type 'boolean' is not allowed.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
-
-            if (isList(type))
+            else if (isList(leftType))
             {
-                var error = $"Error: Division of type list is not allowed.";
+                var error = $"Error: Division of type 'list' is not allowed.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
-            return type;
+            return leftType;
         }
 
         //AndNode -> Left, Right
@@ -333,13 +326,6 @@ namespace CobraCompiler
 
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
-            TypeEnum type;
-
-            /*if (leftType != rightType)
-            {
-                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic and expression.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
-            }*/
 
             if (leftType != TypeEnum.boolean)
             {
@@ -363,14 +349,6 @@ namespace CobraCompiler
 
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
-            TypeEnum type;
-
-            /*if (leftType != rightType)
-            {
-                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic OR expression.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
-            } */
-
 
             if (leftType != TypeEnum.boolean)
             {
@@ -394,18 +372,14 @@ namespace CobraCompiler
 
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
-            TypeEnum type;
 
             if (leftType != rightType)
             {
                 var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic equal expression.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
-
-            type = (TypeEnum)leftType;
-
-            if (!isList(type)){
-                var error = $"Error: Type '{type}' is not allowed in boolean expressions.";
+            else if (isList(leftType)){
+                var error = $"Error: Type '{leftType}' is not allowed in boolean expressions.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -420,18 +394,14 @@ namespace CobraCompiler
 
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
-            TypeEnum type;
 
             if (leftType != rightType)
             {
                 var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic not equal expression.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
-
-            type = (TypeEnum)leftType;
-
-            if (isList(type)){
-                var error = $"Error: Type '{type}' is not allowed in boolean expressions.";
+            else if (isList(leftType)){
+                var error = $"Error: Type '{leftType}' is not allowed in boolean expressions.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -449,15 +419,23 @@ namespace CobraCompiler
 
             if (leftType != rightType)
             {
-                //var error = $"Error: Type '{type}' is not allowed in boolean expressions.";
-                //typeErrorhandler.TypeErrorMessages.Add(error);
+                if (leftType != TypeEnum.number)
+                {
+                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number'.";
+                    typeErrorhandler.TypeErrorMessages.Add(error);
+                }
+                if (rightType != TypeEnum.number)
+                {
+                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number'.";
+                    typeErrorhandler.TypeErrorMessages.Add(error);
+                }
             }
-
-            var type = (TypeEnum)leftType;
-
-            if (type != TypeEnum.number)
-                throw new Exception();
-
+            else if (leftType != TypeEnum.number || rightType != TypeEnum.number )
+            {
+                var error = $"Error: The '>' symbol is only allowed in number expressions.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
+            
             return TypeEnum.boolean;
         }
 
@@ -469,16 +447,25 @@ namespace CobraCompiler
 
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
-            TypeEnum type;
 
             if (leftType != rightType)
-                throw new Exception();
-
-            type = (TypeEnum)leftType;
-
-            if (type != TypeEnum.number)
-                throw new Exception();
-
+            {
+                if (leftType != TypeEnum.number)
+                {
+                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number'.";
+                    typeErrorhandler.TypeErrorMessages.Add(error);
+                }
+                if (rightType != TypeEnum.number)
+                {
+                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number'.";
+                    typeErrorhandler.TypeErrorMessages.Add(error);
+                }
+            }
+            else if (leftType != TypeEnum.number || rightType != TypeEnum.number )
+            {
+                var error = $"Error: The '<' symbol is only allowed in number expressions.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
             return TypeEnum.boolean;
         }
 
@@ -490,15 +477,25 @@ namespace CobraCompiler
 
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
-            TypeEnum type;
 
             if (leftType != rightType)
-                throw new Exception();
-
-            type = (TypeEnum)leftType;
-
-            if (type != TypeEnum.number)
-                throw new Exception();
+            {
+                if (leftType != TypeEnum.number)
+                {
+                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number'";
+                    typeErrorhandler.TypeErrorMessages.Add(error);
+                }
+                if (rightType != TypeEnum.number)
+                {
+                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number'";
+                    typeErrorhandler.TypeErrorMessages.Add(error);
+                }
+            }
+            else if (leftType != TypeEnum.number || rightType != TypeEnum.number )
+            {
+                var error = $"Error: The '>=' symbol is only allowed in number expressions";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return TypeEnum.boolean;
         }
@@ -511,15 +508,25 @@ namespace CobraCompiler
 
             TypeEnum? leftType = Visit(node.Left);
             TypeEnum? rightType = Visit(node.Right);
-            TypeEnum type;
 
             if (leftType != rightType)
-                throw new Exception();
-
-            type = (TypeEnum)leftType;
-
-            if (type != TypeEnum.number)
-                throw new Exception();
+            {
+                if (leftType != TypeEnum.number)
+                {
+                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number'";
+                    typeErrorhandler.TypeErrorMessages.Add(error);
+                }
+                if (rightType != TypeEnum.number)
+                {
+                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number'";
+                    typeErrorhandler.TypeErrorMessages.Add(error);
+                }
+            }
+            else if (leftType != TypeEnum.number || rightType != TypeEnum.number )
+            {
+                var error = $"Error: The '<=' symbol is only allowed in number expressions";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return TypeEnum.boolean;
         }
@@ -534,9 +541,7 @@ namespace CobraCompiler
             //Check if Condition type is boolean
 
             TypeEnum? type = Visit(node.Condition);
-            
-            if (node.Block != null)
-                Visit(node.Block);
+            Visit(node.Block);
 
             foreach (var @else in node.ElseIfs)
             {
@@ -554,7 +559,10 @@ namespace CobraCompiler
             }
 
             if (type != TypeEnum.boolean)
-                throw new Exception();
+            {
+                var error = $"Error: Only boolean expression is allowed in the 'if' condition.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return null;
         }
@@ -565,10 +573,8 @@ namespace CobraCompiler
             //Visit Condition & Block
             //Check if Condition type is boolean
 
-            TypeEnum? type = Visit(node.Condition);
-            
-            if (node.Block != null)
-                Visit(node.Block);
+            TypeEnum? type = Visit(node.Condition); 
+            Visit(node.Block);
 
             if (type != TypeEnum.boolean)
                 throw new Exception();
@@ -579,11 +585,7 @@ namespace CobraCompiler
         //ElseNode -> Block
         public override TypeEnum? Visit(ElseNode node)
         {
-            //Visit Block
-
-            if (node.Block != null)
-                Visit(node.Block);
-
+            Visit(node.Block);
             return null;
         }
 
@@ -593,9 +595,7 @@ namespace CobraCompiler
             //Visit Expression & Block
             //Check if Expression type is Number
             TypeEnum? type = Visit(node.Expression);
-            
-            if (node.Block != null)
-                Visit(node.Block);
+            Visit(node.Block);
 
             if (type != TypeEnum.number)
                 throw new Exception();
@@ -610,9 +610,7 @@ namespace CobraCompiler
             //Check if Condition type is boolean
 
             TypeEnum? type = Visit(node.Condition);
-
-            if (node.Block != null)
-                Visit(node.Block);
+             Visit(node.Block);
 
             if (type != TypeEnum.boolean)
                 throw new Exception();
