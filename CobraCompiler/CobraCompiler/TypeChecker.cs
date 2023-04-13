@@ -90,6 +90,9 @@ namespace CobraCompiler
                 case ListOperationNode listOperationNode:
                     Visit(listOperationNode);
                     break;
+                case ForeachNode foreachNode:
+                    Visit(foreachNode);
+                    break;
                 default:
                     throw new Exception();
             }
@@ -280,7 +283,7 @@ namespace CobraCompiler
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
-            if (isList(type))
+            if (isList(leftType))
             {
                 var error = $"Error: Multiplication of type list is not allowed.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
@@ -625,20 +628,24 @@ namespace CobraCompiler
             //Check if identifier is list
             //Check if list inner type matches Local Variable type
 
+            Symbol? list = _symbolTable.Lookup(node.List.Name, _currentBlock);
             TypeEnum? localVarType = Visit(node.LocalVariable);
-            Symbol list = _symbolTable.Lookup(node.List.Name, _currentBlock);
 
             Visit(node.Block);
 
             if (!isList(list.Type))
-                throw new Exception();
-
-            if (getListType(list.Type) != localVarType)
-                throw new Exception();
+            {
+                var error = $"Error: '{list.Name}' is not a list.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            } else if (getListType(list.Type) != localVarType)
+            {
+                var error = $"Error: For each local variable type error. Expects type '{getListType(list.Type)}'.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return null;
         }
-
+        
         public override TypeEnum? Visit(ListOperationNode node)
         {
             //Visits based on type of ListOperationNode
@@ -672,14 +679,18 @@ namespace CobraCompiler
             //Check if the identifier is a list
             //Check if list inner type matches Expression
 
-            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+            Symbol? list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
             TypeEnum? type = Visit(node.Expression);
 
             if (!isList(list.Type))
-                throw new Exception();
-
-            if (getListType(list.Type) != type)
-                throw new Exception();
+            {
+                var error = $"Error: '{list.Name}' is not a list.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            } else if (getListType(list.Type) != type)
+            {
+                var error = $"Error: '{list.Name}:Add()' expects type '{getListType(list.Type)}'.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return null;
         }
@@ -692,14 +703,18 @@ namespace CobraCompiler
             //Check if the identifier is a list
             //Check if expression is a number
 
-            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+            Symbol? list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
             TypeEnum? type = Visit(node.Expression);
 
             if (!isList(list.Type))
-                throw new Exception();
-
-            if (type != TypeEnum.number)
-                throw new Exception();
+            {
+                var error = $"Error: '{list.Name}' is not a list.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            } else if (type != TypeEnum.number)
+            {
+                var error = $"Error: '{list.Name}:DeleteOf()' expects a number.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return null;
         }
@@ -708,18 +723,22 @@ namespace CobraCompiler
         public override TypeEnum? Visit(ListValueOfNode node)
         {
             //Visits Expression
-            //Get symbol for Identifier in Symboltable
+            //Get symbol for Identifier in Symbol table
             //Check if the identifier is a list
             //Check if Expression is type number
 
-            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+            Symbol? list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
             TypeEnum? type = Visit(node.Expression);
 
             if (!isList(list.Type))
-                throw new Exception();
-
-            if (type != TypeEnum.number)
-                throw new Exception();
+            {
+                var error = $"Error: '{list.Name}' is not a list.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            } else if (type != TypeEnum.number)
+            {
+                var error = $"Error: '{list.Name}:ValueOf()' expects a number.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return null;
         }
@@ -732,14 +751,18 @@ namespace CobraCompiler
             //Check if the identifier is a list
             //Check if list inner type matches Expression
 
-            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+            Symbol? list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
             TypeEnum? type = Visit(node.Expression);
 
             if (!isList(list.Type))
-                throw new Exception();
-
-            if (getListType(list.Type) != type)
-                throw new Exception();
+            {
+                var error = $"Error: '{list.Name}' is not a list.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            } else if (getListType(list.Type) != type)
+            {
+                var error = $"Error: '{list.Name}:IndexOf()' expects type '{getListType(list.Type)}'.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return null;
         }
