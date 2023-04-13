@@ -100,7 +100,27 @@ namespace CobraCompiler {
 
         public override StringBuilder Visit(StatementNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+
+            switch (node)
+            {
+                case IfNode ifNode:
+                    stringBuilder.Append(Visit(ifNode));
+                    break;
+                case RepeatNode repeatNode:
+                    stringBuilder.Append(Visit(repeatNode));
+                    break;
+                case WhileNode whileNode:
+                    stringBuilder.Append(Visit(whileNode));
+                    break;
+                case ListOperationNode listOperationNode:
+                    stringBuilder.Append(Visit(listOperationNode));
+                    break;
+                default:
+                    throw new Exception();
+            }
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(AssignNode node)
@@ -124,7 +144,8 @@ namespace CobraCompiler {
                     stringBuilder.Append(Visit(infixExpressionNode));
                     break;
                 case IdentifierNode identifierNode:
-                    stringBuilder.Append(identifierNode.Value.ToString());
+                    Symbol symbol = _symbolTable.Lookup(identifierNode.Name, _currentBlock);
+                    stringBuilder.Append(symbol.Name); //stringBuilder.Append(identifierNode.Value.ToString());
                     break;
                 case NumberNode numberNode:
                     stringBuilder.Append(numberNode.Value.ToString());
@@ -213,17 +234,48 @@ namespace CobraCompiler {
 
         public override StringBuilder Visit(IfNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+
+            //Generate code for the if block
+            stringBuilder.Append("if(");
+
+            //Generate code for the condition
+            stringBuilder.Append(Visit(node.Condition));
+
+            stringBuilder.AppendLine(")");
+
+            stringBuilder.Append(Visit(node.Block));
+
+            //Generate code for the else if blocks - may also be an else block
+            foreach (var elseIf in node.ElseIfs)
+            {
+                stringBuilder.Append(Visit(elseIf));
+            }
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ElseIfNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+
+            stringBuilder.Append("else if(");
+            stringBuilder.Append(Visit(node.Condition));
+            stringBuilder.AppendLine(")");
+            stringBuilder.Append(Visit(node.Block));
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ElseNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+
+            //Generate code for the else block
+            stringBuilder.AppendLine("else");
+            stringBuilder.Append(Visit(node.Block));
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(RepeatNode node)
@@ -300,42 +352,66 @@ namespace CobraCompiler {
 
         public override StringBuilder Visit(AndNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" && ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(OrNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" || ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(GreaterNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" > ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(LessNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" < ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(GreaterEqualNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" >= ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(LessEqualNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" <= ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(EqualNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" == ");
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(NotEqualNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(" != ");
+
+            return stringBuilder;
         }
 
         private Type ConvertType(TypeEnum inputType)

@@ -331,7 +331,7 @@ namespace CobraCompiler
             if (isList(type))
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         public override TypeEnum? Visit(NotEqualNode node)
@@ -348,7 +348,7 @@ namespace CobraCompiler
             if (isList(type))
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         public override TypeEnum? Visit(GreaterNode node)
@@ -365,7 +365,7 @@ namespace CobraCompiler
             if (type != TypeEnum.number)
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         public override TypeEnum? Visit(LessNode node)
@@ -382,7 +382,7 @@ namespace CobraCompiler
             if (type != TypeEnum.number)
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         public override TypeEnum? Visit(GreaterEqualNode node)
@@ -399,7 +399,7 @@ namespace CobraCompiler
             if (type != TypeEnum.number)
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         public override TypeEnum? Visit(LessEqualNode node)
@@ -416,7 +416,7 @@ namespace CobraCompiler
             if (type != TypeEnum.number)
                 throw new Exception();
 
-            return type;
+            return TypeEnum.boolean;
         }
 
         #endregion

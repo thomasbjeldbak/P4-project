@@ -1,7 +1,15 @@
 using System;
 static void Main(string[] args)
 {
-int hej = (2 + (3 * 5));
-string mega = "jUbii";
-bool test = false;
+int i = 10;
+int j = 5;
+bool v;
+if((i < j))
+{
+v = true;
+}
+else
+{
+v = false;
+}
 }
