@@ -7,6 +7,7 @@ using static ASTNodes;
 
 namespace CobraCompiler
 {
+    //ASTVisitor is used for TypeChecking and CodeGeneration
     internal abstract class ASTVisitor<T>
     {
 

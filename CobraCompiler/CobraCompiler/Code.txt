@@ -1,0 +1,14 @@
+number hej = 2;
+text ti = "ti";
+boolean y = true;
+boolean p = false;
+list (number) k;
+
+k: Add(1);
+k: Add(2);
+k: Add(3); 
+k:IndexOf(1);
+
+repeat for each(number test in k) {
+
+}

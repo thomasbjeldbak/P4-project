@@ -16,28 +16,33 @@ using static CobraCompiler.Symbol;
 namespace CobraCompiler
 {
 
-    public class Symbol
+    public class Symbol //Entry in a scope
     {
-        public string Name { get; set; }
-        public TypeEnum Type { get; set; }
+        public string Name { get; set; } //ID (name) of the variable
+        public TypeEnum Type { get; set; } //Type of the variable
     }
 
-    public class Scope
+    public class Scope //Scope in the symbol table
     {
         public Scope() 
         {
             Symbols = new Dictionary<string, Symbol>();
         }
-        public Dictionary<string, Symbol> Symbols { get; set; }
-        public Scope Parent { get; set; }
+        public Dictionary<string, Symbol> Symbols { get; set; } //Key = ID (name), Value = Symbol
+        public Scope Parent { get; set; } //Outter Scope (parent scope)
     }
 
-    internal class SymbolTable
+    public class SymbolTable
     {
-        private Dictionary<BlockNode, Scope> _scopes;
-        private Stack<Scope> _stackScopes;
-        private BlockNode _currentBlock;
+        private Dictionary<BlockNode, Scope> _scopes; //Key = BlockNode belonging to the Scope, Value = Scope
+        private Stack<Scope> _stackScopes; //Stack of scopes for building _scopes
+        private BlockNode _currentBlock; //The current Block (used for look-up)
+        private ErrorHandler symbolErrorhandler;
 
+        public SymbolTable(ErrorHandler errorHandler)
+        {
+            symbolErrorhandler = errorHandler;
+        }
         public SymbolTable BuildSymbolTable(ASTNode astRoot)
         {
             _scopes = new Dictionary<BlockNode, Scope>();
@@ -46,35 +51,43 @@ namespace CobraCompiler
             return this;
         }
 
+        //Recursively go all children of each ASTNode
         private void ProcessNode(ASTNode node)
         {
             switch (node) {
+                //If node is a BlockNode, open new scope
                 case BlockNode blockNode:
                     NewScope(blockNode);
                     break;
-                case DeclarationNode declarationNode:
+                //If node is a DeclarationNode, Insert the name and type in the scope at the top of the stack
+                case DeclarationNode declarationNode: 
                     Insert(declarationNode.Identifier.Name, declarationNode.Identifier.TypeNode.Type);
                     break;
+                //If node is a IdentifierNode, check if it exists in the symbolTable
                 case IdentifierNode identifierNode:
                     var sym = Lookup(identifierNode.Name, _currentBlock);
                     if (sym == null) {
-                        throw new Exception("Symbol not found");
+                        var error = $"Error: {identifierNode.Name} is not found. Declare your variable before use.";
+                        symbolErrorhandler.SymbolErrorMessages.Add(error);
                     }
                     break;
             }
             
+            //Go through the children of the node and process them
             foreach (var child in node.GetChildren().Where(x => x is ASTNode))
             {
                 ProcessNode(child);
             }
-            
-            if (node is BlockNode) 
+
+            //The BlockNode is now processed, we can exit the scope
+            if (node is BlockNode)
             {
                 ExitScope();
             }
         }
 
-        // create a function that creates a new scope
+        //Add a new scope on the stack and add the scope to _scopes
+        //Also update the currentBlock
         private void NewScope(BlockNode blockNode)
         {
             var scope = new Scope();
@@ -87,11 +100,14 @@ namespace CobraCompiler
             _currentBlock = blockNode;
         }
 
+        //Pop the stack of scopes
         private void ExitScope()
         {
             _stackScopes.Pop();
         }
 
+        //Insert ID (name) and Type for a variable into the
+        //scope at the top of the stack
         private void Insert(string name, TypeEnum type)
         {
             _stackScopes.Peek().Symbols.Add(name, new Symbol 
@@ -100,6 +116,8 @@ namespace CobraCompiler
             });
         }
 
+        //Given a ID (name) and a BlockNode, check outwards from
+        //the scope belonging to the blockNode until the variable is found
         public Symbol? Lookup(string name, BlockNode blockNode)
         {
             var scope = _scopes[blockNode];
@@ -113,10 +131,9 @@ namespace CobraCompiler
                         return symbol;
                     }
                 }
-
+                
                 scope = scope.Parent;
             }
-
             return null;
         }
     }
