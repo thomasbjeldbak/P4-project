@@ -2,8 +2,5 @@ using System;
 static void Main(string[] args)
 {
 List<int> superman = new();
-foreach(int sick in superman)
-{
-string ala = "Al";
-}
+superman[4];
 }

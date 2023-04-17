@@ -1,6 +1,3 @@
 list(number) superman;
 
-repeat for each (number sick in superman)
-{
-text ala = "Al";
-}
+superman:ValueOf(4);

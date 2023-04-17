@@ -345,27 +345,77 @@ namespace CobraCompiler {
 
         public override StringBuilder Visit(ListOperationNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            
+
+            switch (node)
+            {
+                case ListAddNode listAddNode:
+                    stringBuilder.Append(Visit(listAddNode));
+                    break;
+                case ListDeleteNode listDeleteNode:
+                    stringBuilder.Append(Visit(listDeleteNode));
+                    break;
+                case ListIndexOfNode listIndexOfNode:
+                    stringBuilder.Append(Visit(listIndexOfNode));
+                    break;
+                case ListValueOfNode listValueOfNode:
+                    stringBuilder.Append(Visit(listValueOfNode));
+                    break;
+                
+                    default:
+                        throw new Exception();
+            }
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ListAddNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+
+            stringBuilder.Append($"{list.Name}.Add(");
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.AppendLine(");");
+            
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ListDeleteNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+
+            stringBuilder.Append($"{list.Name}.RemoveAt(");
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.AppendLine(");");
+            
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ListIndexOfNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+
+            stringBuilder.Append($"{list.Name}.IndexOf(");
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.AppendLine(");");
+            
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ListValueOfNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+
+            stringBuilder.Append($"{list.Name}[");
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.AppendLine("];");
+            
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(AdditionNode node)
