@@ -32,12 +32,17 @@ namespace CobraCompiler
         public Scope Parent { get; set; } //Outter Scope (parent scope)
     }
 
-    internal class SymbolTable
+    public class SymbolTable
     {
         private Dictionary<BlockNode, Scope> _scopes; //Key = BlockNode belonging to the Scope, Value = Scope
         private Stack<Scope> _stackScopes; //Stack of scopes for building _scopes
         private BlockNode _currentBlock; //The current Block (used for look-up)
+        private ErrorHandler symbolErrorhandler;
 
+        public SymbolTable(ErrorHandler errorHandler)
+        {
+            symbolErrorhandler = errorHandler;
+        }
         public SymbolTable BuildSymbolTable(ASTNode astRoot)
         {
             _scopes = new Dictionary<BlockNode, Scope>();
@@ -62,7 +67,8 @@ namespace CobraCompiler
                 case IdentifierNode identifierNode:
                     var sym = Lookup(identifierNode.Name, _currentBlock);
                     if (sym == null) {
-                        throw new Exception("Symbol not found");
+                        var error = $"Error: {identifierNode.Name} is not found. Declare your variable before use.";
+                        symbolErrorhandler.SymbolErrorMessages.Add(error);
                     }
                     break;
             }
@@ -125,10 +131,9 @@ namespace CobraCompiler
                         return symbol;
                     }
                 }
-
+                
                 scope = scope.Parent;
             }
-
             return null;
         }
     }

@@ -10,6 +10,8 @@ namespace CobraCompiler
     //ASTVisitor is used for TypeChecking and CodeGeneration
     internal abstract class ASTVisitor<T>
     {
+
+        public abstract T Visit(ProgramNode node);
         public abstract T Visit(BlockNode node);
         public abstract T Visit(DeclarationNode node);
         public abstract T Visit(StatementNode node);

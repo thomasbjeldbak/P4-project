@@ -37,7 +37,7 @@ public class ASTNodes
     }
 
     //abstract "Command" is either a declaration, assignment or statement
-    internal abstract class CommandNode : ASTNode 
+    public abstract class CommandNode : ASTNode 
     {
     };
 
@@ -173,7 +173,12 @@ public class ASTNodes
     {
         public ListNode(TypeEnum listType)
         {
-            Type = listType;
+            if (listType is TypeEnum.number)
+                Type = TypeEnum.list_number;
+            else if (listType is TypeEnum.text)
+                Type = TypeEnum.list_text;
+            else if (listType is TypeEnum.boolean)
+                Type = TypeEnum.list_boolean; 
         }
         public new TypeNode[] Value { get; set; }
         public override List<ASTNode> GetChildren()
@@ -360,7 +365,7 @@ public class ASTNodes
 
     //"block" contains commands
     //{Block}
-    internal class BlockNode : ASTNode
+    public class BlockNode : ASTNode
     {
         public List<CommandNode> Commands { get; set; }
         public override List<ASTNode> GetChildren()

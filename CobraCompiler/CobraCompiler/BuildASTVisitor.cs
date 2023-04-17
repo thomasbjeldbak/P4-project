@@ -57,8 +57,8 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
         var outputNode = new ProgramNode();
 
-        prettyPrint("ProgramNode", context);
-        incrIndent();
+            prettyPrint("ProgramNode", context);
+            incrIndent();
 
         if (cmds != null)
         {
@@ -722,34 +722,38 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             numberNode.Value = int.Parse(INT.ToString());
             return numberNode;
         }
-        else if (ID != null)
+
+        if (ID != null)
         {
             prettyPrint("IdentifierNode", context);
             var identifierNode = new IdentifierNode();
             identifierNode.Name = ID.ToString();
             return identifierNode;
         }
-        else if ((LPAREN != null) &&
-                (expr != null && expr.ChildCount > 0) &&
-                (RPAREN != null))
+
+        if ((LPAREN != null) &&
+            (expr != null && expr.ChildCount > 0) &&
+            (RPAREN != null))
         {
             return (ExpressionNode)Visit(expr);
         }
-        else if (boolean != null)
+
+        if (boolean != null)
         {
             prettyPrint("booleanNode", context);
             var booleanNode = Visit(boolean);
             return booleanNode;
         }
-        else if (STR != null)
+
+        if (STR != null)
         {
             prettyPrint("TextNode", context);
             var textNode = new TextNode();
             textNode.Value = STR.ToString();
             return textNode;
         }
-        else
-            throw new Exception();
+
+        return null;
     }
 
     //boolean: TRUE | FALSE; 
