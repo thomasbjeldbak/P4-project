@@ -94,6 +94,11 @@ namespace CobraCompiler {
                 stringBuilder.Append(" = ");
                 stringBuilder.Append(Visit(node.Expression));
             }
+            else if (_typeAlias[ConvertType(symbol.Type)].Contains("List"))
+            {
+                stringBuilder.Append(" = new()");
+                
+            }
 
             stringBuilder.AppendLine(";");
 
@@ -299,12 +304,11 @@ namespace CobraCompiler {
             var stringBuilder = new StringBuilder();
             
             //Generate code for the Repeat node
-            stringBuilder.Append("repeat (");
-            
+            stringBuilder.Append("for (_å = 0; _å < ");
             //Generate code for the expression in the repeat
             stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.Append("; _å++");
             stringBuilder.Append(")");
-            stringBuilder.AppendLine("times");
             stringBuilder.Append(Visit(node.Block));
 
             return stringBuilder;
@@ -315,7 +319,7 @@ namespace CobraCompiler {
             var stringBuilder = new StringBuilder();
     
             //Generate code for the repeat while loop
-            stringBuilder.Append("repeat while(");
+            stringBuilder.Append("while(");
             
             //Generates the condition for the while part
             stringBuilder.Append(Visit(node.Condition));
@@ -329,8 +333,8 @@ namespace CobraCompiler {
         {
             var stringBuilder = new StringBuilder();
 
-            stringBuilder.Append("repeat for each(");
-            stringBuilder.Append(Visit(node.LocalVariable));
+            stringBuilder.Append("foreach(");
+            stringBuilder.Append(Visit(node.LocalVariable).Replace(";", "").ToString().TrimEnd());
             stringBuilder.Append(" in ");
             stringBuilder.Append(Visit(node.List));
             stringBuilder.AppendLine(")");
@@ -498,7 +502,9 @@ namespace CobraCompiler {
             { typeof(bool), "bool" },
             { typeof(int), "int" },
             { typeof(string), "string" },
-
+            { typeof(List<int>), "List<int>"},
+            { typeof(List<string>), "List<string>"},
+            { typeof(List<bool>), "List<bool>"},
             { typeof(void), "void" }
         };
 

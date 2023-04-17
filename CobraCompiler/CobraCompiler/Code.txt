@@ -1,3 +1,6 @@
+list(number) superman;
 
-
-repeat for each ( in superman)
+repeat for each (number sick in superman)
+{
+text ala = "Al";
+}

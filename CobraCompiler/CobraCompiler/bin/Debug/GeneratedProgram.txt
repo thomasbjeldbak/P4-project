@@ -1,8 +1,9 @@
 using System;
 static void Main(string[] args)
 {
-repeat while((5 == 3))
+List<int> superman = new();
+foreach(int sick in superman)
 {
-int hej = 7;
+string ala = "Al";
 }
 }
