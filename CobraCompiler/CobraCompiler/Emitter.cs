@@ -26,6 +26,7 @@ namespace CobraCompiler {
             _currentBlock = node;
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("using System;");
+            stringBuilder.Append("class GeneratedProgram{");
             stringBuilder.AppendLine("static void Main(string[] args)");
             stringBuilder.AppendLine("{");
 
@@ -47,6 +48,7 @@ namespace CobraCompiler {
                 }
             }
 
+            stringBuilder.AppendLine("}");
             stringBuilder.AppendLine("}");
 
             return stringBuilder;
