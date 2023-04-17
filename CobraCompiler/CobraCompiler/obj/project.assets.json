@@ -194,6 +194,22 @@
           "lib/netstandard1.1/System.Buffers.dll": {}
         }
       },
+      "System.CodeDom/7.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net7.0/System.CodeDom.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/System.CodeDom.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/net6.0/_._": {}
+        }
+      },
       "System.Collections/4.0.11": {
         "type": "package",
         "dependencies": {
@@ -1496,6 +1512,33 @@
         "lib/netstandard1.1/System.Buffers.dll",
         "system.buffers.4.0.0.nupkg.sha512",
         "system.buffers.nuspec"
+      ]
+    },
+    "System.CodeDom/7.0.0": {
+      "sha512": "GLltyqEsE5/3IE+zYRP5sNa1l44qKl9v+bfdMcwg+M9qnQf47wK3H0SUR/T+3N4JEQXF3vV4CSuuo0rsg+nq2A==",
+      "type": "package",
+      "path": "system.codedom/7.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "buildTransitive/net461/System.CodeDom.targets",
+        "buildTransitive/net462/_._",
+        "buildTransitive/net6.0/_._",
+        "buildTransitive/netcoreapp2.0/System.CodeDom.targets",
+        "lib/net462/System.CodeDom.dll",
+        "lib/net462/System.CodeDom.xml",
+        "lib/net6.0/System.CodeDom.dll",
+        "lib/net6.0/System.CodeDom.xml",
+        "lib/net7.0/System.CodeDom.dll",
+        "lib/net7.0/System.CodeDom.xml",
+        "lib/netstandard2.0/System.CodeDom.dll",
+        "lib/netstandard2.0/System.CodeDom.xml",
+        "system.codedom.7.0.0.nupkg.sha512",
+        "system.codedom.nuspec",
+        "useSharedDesignerContext.txt"
       ]
     },
     "System.Collections/4.0.11": {
@@ -4355,29 +4398,37 @@
   "projectFileDependencyGroups": {
     "net7.0": [
       "Antlr4 >= 4.6.6",
-      "Antlr4.Runtime >= 4.6.6"
+      "Antlr4.Runtime >= 4.6.6",
+      "System.CodeDom >= 7.0.0"
     ]
   },
   "packageFolders": {
-    "/Users/nichlashjorth/.nuget/packages/": {}
+    "C:\\Users\\thoma\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
+      "projectUniqueName": "C:\\Github Repos\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj",
       "projectName": "CobraCompiler",
-      "projectPath": "/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
-      "packagesPath": "/Users/nichlashjorth/.nuget/packages/",
-      "outputPath": "/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/",
+      "projectPath": "C:\\Github Repos\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj",
+      "packagesPath": "C:\\Users\\thoma\\.nuget\\packages\\",
+      "outputPath": "C:\\Github Repos\\P4-project\\CobraCompiler\\CobraCompiler\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/nichlashjorth/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\thoma\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "/usr/local/share/dotnet/library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4405,6 +4456,10 @@
           "Antlr4.Runtime": {
             "target": "Package",
             "version": "[4.6.6, )"
+          },
+          "System.CodeDom": {
+            "target": "Package",
+            "version": "[7.0.0, )"
           }
         },
         "imports": [
@@ -4423,7 +4478,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.102/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }
