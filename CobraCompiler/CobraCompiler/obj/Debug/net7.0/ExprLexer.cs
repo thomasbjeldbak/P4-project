@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\CobraCompiler\CobraCompiler\ExprLexer.g4 by ANTLR 4.6.6
+// Generated from /Users/charlotte/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/ExprLexer.g4 by ANTLR 4.6.6
 
 // Unreachable code detected
 #pragma warning disable 0162

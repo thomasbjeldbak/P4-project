@@ -98,11 +98,11 @@ namespace CobraCompiler
                     case DeclarationNode declarationNode:
                         Visit(declarationNode);
                         break;
-                    case StatementNode statementNode:
-                        Visit(statementNode);
-                        break;
                     case AssignNode assignNode:
                         Visit(assignNode);
+                        break;
+                    case StatementNode statementNode:
+                        Visit(statementNode);
                         break;
                     default:
                         throw new Exception($"Command was not valid");

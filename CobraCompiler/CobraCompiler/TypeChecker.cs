@@ -603,7 +603,10 @@ namespace CobraCompiler
             Visit(node.Block);
 
             if (type != TypeEnum.boolean)
-                throw new Exception();
+            {
+                var error = $"Error: Only boolean expression is allowed in the 'else if' condition.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return null;
         }
@@ -624,7 +627,10 @@ namespace CobraCompiler
             Visit(node.Block);
 
             if (type != TypeEnum.number)
-                throw new Exception();
+            {
+                var error = $"Error: The repeat condition is type '{type}', but have to be a number.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return null;
         }
@@ -639,7 +645,10 @@ namespace CobraCompiler
              Visit(node.Block);
 
             if (type != TypeEnum.boolean)
-                throw new Exception();
+            {
+                var error = $"Error: The while expression is type '{type}', but have to be a boolean.";
+                typeErrorhandler.TypeErrorMessages.Add(error);
+            }
 
             return null;
         }
