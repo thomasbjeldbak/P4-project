@@ -34,11 +34,11 @@ namespace CobraCompiler {
                     case DeclarationNode declarationNode:
                         stringBuilder.Append(Visit(declarationNode));
                         break;
-                    case StatementNode statementNode:
-                        stringBuilder.Append(Visit(statementNode));
-                        break;
                     case AssignNode assignNode:
                         stringBuilder.Append(Visit(assignNode));
+                        break;
+                    case StatementNode statementNode:
+                        stringBuilder.Append(Visit(statementNode));
                         break;
                     default:
                         throw new Exception($"Command was not valid");
@@ -62,11 +62,11 @@ namespace CobraCompiler {
                     case DeclarationNode declarationNode:
                         stringBuilder.Append(Visit(declarationNode));
                         break;
-                    case StatementNode statementNode:
-                        stringBuilder.Append(Visit(statementNode));
-                        break;
                     case AssignNode assignNode:
                         stringBuilder.Append(Visit(assignNode));
+                        break;
+                    case StatementNode statementNode:
+                        stringBuilder.Append(Visit(statementNode));
                         break;
                     default:
                         throw new Exception($"Command was not valid");
