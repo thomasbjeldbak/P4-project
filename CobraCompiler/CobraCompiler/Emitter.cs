@@ -154,7 +154,7 @@ namespace CobraCompiler {
                     stringBuilder.Append(numberNode.Value.ToString());
                     break;
                 case TextNode textNode:
-                    stringBuilder.Append(textNode.Value.ToString()); //R To.String ikke irrellevant i den her?
+                    stringBuilder.Append(textNode.Value);
                     break;
                 case BooleanNode booleanNode:
                     stringBuilder.Append(booleanNode.Value.ToString().ToLower());
