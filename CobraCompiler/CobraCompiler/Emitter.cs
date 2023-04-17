@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
+using Antlr4.Runtime.Atn;
 using static ASTNodes;
 
 namespace CobraCompiler {
@@ -143,13 +145,6 @@ namespace CobraCompiler {
 
             switch (node)
             {
-                case InfixExpressionNode infixExpressionNode:
-                    stringBuilder.Append(Visit(infixExpressionNode));
-                    break;
-                case IdentifierNode identifierNode:
-                    Symbol symbol = _symbolTable.Lookup(identifierNode.Name, _currentBlock);
-                    stringBuilder.Append(symbol.Name); //stringBuilder.Append(identifierNode.Value.ToString());
-                    break;
                 case NumberNode numberNode:
                     stringBuilder.Append(numberNode.Value.ToString());
                     break;
@@ -159,6 +154,14 @@ namespace CobraCompiler {
                 case BooleanNode booleanNode:
                     stringBuilder.Append(booleanNode.Value.ToString().ToLower());
                     break;
+                case InfixExpressionNode infixExpressionNode:
+                    stringBuilder.Append(Visit(infixExpressionNode));
+                    break;
+                case IdentifierNode identifierNode:
+                    Symbol symbol = _symbolTable.Lookup(identifierNode.Name, _currentBlock);
+                    stringBuilder.Append(symbol.Name); //stringBuilder.Append(identifierNode.Value.ToString());
+                    break;
+
                 case ListNode listNode:
                     //_stringBuilder.Append("new List<");
                     //_stringBuilder.Append(_typeAlias[ConvertType(listNode.Type)]);
@@ -293,20 +296,47 @@ namespace CobraCompiler {
 
         public override StringBuilder Visit(RepeatNode node)
         {
-            throw new NotImplementedException();
-            // Generate code for the repeat block
-            //_stringBuilder.AppendLine("do");
-            //Visit(node.Block);
+            var stringBuilder = new StringBuilder();
+            
+            //Generate code for the Repeat node
+            stringBuilder.Append("repeat (");
+            
+            //Generate code for the expression in the repeat
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.Append(")");
+            stringBuilder.AppendLine("times");
+            stringBuilder.Append(Visit(node.Block));
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(WhileNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+    
+            //Generate code for the repeat while loop
+            stringBuilder.Append("repeat while(");
+            
+            //Generates the condition for the while part
+            stringBuilder.Append(Visit(node.Condition));
+            stringBuilder.AppendLine(")");
+            stringBuilder.Append(Visit(node.Block));
+            
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ForeachNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+
+            stringBuilder.Append("repeat for each(");
+            stringBuilder.Append(Visit(node.LocalVariable));
+            stringBuilder.Append(" in ");
+            stringBuilder.Append(Visit(node.List));
+            stringBuilder.AppendLine(")");
+            stringBuilder.Append(Visit(node.Block));
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ListOperationNode node)
