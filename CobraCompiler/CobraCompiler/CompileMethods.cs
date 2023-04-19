@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace CobraCompiler;
 using System;
 using System.IO;
@@ -5,76 +7,42 @@ using System.Globalization;
 using System.CodeDom.Compiler;
 using System.Text;
 using Microsoft.CSharp;
+
 public static class CompileMethods
 {
 
-    public static bool CompileExecutable(string sourceName)
+    public static void CompileExecutable(string filePath)
     {
-        FileInfo sourceFile = new FileInfo(sourceName);
-        CodeDomProvider provider = null;
-        bool compileOk = false;
+        // Set the command to run
+        string command = $"dotnet build {filePath} -o build";
 
-        //Create provider with C# as language
-        provider = CodeDomProvider.CreateProvider("CSharp");
+        // Create a ProcessStartInfo instance
+        ProcessStartInfo startInfo = new ProcessStartInfo();
+        startInfo.FileName = "cmd.exe";
+        startInfo.Arguments = $"/C {command}";
+        startInfo.RedirectStandardOutput = true;
+        startInfo.UseShellExecute = false;
 
+        // Start the process
+        Process process = new Process();
+        process.StartInfo = startInfo;
+        process.Start();
 
-        // Format the executable file name.
-        // Build the output assembly path using the current directory
-        // and <source>_cs.exe or <source>_vb.exe.
+        // Read the output
+        string output = process.StandardOutput.ReadToEnd();
 
-        String exeName = String.Format(@"{0}\{1}.exe",
-            System.Environment.CurrentDirectory,
-            sourceFile.Name.Replace(".", "_"));
+        // Wait for the process to exit
+        process.WaitForExit();
 
-        CompilerParameters cp = new CompilerParameters();
-
-        // Generate an executable instead of
-        // a class library.
-        cp.GenerateExecutable = true;
-
-        // Specify the assembly file name to generate.
-        cp.OutputAssembly = exeName;
-
-        // Save the assembly as a physical file.
-        cp.GenerateInMemory = false;
-
-        // Set whether to treat all warnings as errors.
-        cp.TreatWarningsAsErrors = false;
-
-        // Invoke compilation of the source file.
-        CompilerResults cr = provider.CompileAssemblyFromFile(cp,
-            sourceName);
-
-        if (cr.Errors.Count > 0)
+        // Check for errors
+        if (process.ExitCode != 0)
         {
-            // Display compilation errors.
-            Console.WriteLine("Errors building {0} into {1}",
-                sourceName, cr.PathToAssembly);
-            foreach (CompilerError ce in cr.Errors)
-            {
-                Console.WriteLine("  {0}", ce.ToString());
-                Console.WriteLine();
-            }
+            Console.WriteLine("Compilation failed with errors:");
+            Console.WriteLine(output);
         }
         else
         {
-            // Display a successful compilation message.
-            Console.WriteLine("Source {0} built into {1} successfully.",
-                sourceName, cr.PathToAssembly);
+            Console.WriteLine("Compilation succeeded. Output directory: build");
         }
-
-        // Return the results of the compilation.
-        if (cr.Errors.Count > 0)
-        {
-            compileOk = false;
-        }
-        else
-        {
-            compileOk = true;
-        }
-
-
-
-        return compileOk;
     }
 }

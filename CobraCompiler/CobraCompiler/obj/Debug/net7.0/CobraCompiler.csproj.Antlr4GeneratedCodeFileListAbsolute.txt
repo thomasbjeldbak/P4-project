@@ -1,6 +1,6 @@
-C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprLexer.cs
-C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParser.cs
-C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserListener.cs
-C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseListener.cs
-C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserVisitor.cs
-C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseVisitor.cs
+/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprLexer.cs
+/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParser.cs
+/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserListener.cs
+/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserBaseListener.cs
+/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserVisitor.cs
+/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserBaseVisitor.cs
