@@ -5,7 +5,7 @@ using System.Globalization;
 using System.CodeDom.Compiler;
 using System.Text;
 using Microsoft.CSharp;
-public class CompileMethods
+public static class CompileMethods
 {
 
     public static bool CompileExecutable(string sourceName)
