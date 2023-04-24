@@ -69,10 +69,14 @@ namespace CobraCompiler
             var sb = new StringBuilder();
             sb = new Emitter(sb, st).Visit((ProgramNode)ast);
 
+            string path = Directory.GetCurrentDirectory();
+            path += "\\GeneratedProgram.cs";
+            
+
             File.WriteAllText("GeneratedProgram.cs", sb.ToString());
 
             //[STAThread]
-            CompileMethods.CompileExecutable("GeneratedProgram.cs");
+            CompileMethods.CompileExecutable(path); //"GeneratedProgram.cs"
             //var csc = new CSharpCodeProvider(new Dictionary<string, string>() { { "CompilerVersion", "v3.5" } });
             //var parameters = new CompilerParameters(new[] { "mscorlib.dll", "System.Core.dll" }, "foo.exe", true);
             //parameters.GenerateExecutable = true;

@@ -94,29 +94,54 @@ D:/Git Projects/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ref/Cobr
 /Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.pdb
 /Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.genruntimeconfig.cache
 /Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ref/CobraCompiler.dll
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/bin/Debug/net7.0/CobraCompiler.exe
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/bin/Debug/net7.0/CobraCompiler.deps.json
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/bin/Debug/net7.0/CobraCompiler.runtimeconfig.json
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/bin/Debug/net7.0/CobraCompiler.dll
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/bin/Debug/net7.0/CobraCompiler.pdb
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/bin/Debug/net7.0/Antlr4.Runtime.dll
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/bin/Debug/net7.0/System.CodeDom.dll
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.AssemblyReference.cache
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprLexer.cs
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParser.cs
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserListener.cs
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserBaseListener.cs
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserVisitor.cs
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserBaseVisitor.cs
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.Antlr4GeneratedCodeFileListAbsolute.txt
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.GeneratedMSBuildEditorConfig.editorconfig
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.AssemblyInfoInputs.cache
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.AssemblyInfo.cs
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.CoreCompileInputs.cache
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.csproj.CopyComplete
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.dll
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/refint/CobraCompiler.dll
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.pdb
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/CobraCompiler.genruntimeconfig.cache
-C:/Github Repos/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ref/CobraCompiler.dll
 /Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/bin/Debug/net7.0/System.CodeDom.dll
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\CobraCompiler.exe
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\CobraCompiler.deps.json
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\CobraCompiler.runtimeconfig.json
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\CobraCompiler.dll
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\CobraCompiler.pdb
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\Antlr4.Runtime.dll
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\System.CodeDom.dll
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.csproj.AssemblyReference.cache
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprLexer.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParser.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserListener.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseListener.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserVisitor.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseVisitor.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.csproj.Antlr4GeneratedCodeFileListAbsolute.txt
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.GeneratedMSBuildEditorConfig.editorconfig
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.AssemblyInfoInputs.cache
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.AssemblyInfo.cs
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.csproj.CoreCompileInputs.cache
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.csproj.CopyComplete
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.dll
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\refint\CobraCompiler.dll
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.pdb
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.genruntimeconfig.cache
+C:\Github Repos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ref\CobraCompiler.dll
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\CobraCompiler.exe
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\CobraCompiler.deps.json
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\CobraCompiler.runtimeconfig.json
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\CobraCompiler.dll
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\CobraCompiler.pdb
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\Antlr4.Runtime.dll
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\bin\Debug\net7.0\System.CodeDom.dll
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.csproj.AssemblyReference.cache
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprLexer.cs
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParser.cs
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserListener.cs
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseListener.cs
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserVisitor.cs
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseVisitor.cs
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.csproj.Antlr4GeneratedCodeFileListAbsolute.txt
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.GeneratedMSBuildEditorConfig.editorconfig
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.AssemblyInfoInputs.cache
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.AssemblyInfo.cs
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.csproj.CoreCompileInputs.cache
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.csproj.CopyComplete
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.dll
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\refint\CobraCompiler.dll
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.pdb
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\CobraCompiler.genruntimeconfig.cache
+C:\GithubRepos\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ref\CobraCompiler.dll

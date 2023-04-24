@@ -1,3 +1,1 @@
-list(number) superman;
-
-superman:ValueOf(4);
+number test = 10;
