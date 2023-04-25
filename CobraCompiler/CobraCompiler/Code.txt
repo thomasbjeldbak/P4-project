@@ -9,6 +9,3 @@ k: Add(2);
 k: Add(3); 
 k:IndexOf(1);
 
-if (hej) {}
-else if (hej){}
-repeat while (ti) {}
