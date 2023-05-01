@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
+using Antlr4.Runtime.Atn;
 using static ASTNodes;
 
 namespace CobraCompiler {
@@ -24,6 +26,8 @@ namespace CobraCompiler {
             _currentBlock = node;
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("using System;");
+            //stringBuilder.AppendLine("using System.Collection.Generic;");
+            stringBuilder.Append("class GeneratedProgram{");
             stringBuilder.AppendLine("static void Main(string[] args)");
             stringBuilder.AppendLine("{");
 
@@ -45,6 +49,7 @@ namespace CobraCompiler {
                 }
             }
 
+            stringBuilder.AppendLine("}");
             stringBuilder.AppendLine("}");
 
             return stringBuilder;
@@ -91,6 +96,11 @@ namespace CobraCompiler {
             {
                 stringBuilder.Append(" = ");
                 stringBuilder.Append(Visit(node.Expression));
+            }
+            else if (_typeAlias[ConvertType(symbol.Type)].Contains("List"))
+            {
+                stringBuilder.Append(" = new()");
+                
             }
 
             stringBuilder.AppendLine(";");
@@ -143,13 +153,6 @@ namespace CobraCompiler {
 
             switch (node)
             {
-                case InfixExpressionNode infixExpressionNode:
-                    stringBuilder.Append(Visit(infixExpressionNode));
-                    break;
-                case IdentifierNode identifierNode:
-                    Symbol symbol = _symbolTable.Lookup(identifierNode.Name, _currentBlock);
-                    stringBuilder.Append(symbol.Name); //stringBuilder.Append(identifierNode.Value.ToString());
-                    break;
                 case NumberNode numberNode:
                     stringBuilder.Append(numberNode.Value.ToString());
                     break;
@@ -159,6 +162,14 @@ namespace CobraCompiler {
                 case BooleanNode booleanNode:
                     stringBuilder.Append(booleanNode.Value.ToString().ToLower());
                     break;
+                case InfixExpressionNode infixExpressionNode:
+                    stringBuilder.Append(Visit(infixExpressionNode));
+                    break;
+                case IdentifierNode identifierNode:
+                    Symbol symbol = _symbolTable.Lookup(identifierNode.Name, _currentBlock);
+                    stringBuilder.Append(symbol.Name); //stringBuilder.Append(identifierNode.Value.ToString());
+                    break;
+
                 case ListNode listNode:
                     //_stringBuilder.Append("new List<");
                     //_stringBuilder.Append(_typeAlias[ConvertType(listNode.Type)]);
@@ -293,45 +304,121 @@ namespace CobraCompiler {
 
         public override StringBuilder Visit(RepeatNode node)
         {
-            throw new NotImplementedException();
-            // Generate code for the repeat block
-            //_stringBuilder.AppendLine("do");
-            //Visit(node.Block);
+            var stringBuilder = new StringBuilder();
+            
+            //Generate code for the Repeat node
+            stringBuilder.Append("for (_å = 0; _å < ");
+            //Generate code for the expression in the repeat
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.Append("; _å++");
+            stringBuilder.Append(")");
+            stringBuilder.Append(Visit(node.Block));
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(WhileNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+    
+            //Generate code for the repeat while loop
+            stringBuilder.Append("while(");
+            
+            //Generates the condition for the while part
+            stringBuilder.Append(Visit(node.Condition));
+            stringBuilder.AppendLine(")");
+            stringBuilder.Append(Visit(node.Block));
+            
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ForeachNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+
+            stringBuilder.Append("foreach(");
+            stringBuilder.Append(Visit(node.LocalVariable).Replace(";", "").ToString().TrimEnd());
+            stringBuilder.Append(" in ");
+            stringBuilder.Append(Visit(node.List));
+            stringBuilder.AppendLine(")");
+            stringBuilder.Append(Visit(node.Block));
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ListOperationNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            
+
+            switch (node)
+            {
+                case ListAddNode listAddNode:
+                    stringBuilder.Append(Visit(listAddNode));
+                    break;
+                case ListDeleteNode listDeleteNode:
+                    stringBuilder.Append(Visit(listDeleteNode));
+                    break;
+                case ListIndexOfNode listIndexOfNode:
+                    stringBuilder.Append(Visit(listIndexOfNode));
+                    break;
+                case ListValueOfNode listValueOfNode:
+                    stringBuilder.Append(Visit(listValueOfNode));
+                    break;
+                
+                    default:
+                        throw new Exception();
+            }
+
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ListAddNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+
+            stringBuilder.Append($"{list.Name}.Add(");
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.AppendLine(");");
+            
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ListDeleteNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+
+            stringBuilder.Append($"{list.Name}.RemoveAt(");
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.AppendLine(");");
+            
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ListIndexOfNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+
+            stringBuilder.Append($"{list.Name}.IndexOf(");
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.AppendLine(");");
+            
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ListValueOfNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+
+            stringBuilder.Append($"{list.Name}[");
+            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.AppendLine("];");
+            
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(AdditionNode node)
@@ -468,7 +555,9 @@ namespace CobraCompiler {
             { typeof(bool), "bool" },
             { typeof(int), "int" },
             { typeof(string), "string" },
-
+            { typeof(List<int>), "List<int>"},
+            { typeof(List<string>), "List<string>"},
+            { typeof(List<bool>), "List<bool>"},
             { typeof(void), "void" }
         };
 

@@ -1,0 +1,7 @@
+C:\Users\thoma\OneDrive\Skrivebord\Test\CobraCompiler.exe
+C:\Users\thoma\OneDrive\Skrivebord\Test\CobraCompiler.dll
+C:\Users\thoma\OneDrive\Skrivebord\Test\CobraCompiler.runtimeconfig.json
+C:\Users\thoma\OneDrive\Skrivebord\Test\CobraCompiler.pdb
+C:\Users\thoma\OneDrive\Skrivebord\Test\Antlr4.Runtime.dll
+C:\Users\thoma\OneDrive\Skrivebord\Test\System.CodeDom.dll
+C:\Users\thoma\OneDrive\Skrivebord\Test\CobraCompiler.deps.json

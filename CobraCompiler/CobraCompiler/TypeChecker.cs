@@ -628,7 +628,7 @@ namespace CobraCompiler
 
             if (type != TypeEnum.number)
             {
-                var error = $"Error: The repeat condition is type '{type}', but have to be a number.";
+                var error = $"Error: The repeat condition is type '{type}', but has to be a number.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -646,7 +646,7 @@ namespace CobraCompiler
 
             if (type != TypeEnum.boolean)
             {
-                var error = $"Error: The while expression is type '{type}', but have to be a boolean.";
+                var error = $"Error: The while expression is type '{type}', but has to be a boolean.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -672,7 +672,7 @@ namespace CobraCompiler
                 typeErrorhandler.TypeErrorMessages.Add(error);
             } else if (getListType(list.Type) != localVarType)
             {
-                var error = $"Error: For each local variable type error. Expects type '{getListType(list.Type)}'.";
+                var error = $"Error: Local variable type error in for each. Expecting type '{getListType(list.Type)}'.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -721,7 +721,7 @@ namespace CobraCompiler
                 typeErrorhandler.TypeErrorMessages.Add(error);
             } else if (getListType(list.Type) != type)
             {
-                var error = $"Error: '{list.Name}:Add()' expects type '{getListType(list.Type)}'.";
+                var error = $"Error: '{list.Name}:Add()' expecting type '{getListType(list.Type)}'.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -745,7 +745,7 @@ namespace CobraCompiler
                 typeErrorhandler.TypeErrorMessages.Add(error);
             } else if (type != TypeEnum.number)
             {
-                var error = $"Error: '{list.Name}:DeleteOf()' expects a number.";
+                var error = $"Error: '{list.Name}:DeleteOf()' expecting a number.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -769,7 +769,7 @@ namespace CobraCompiler
                 typeErrorhandler.TypeErrorMessages.Add(error);
             } else if (type != TypeEnum.number)
             {
-                var error = $"Error: '{list.Name}:ValueOf()' expects a number.";
+                var error = $"Error: '{list.Name}:ValueOf()' expecting a number.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -793,7 +793,7 @@ namespace CobraCompiler
                 typeErrorhandler.TypeErrorMessages.Add(error);
             } else if (getListType(list.Type) != type)
             {
-                var error = $"Error: '{list.Name}:IndexOf()' expects type '{getListType(list.Type)}'.";
+                var error = $"Error: '{list.Name}:IndexOf()' expecting type '{getListType(list.Type)}'.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 

@@ -4,6 +4,8 @@ using System.Reflection.Emit;
 using System.Text;
 using Antlr4.Runtime.Tree.Xpath;
 using static ASTNodes;
+using Microsoft.CSharp;
+using System.CodeDom.Compiler;
 
 namespace CobraCompiler
 {
@@ -66,7 +68,19 @@ namespace CobraCompiler
             var sb = new StringBuilder();
             sb = new Emitter(sb, st).Visit((ProgramNode)ast);
 
-            File.WriteAllText("../GeneratedProgram.txt", sb.ToString());
+            string path = Directory.GetCurrentDirectory();
+            path += "\\GeneratedProgram.cs";
+            
+
+            File.WriteAllText("GeneratedProgram.cs", sb.ToString());
+
+            //[STAThread]
+            CompileMethods.CompileExecutable(path); //"GeneratedProgram.cs"
+            //var csc = new CSharpCodeProvider(new Dictionary<string, string>() { { "CompilerVersion", "v3.5" } });
+            //var parameters = new CompilerParameters(new[] { "mscorlib.dll", "System.Core.dll" }, "foo.exe", true);
+            //parameters.GenerateExecutable = true;
+            //CompilerResults results = csc.CompileAssemblyFromSource(parameters,sb.ToString());
+            //results.Errors.Cast<CompilerError>().ToList().ForEach(error => Console.WriteLine(error.ErrorText));
 
             #endregion
 
