@@ -55,7 +55,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         //  The BlockNodes commands is assigned to the programNodes commands
         var cmds = context.cmds();
 
-        var outputNode = new ProgramNode();
+        var outputNode = new ProgramNode() { Line = cmds.start.Line };
 
             prettyPrint("ProgramNode", context);
             incrIndent();
@@ -80,7 +80,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var cmd = context.cmd();
         var cmds = context.cmds();
 
-        var outputNode = new BlockNode();
+        var outputNode = new BlockNode() { Line = cmd.start.Line };
         outputNode.Commands = new List<CommandNode>();
 
         var command = (CommandNode)Visit(cmd);
@@ -130,7 +130,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var ass = context.ass();
         var SEMI = context.SEMI();
 
-        var outputNode = new DeclarationNode();
+        var outputNode = new DeclarationNode() { Line = ass.start.Line };
 
         prettyPrint("DeclarationNode", context);
         incrIndent();
@@ -140,7 +140,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             (ass != null) &&
             (SEMI != null))
         {
-            var identifier = new IdentifierNode();
+            var identifier = new IdentifierNode() { Line = ID.Symbol.Line };
             prettyPrint("IdentifierNode", context);
             incrIndent();
 
@@ -194,11 +194,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             (expr != null && expr.ChildCount > 0) &&
             SEMI != null)
         {
-            var assignNode = new AssignNode();
+            var assignNode = new AssignNode() { Line = expr.start.Line };
             prettyPrint("AssignNode", context);
             incrIndent();
 
-            var identifier = new IdentifierNode();
+            var identifier = new IdentifierNode() { Line = expr.start.Line };
             prettyPrint("IdentifierNode", context);
             identifier.Name = ID.ToString();
 
@@ -274,7 +274,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (OR != null)
         {
             prettyPrint("OrNode", context);
-            outputNode = new OrNode();
+            outputNode = new OrNode() { Line = OR.Symbol.Line };
         }
         else
             throw new Exception();
@@ -346,7 +346,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (AND != null)
         {
             prettyPrint("AndNode", context);
-            outputNode = new AndNode();
+            outputNode = new AndNode() { Line = AND.Symbol.Line };
         }
         else
             throw new Exception();
@@ -420,12 +420,12 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (EQUAL != null)
         {
             prettyPrint("EqualNode", context);
-            outputNode = new EqualNode();
+            outputNode = new EqualNode() { Line = EQUAL.Symbol.Line };
         }
         else if (NOT != null)
         {
             prettyPrint("NotEqualNode", context);
-            outputNode = new NotEqualNode();
+            outputNode = new NotEqualNode() { Line = NOT.Symbol.Line };
         }
         else
             throw new Exception();
@@ -499,22 +499,22 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (GREAT != null)
         {
             prettyPrint("GreaterNode", context);
-            outputNode = new GreaterNode();
+            outputNode = new GreaterNode() { Line = GREAT.Symbol.Line };
         }
         else if (GREATEQL != null)
         {
             prettyPrint("GreaterEqualNode", context);
-            outputNode = new GreaterEqualNode();
+            outputNode = new GreaterEqualNode() { Line = GREATEQL.Symbol.Line };
         }
         else if (LESS != null)
         {
             prettyPrint("LessNode", context);
-            outputNode = new LessNode();
+            outputNode = new LessNode() { Line = LESS.Symbol.Line };
         }
         else if (LESSEQL != null)
         {
             prettyPrint("LessEqualNode", context);
-            outputNode = new LessEqualNode();
+            outputNode = new LessEqualNode() { Line = LESSEQL.Symbol.Line };
         }
         else
             throw new Exception();
@@ -586,12 +586,12 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (ADD != null)
         {
             prettyPrint("AdditionNode", context);
-            outputNode = new AdditionNode();
+            outputNode = new AdditionNode() { Line = ADD.Symbol.Line };
         }
         else if (SUB != null)
         {
             prettyPrint("SubtractionNode", context);
-            outputNode = new SubtractionNode();
+            outputNode = new SubtractionNode() { Line = SUB.Symbol.Line };
         }
         else
             throw new Exception();
@@ -663,12 +663,12 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (MUL != null)
         {
             prettyPrint("MultiplicationNode", context);
-            outputNode = new MultiplicationNode();
+            outputNode = new MultiplicationNode() { Line = MUL.Symbol.Line };
         }
         else if (DIV != null)
         {
             prettyPrint("DivisionNode", context);
-            outputNode = new DivisionNode();
+            outputNode = new DivisionNode() { Line = DIV.Symbol.Line };
         }
         else
             throw new Exception();
@@ -718,7 +718,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (INT != null)
         {
             prettyPrint("NumberNode", context);
-            var numberNode = new NumberNode();
+            var numberNode = new NumberNode() { Line = INT.Symbol.Line };
             numberNode.Value = int.Parse(INT.ToString());
             return numberNode;
         }
@@ -726,7 +726,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (ID != null)
         {
             prettyPrint("IdentifierNode", context);
-            var identifierNode = new IdentifierNode();
+            var identifierNode = new IdentifierNode() { Line = ID.Symbol.Line };
             identifierNode.Name = ID.ToString();
             return identifierNode;
         }
@@ -748,7 +748,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (STR != null)
         {
             prettyPrint("TextNode", context);
-            var textNode = new TextNode();
+            var textNode = new TextNode() { Line = STR.Symbol.Line };
             textNode.Value = STR.ToString();
             return textNode;
         }
@@ -771,10 +771,12 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (TRUE != null)
         {
             outputNode.Value = true;
+            outputNode.Line = TRUE.Symbol.Line;
         }
         else if (FALSE != null)
         {
             outputNode.Value = false;
+            outputNode.Line = FALSE.Symbol.Line;
         }
         else
             throw new Exception();
@@ -792,7 +794,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var cmds = context.cmds();
         var RCURLY = context.RCURLY();
 
-        var outputNode = new BlockNode();
+        var outputNode = new BlockNode() { Line = LCURLY.Symbol.Line };
 
         if ((LCURLY != null) &&
             (cmds != null) &&
@@ -848,7 +850,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var block = context.block();
         var elseIfStmt = context.elseIfStmt();
 
-        var outputNode = new IfNode();
+        var outputNode = new IfNode() { Line = IF.Symbol.Line };
 
         if ((IF != null) &&
             (LPAREN != null) &&
@@ -902,6 +904,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             prettyPrint("ElseNode", context);
             incrIndent();
 
+            elseNode.Line = @else.start.Line;
             elseNode = (ElseNode)Visit(@else);
             outputNode.ElseIfs.Add(elseNode);
             decrIndent();
@@ -915,6 +918,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             prettyPrint("ElseIfNode", context);
             incrIndent();
 
+            elseIfNode.Line = ELSE.Symbol.Line;
             elseIfNode.Condition = (ExpressionNode)Visit(expr);
             elseIfNode.Block = (BlockNode)Visit(block);
             outputNode.ElseIfs.Add(elseIfNode);
@@ -944,6 +948,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if ((ELSE != null) &&
             (block != null))
         {
+            outputNode.Line = ELSE.Symbol.Line;
             outputNode.Block = (BlockNode)Visit(block);
         }
         else
@@ -1020,6 +1025,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             (TIMES != null) &&
             (block != null))
         {
+            outputNode.Line = LPAREN.Symbol.Line;
             outputNode.Block = (BlockNode)Visit(block);
             outputNode.Expression = (ExpressionNode)Visit(expr); 
         }
@@ -1054,6 +1060,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             (RPAREN != null) &&
             (block != null))
         {
+            outputNode.Line = LPAREN.Symbol.Line;
             outputNode.Condition = (ExpressionNode)Visit(expr);
             outputNode.Block = (BlockNode)Visit(block);
         }
@@ -1101,16 +1108,16 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             (block != null))
         {
             prettyPrint("DeclarationNode", context);
-            var localVar = new DeclarationNode();
+            var localVar = new DeclarationNode() { Line = type.start.Line };
             var typeNode = (TypeNode)Visit(type);
-            var localVarIdentifier = new IdentifierNode();
+            var localVarIdentifier = new IdentifierNode() { Line = ID.Symbol.Line };
             localVarIdentifier.TypeNode = typeNode;
             localVarIdentifier.Name = ID.ToString();
             localVar.Identifier = localVarIdentifier;
 
             prettyPrint("IdentifierNode", context);
-            var identifierNode = new IdentifierNode();
-            var listNode = new ListNode(typeNode.Type);
+            var identifierNode = new IdentifierNode() { Line = ID2.Symbol.Line };
+            var listNode = new ListNode(typeNode.Type) { Line = ID2.Symbol.Line };
             identifierNode.TypeNode = listNode;
             identifierNode.Name = ID2.ToString();
 
@@ -1144,21 +1151,21 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (BOOl != null)
         {
             prettyPrint("BooleanNode",context);
-            var outputNode = new BooleanNode();
+            var outputNode = new BooleanNode() { Line = BOOl.Symbol.Line };
             decrIndent();
             return outputNode;
         }
         else if (TEXT != null)
         {
             prettyPrint("TextNode", context);
-            var outputNode = new TextNode();
+            var outputNode = new TextNode() { Line = TEXT.Symbol.Line };
             decrIndent();
             return outputNode;
         }
         else if (NUM != null)
         {
             prettyPrint("NumberNode", context);
-            var outputNode = new NumberNode();
+            var outputNode = new NumberNode() { Line = NUM.Symbol.Line };
             decrIndent();
             return outputNode;
         }
@@ -1170,7 +1177,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             prettyPrint("ListNode", context);
             incrIndent();
             var listType = (TypeNode)Visit(type);
-            var outputNode = new ListNode(listType.Type);
+            var outputNode = new ListNode(listType.Type) { Line = LIST.Symbol.Line };
             decrIndent();
             return outputNode;
 
@@ -1196,9 +1203,9 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
         if (ID != null && COLON != null && listOpr != null)
         {
-            var identifierNode = new IdentifierNode();
+            var identifierNode = new IdentifierNode() { Line = ID.Symbol.Line };
             identifierNode.Name = ID.ToString();
-            identifierNode.TypeNode = new ListNode(TypeEnum.list_object);
+            identifierNode.TypeNode = new ListNode(TypeEnum.list_object) { Line = ID.Symbol.Line };
 
             outputNode = (ListOperationNode)Visit(listOpr);
             outputNode.Identifier = identifierNode;
@@ -1236,7 +1243,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
                 prettyPrint("ListAddNode", context);
                 incrIndent();
 
-                outputNode = new ListAddNode();
+                outputNode = new ListAddNode() { Line = LISTADD.Symbol.Line };
                 outputNode.Expression = (ExpressionNode)Visit(expr);
             }
             else if (LISTDEL != null)
@@ -1244,7 +1251,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
                 prettyPrint("ListDeleteNode", context);
                 incrIndent();
 
-                outputNode = new ListDeleteNode();
+                outputNode = new ListDeleteNode() { Line = LISTDEL.Symbol.Line };
                 outputNode.Expression = (ExpressionNode)Visit(expr);
             }
             else if (LISTIDXOF != null)
@@ -1252,7 +1259,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
                 prettyPrint("ListIndexOfNode", context);
                 incrIndent();
 
-                outputNode = new ListIndexOfNode();
+                outputNode = new ListIndexOfNode() { Line = LISTIDXOF.Symbol.Line };
                 outputNode.Expression = (ExpressionNode)Visit(expr);
             }
             else if (LISTVALOF != null)
@@ -1260,7 +1267,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
                 prettyPrint("ListValueOfNode", context);
                 incrIndent();
 
-                outputNode = new ListValueOfNode();
+                outputNode = new ListValueOfNode() { Line = LISTVALOF.Symbol.Line };
                 outputNode.Expression = (ExpressionNode)Visit(expr);
             }
             else

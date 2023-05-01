@@ -90,7 +90,7 @@ namespace CobraCompiler
 
                 if (symbol.Type != exprNode)
                 {
-                    var error = $"Error: Initialization of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}.";
+                    var error = $"Error: Initialization of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode} at line {node.Line}.";
                     typeErrorhandler.TypeErrorMessages.Add(error);
                 }
             }
@@ -139,7 +139,7 @@ namespace CobraCompiler
 
                 if (symbol.Type != exprNode)
                 {
-                    var error = $"Error: Assignment of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}.";
+                    var error = $"Error: Assignment of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode} at line {node.Line}.";
                     typeErrorhandler.TypeErrorMessages.Add(error);
                 }
             } 
@@ -243,17 +243,17 @@ namespace CobraCompiler
             
             if (leftType != rightType)
             {
-                var error = $"Error: Addition of '{leftType}' and '{rightType}' does not match.";
+                var error = $"Error: Addition of '{leftType}' and '{rightType}' does not match at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             else if (leftType == TypeEnum.boolean) 
             {
-                var error = $"Error: Addition of type boolean is not allowed.";
+                var error = $"Error: Addition of type boolean is not allowed at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             else if (isList(leftType))
             {
-                var error = $"Error: Addition of type list is not allowed.";
+                var error = $"Error: Addition of type list is not allowed at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -271,17 +271,17 @@ namespace CobraCompiler
 
             if (leftType != rightType)            
             {
-                var error = $"Error: Subtraction of '{leftType}' and '{rightType}' does not match.";
+                var error = $"Error: Subtraction of '{leftType}' and '{rightType}' does not match at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             else if (leftType == TypeEnum.boolean)
             {
-                var error = $"Error: Subtraction of type boolean is not allowed.";
+                var error = $"Error: Subtraction of type boolean is not allowed at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             else if (isList(leftType))
             {
-                var error = $"Error: Subtraction of type list is not allowed.";
+                var error = $"Error: Subtraction of type list is not allowed at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             
@@ -299,17 +299,17 @@ namespace CobraCompiler
 
             if (leftType != rightType)
             {
-                var error = $"Error: Multiplication of '{leftType}' and '{rightType}' does not match.";
+                var error = $"Error: Multiplication of '{leftType}' and '{rightType}' does not match at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             else if (leftType == TypeEnum.boolean)
             {
-                var error = $"Error: Multiplication of type boolean is not allowed.";
+                var error = $"Error: Multiplication of type boolean is not allowed at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             else if (isList(leftType))
             {
-                var error = $"Error: Multiplication of type list is not allowed.";
+                var error = $"Error: Multiplication of type list is not allowed at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -327,17 +327,17 @@ namespace CobraCompiler
             TypeEnum type;
             if (leftType != rightType)
             {
-                var error = $"Error: Division of '{leftType}' and '{rightType}' does not match.";
+                var error = $"Error: Division of '{leftType}' and '{rightType}' does not match at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             else if (leftType == TypeEnum.boolean)
             {
-                var error = $"Error: Division of type 'boolean' is not allowed.";
+                var error = $"Error: Division of type 'boolean' is not allowed at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             else if (isList(leftType))
             {
-                var error = $"Error: Division of type 'list' is not allowed.";
+                var error = $"Error: Division of type 'list' is not allowed at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -355,12 +355,12 @@ namespace CobraCompiler
 
             if (leftType != TypeEnum.boolean)
             {
-                var error = $"Error: Type '{leftType}' does not match type 'boolean' on the left hand side of the logic 'and' expression";
+                var error = $"Error: Type '{leftType}' does not match type 'boolean' on the left hand side of the logic 'and' expression at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             if(rightType != TypeEnum.boolean) 
             {
-                var error = $"Error: Type '{rightType}' does not match type 'boolean' on the right hand side of the logic 'and' expression";
+                var error = $"Error: Type '{rightType}' does not match type 'boolean' on the right hand side of the logic 'and' expression at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -378,12 +378,12 @@ namespace CobraCompiler
 
             if (leftType != TypeEnum.boolean)
             {
-                var error = $"Error: Type '{leftType}' does not match type 'boolean' on the left hand side of the logic 'or' expression";
+                var error = $"Error: Type '{leftType}' does not match type 'boolean' on the left hand side of the logic 'or' expression at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             if(rightType != TypeEnum.boolean) 
             {
-                var error = $"Error: Type '{rightType}' does not match type 'boolean' on the right hand side of the logic 'or' expression";
+                var error = $"Error: Type '{rightType}' does not match type 'boolean' on the right hand side of the logic 'or' expression at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -401,11 +401,11 @@ namespace CobraCompiler
 
             if (leftType != rightType)
             {
-                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic equal expression.";
+                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic equal expression at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             else if (isList(leftType)){
-                var error = $"Error: Type '{leftType}' is not allowed in boolean expressions.";
+                var error = $"Error: Type '{leftType}' is not allowed in boolean expressions at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -423,11 +423,11 @@ namespace CobraCompiler
 
             if (leftType != rightType)
             {
-                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic not equal expression.";
+                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic not equal expression at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             else if (isList(leftType)){
-                var error = $"Error: Type '{leftType}' is not allowed in boolean expressions.";
+                var error = $"Error: Type '{leftType}' is not allowed in boolean expressions at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -447,18 +447,18 @@ namespace CobraCompiler
             {
                 if (leftType != TypeEnum.number)
                 {
-                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number'.";
+                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number' at line {node.Line}.";
                     typeErrorhandler.TypeErrorMessages.Add(error);
                 }
                 if (rightType != TypeEnum.number)
                 {
-                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number'.";
+                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number' at line {node.Line}.";
                     typeErrorhandler.TypeErrorMessages.Add(error);
                 }
             }
             else if (leftType != TypeEnum.number || rightType != TypeEnum.number )
             {
-                var error = $"Error: The '>' symbol is only allowed in number expressions.";
+                var error = $"Error: The '>' symbol is only allowed in number expressions at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             
@@ -478,18 +478,18 @@ namespace CobraCompiler
             {
                 if (leftType != TypeEnum.number)
                 {
-                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number'.";
+                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number' at line {node.Line}.";
                     typeErrorhandler.TypeErrorMessages.Add(error);
                 }
                 if (rightType != TypeEnum.number)
                 {
-                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number'.";
+                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number' at line {node.Line}.";
                     typeErrorhandler.TypeErrorMessages.Add(error);
                 }
             }
             else if (leftType != TypeEnum.number || rightType != TypeEnum.number )
             {
-                var error = $"Error: The '<' symbol is only allowed in number expressions.";
+                var error = $"Error: The '<' symbol is only allowed in number expressions at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
             return TypeEnum.boolean;
@@ -508,18 +508,18 @@ namespace CobraCompiler
             {
                 if (leftType != TypeEnum.number)
                 {
-                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number'";
+                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number' at line {node.Line}.";
                     typeErrorhandler.TypeErrorMessages.Add(error);
                 }
                 if (rightType != TypeEnum.number)
                 {
-                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number'";
+                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number' at line {node.Line}.";
                     typeErrorhandler.TypeErrorMessages.Add(error);
                 }
             }
             else if (leftType != TypeEnum.number || rightType != TypeEnum.number )
             {
-                var error = $"Error: The '>=' symbol is only allowed in number expressions";
+                var error = $"Error: The '>=' symbol is only allowed in number expressions at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -539,18 +539,18 @@ namespace CobraCompiler
             {
                 if (leftType != TypeEnum.number)
                 {
-                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number'";
+                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number' at line {node.Line}.";
                     typeErrorhandler.TypeErrorMessages.Add(error);
                 }
                 if (rightType != TypeEnum.number)
                 {
-                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number'";
+                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number' at line {node.Line}.";
                     typeErrorhandler.TypeErrorMessages.Add(error);
                 }
             }
             else if (leftType != TypeEnum.number || rightType != TypeEnum.number )
             {
-                var error = $"Error: The '<=' symbol is only allowed in number expressions";
+                var error = $"Error: The '<=' symbol is only allowed in number expressions at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -586,7 +586,7 @@ namespace CobraCompiler
 
             if (type != TypeEnum.boolean)
             {
-                var error = $"Error: Only boolean expression is allowed in the 'if' condition.";
+                var error = $"Error: Only boolean expression is allowed in the 'if' condition at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -604,7 +604,7 @@ namespace CobraCompiler
 
             if (type != TypeEnum.boolean)
             {
-                var error = $"Error: Only boolean expression is allowed in the 'else if' condition.";
+                var error = $"Error: Only boolean expression is allowed in the 'else if' condition at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -628,7 +628,7 @@ namespace CobraCompiler
 
             if (type != TypeEnum.number)
             {
-                var error = $"Error: The repeat condition is type '{type}', but have to be a number.";
+                var error = $"Error: The repeat condition is type '{type}', but have to be a number at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -646,7 +646,7 @@ namespace CobraCompiler
 
             if (type != TypeEnum.boolean)
             {
-                var error = $"Error: The while expression is type '{type}', but have to be a boolean.";
+                var error = $"Error: The while expression is type '{type}', but have to be a boolean at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -668,11 +668,11 @@ namespace CobraCompiler
 
             if (!isList(list.Type))
             {
-                var error = $"Error: '{list.Name}' is not a list.";
+                var error = $"Error: '{list.Name}' is not a list at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             } else if (getListType(list.Type) != localVarType)
             {
-                var error = $"Error: For each local variable type error. Expects type '{getListType(list.Type)}'.";
+                var error = $"Error: For each local variable type error. Expects type '{getListType(list.Type)}' at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -717,11 +717,11 @@ namespace CobraCompiler
 
             if (!isList(list.Type))
             {
-                var error = $"Error: '{list.Name}' is not a list.";
+                var error = $"Error: '{list.Name}' is not a list at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             } else if (getListType(list.Type) != type)
             {
-                var error = $"Error: '{list.Name}:Add()' expects type '{getListType(list.Type)}'.";
+                var error = $"Error: '{list.Name}:Add()' expects type '{getListType(list.Type)}' at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -741,11 +741,11 @@ namespace CobraCompiler
 
             if (!isList(list.Type))
             {
-                var error = $"Error: '{list.Name}' is not a list.";
+                var error = $"Error: '{list.Name}' is not a list at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             } else if (type != TypeEnum.number)
             {
-                var error = $"Error: '{list.Name}:DeleteOf()' expects a number.";
+                var error = $"Error: '{list.Name}:DeleteOf()' expects a number at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -765,11 +765,11 @@ namespace CobraCompiler
 
             if (!isList(list.Type))
             {
-                var error = $"Error: '{list.Name}' is not a list.";
+                var error = $"Error: '{list.Name}' is not a list at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             } else if (type != TypeEnum.number)
             {
-                var error = $"Error: '{list.Name}:ValueOf()' expects a number.";
+                var error = $"Error: '{list.Name}:ValueOf()' expects a number at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 
@@ -789,11 +789,11 @@ namespace CobraCompiler
 
             if (!isList(list.Type))
             {
-                var error = $"Error: '{list.Name}' is not a list.";
+                var error = $"Error: '{list.Name}' is not a list at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             } else if (getListType(list.Type) != type)
             {
-                var error = $"Error: '{list.Name}:IndexOf()' expects type '{getListType(list.Type)}'.";
+                var error = $"Error: '{list.Name}:IndexOf()' expects type '{getListType(list.Type)}' at line {node.Line}.";
                 typeErrorhandler.TypeErrorMessages.Add(error);
             }
 

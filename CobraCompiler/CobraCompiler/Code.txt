@@ -1,11 +1,14 @@
-number hej = 2;
-text ti = "ti";
-boolean y = true;
-boolean p = false;
-list (number) k;
+number x;
+boolean y;
+text z = "hej";
+list(number) l;
 
-k: Add(1);
-k: Add(2);
-k: Add(3); 
-k:IndexOf(1);
+x = 2;
+if (x is 2)
+{
+}
+
+repeat for each(number l1 in l)
+{
+}
 

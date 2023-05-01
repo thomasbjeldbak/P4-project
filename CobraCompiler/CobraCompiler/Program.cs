@@ -51,6 +51,7 @@ namespace CobraCompiler
                 {
                     Console.WriteLine(errorMessage);
                 }
+                Environment.Exit(1);
             }
             new TypeChecker(st, errorHandler).Visit((ProgramNode)ast);
             if (errorHandler.TypeErrorMessages.Count > 0)
@@ -60,6 +61,7 @@ namespace CobraCompiler
                 {
                     Console.WriteLine(errorMessage);
                 }
+                Environment.Exit(1);
             }
 
             #region CodeGeneration
