@@ -110,6 +110,13 @@ namespace CobraCompiler
         //scope at the top of the stack
         private void Insert(string name, TypeEnum type)
         {
+            if (_stackScopes.Peek().Symbols.ContainsKey(name))
+            {
+                var error = $"Error: The variable '{name}' is defined twice within the same scope";
+                symbolErrorhandler.SymbolErrorMessages.Add(error);
+                return;
+            }
+
             _stackScopes.Peek().Symbols.Add(name, new Symbol 
             { 
                 Name = name, Type = type,
