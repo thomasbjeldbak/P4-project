@@ -90,8 +90,7 @@ namespace CobraCompiler
 
                 if (symbol.Type != exprNode)
                 {
-                    var error = $"Error: Initialization of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode} at line {node.Line}.";
-                    typeErrorhandler.TypeErrorMessages.Add(error);
+                    TypeError(node, $"Initialization of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}");
                 }
             }
             return symbol.Type;
@@ -139,8 +138,7 @@ namespace CobraCompiler
 
                 if (symbol.Type != exprNode)
                 {
-                    var error = $"Error: Assignment of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode} at line {node.Line}.";
-                    typeErrorhandler.TypeErrorMessages.Add(error);
+                    TypeError(node, $"Assignment of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}");
                 }
             } 
 
@@ -586,8 +584,7 @@ namespace CobraCompiler
 
             if (type != TypeEnum.boolean)
             {
-                var error = $"Error: Only boolean expression is allowed in the 'if' condition at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Only boolean expression is allowed in an 'if' condition");
             }
 
             return null;
@@ -604,8 +601,7 @@ namespace CobraCompiler
 
             if (type != TypeEnum.boolean)
             {
-                var error = $"Error: Only boolean expression is allowed in the 'else if' condition at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Only boolean expression is allowed in an 'else if' condition");
             }
 
             return null;
@@ -628,8 +624,7 @@ namespace CobraCompiler
 
             if (type != TypeEnum.number)
             {
-                var error = $"Error: The repeat condition is type '{type}', but has to be a number at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, "The repeat condition is type '{type}', but has to be a number");
             }
 
             return null;
@@ -646,8 +641,7 @@ namespace CobraCompiler
 
             if (type != TypeEnum.boolean)
             {
-                var error = $"Error: The while expression is type '{type}', but has to be a boolean at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"The while expression is type '{type}', but has to be a boolean");
             }
 
             return null;
@@ -668,12 +662,11 @@ namespace CobraCompiler
 
             if (!isList(list.Type))
             {
-                var error = $"Error: '{list.Name}' is not a list at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
-            } else if (getListType(list.Type) != localVarType)
+                TypeError(node, $"'{list.Name}' is not a list");
+            } 
+            else if (getListType(list.Type) != localVarType)
             {
-                var error = $"Error: For each local variable type error. Expects type '{getListType(list.Type)}' at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"For each local variable type error. Expects type '{getListType(list.Type)}'");
             }
 
             return null;
@@ -717,12 +710,11 @@ namespace CobraCompiler
 
             if (!isList(list.Type))
             {
-                var error = $"Error: '{list.Name}' is not a list at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
-            } else if (getListType(list.Type) != type)
+                TypeError(node, $"'{list.Name}' is not a list");
+            } 
+            else if (getListType(list.Type) != type)
             {
-                var error = $"Error: '{list.Name}:Add()' expects type '{getListType(list.Type)}' at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"'{list.Name}:Add()' expects type '{getListType(list.Type)}'");
             }
 
             return null;
@@ -741,12 +733,11 @@ namespace CobraCompiler
 
             if (!isList(list.Type))
             {
-                var error = $"Error: '{list.Name}' is not a list at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
-            } else if (type != TypeEnum.number)
+                TypeError(node, $"'{list.Name}' is not a list");
+            } 
+            else if (type != TypeEnum.number)
             {
-                var error = $"Error: '{list.Name}:DeleteOf()' expects a number at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"'{list.Name}:DeleteOf()' expects a number");
             }
 
             return null;
@@ -765,12 +756,12 @@ namespace CobraCompiler
 
             if (!isList(list.Type))
             {
-                var error = $"Error: '{list.Name}' is not a list at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
-            } else if (type != TypeEnum.number)
+                TypeError(node, $"'{list.Name}' is not a list");
+            } 
+            else if (type != TypeEnum.number)
             {
-                var error = $"Error: '{list.Name}:ValueOf()' expects a number at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"'{list.Name}:ValueOf()' expects a number");
+
             }
 
             return null;
@@ -789,17 +780,20 @@ namespace CobraCompiler
 
             if (!isList(list.Type))
             {
-                var error = $"Error: '{list.Name}' is not a list at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
-            } else if (getListType(list.Type) != type)
+                TypeError(node, $"'{list.Name}' is not a list");
+            } 
+            else if (getListType(list.Type) != type)
             {
-                var error = $"Error: '{list.Name}:IndexOf()' expects type '{getListType(list.Type)}' at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"'{list.Name}:IndexOf()' expects type '{getListType(list.Type)}'.");
             }
 
             return null;
         }
 
+        public void TypeError(ASTNode node, string error)
+        {
+            typeErrorhandler.TypeErrorMessages.Add($"Error line {node.Line}: {error}");
+        }
 
         #region List helper functions
 

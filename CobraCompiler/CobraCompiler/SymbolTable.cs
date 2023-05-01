@@ -77,8 +77,7 @@ namespace CobraCompiler
         {
             if (_stackScopes.Peek().Symbols.ContainsKey(node.Name))
             {
-                var error = $"Error: The variable '{node.Name}' is defined twice within the same scope at line {node.Line}";
-                symbolErrorhandler.SymbolErrorMessages.Add(error);
+                SymbolError(node, $"The variable '{node.Name}' is defined twice within the same scope.");
                 return;
             }
 
@@ -463,9 +462,13 @@ namespace CobraCompiler
             var sym = Lookup(node.Name, _currentBlock);
             if (sym == null)
             {
-                var error = $"Error: {node.Name} is not found at line {node.Line}. Declare your variable before use.";
-                symbolErrorhandler.SymbolErrorMessages.Add(error);
+                SymbolError(node, $"{node.Name} is not found. Declare your variable before use.");
             }
+        }
+
+        public void SymbolError(ASTNode node, string error)
+        {
+            symbolErrorhandler.SymbolErrorMessages.Add($"Error line {node.Line}: {error}");
         }
     }
 }
