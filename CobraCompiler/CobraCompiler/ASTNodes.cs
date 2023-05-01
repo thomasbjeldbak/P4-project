@@ -20,26 +20,18 @@ public class ASTNodes
     //All abstract nodes cannot directly be a node in the generated AST tree
     public abstract class ASTNode //A general class for all AST Nodes
     {
-        //A function for retrieving the properties (children) of the node
-        //Is used for the symbol table
-        public abstract List<ASTNode> GetChildren();
+        public int Line { get; set; }
     }
 
     //ProgramNode (the start node)
     internal class ProgramNode : BlockNode
     {
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.AddRange(Commands);
-            return children;
-        }
     }
 
     //abstract "Command" is either a declaration, assignment or statement
     public abstract class CommandNode : ASTNode 
     {
-    };
+    }
 
     //Declaration declares a variable using an expression
     //Type Identifier = Expression;
@@ -47,14 +39,6 @@ public class ASTNodes
     {
         public IdentifierNode Identifier { get; set; }
         public ExpressionNode Expression { get; set; }
-
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(Identifier);
-            children.Add(Expression);
-            return children;
-        }
     }
 
     //Statement can be many things: functions, control structures etc,
@@ -68,13 +52,6 @@ public class ASTNodes
     {
         public IdentifierNode Identifier { get; set; }
         public ExpressionNode Expression { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(Identifier);
-            children.Add(Expression);
-            return children;
-        }
     }
 
     //Identifier has a type and a name
@@ -84,11 +61,6 @@ public class ASTNodes
     {
         public TypeNode TypeNode { get; set; }
         public string Name { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            return children;
-        }
     }
 
     //Any expression can have a value (except infixExpressions shouldn't have)
@@ -96,11 +68,6 @@ public class ASTNodes
     internal abstract class ExpressionNode : ASTNode
     {
         public dynamic Value { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            return children;
-        }
     }
 
     //InfixExpression has a left and right side
@@ -109,13 +76,6 @@ public class ASTNodes
     {
         public ExpressionNode Left { get; set; }
         public ExpressionNode Right { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(Left);
-            children.Add(Right);
-            return children;
-        }
     }
 
     //Types (with values)
@@ -134,11 +94,6 @@ public class ASTNodes
             Type = TypeEnum.number;
         }
         public new int Value { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            return children;
-        }
     }
 
     internal class TextNode : TypeNode
@@ -148,11 +103,6 @@ public class ASTNodes
             Type = TypeEnum.text;
         }
         public new string Value { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            return children;
-        }
     }
      
     internal class BooleanNode : TypeNode
@@ -162,11 +112,6 @@ public class ASTNodes
             Type = TypeEnum.boolean;
         }
         public new bool Value { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            return children;
-        }
     }
 
     internal class ListNode : TypeNode
@@ -181,12 +126,6 @@ public class ASTNodes
                 Type = TypeEnum.list_boolean; 
         }
         public new TypeNode[] Value { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.AddRange(Value);
-            return children;
-        }
     }
 
     #endregion
@@ -247,26 +186,12 @@ public class ASTNodes
     {
         public ExpressionNode Condition { get; set; }
         public List<ElseNode> ElseIfs { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(Condition);
-            children.Add(Block);
-            children.AddRange(ElseIfs);
-            return children;
-        }
     }
 
     //Else doesn't need a Condition
     //Else {Block}
     internal class ElseNode : ControlStructureNode 
     {
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(Block);
-            return children;
-        }
     }
 
     //ElseIf has a condition and is an ElseNode
@@ -274,13 +199,6 @@ public class ASTNodes
     internal class ElseIfNode : ElseNode
     {
         public ExpressionNode Condition { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(Condition);
-            children.Add(Block);
-            return children;
-        }
     }
     
     //"For loop" containing the number to count up to and a block
@@ -288,13 +206,6 @@ public class ASTNodes
     internal class RepeatNode : ControlStructureNode
     {
         public ExpressionNode Expression { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(Expression);
-            children.Add(Block);
-            return children;
-        }
     }
     
     //"While loop" containing a Condition and a block
@@ -302,13 +213,6 @@ public class ASTNodes
     internal class WhileNode : ControlStructureNode
     {
         public ExpressionNode Condition { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(Condition);
-            children.Add(Block);
-            return children;
-        }
     }
 
     //"Foreach loop" containing
@@ -317,14 +221,6 @@ public class ASTNodes
     {
         public IdentifierNode List { get; set; }
         public DeclarationNode LocalVariable { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(List);
-            children.Add(LocalVariable);
-            children.Add(Block);
-            return children;
-        }
     }
 
     #endregion
@@ -335,13 +231,6 @@ public class ASTNodes
     {
         public FunctionDeclarationNode Function { get; set; }
         public IdentifierNode[] Arguments { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(Function);
-            children.AddRange(Arguments);
-            return children;
-        }
     }
 
     //"Function declaration" has a type to return, parameters and a block
@@ -353,14 +242,6 @@ public class ASTNodes
         public IdentifierNode[] Parameters { get; set; }
         public BlockNode Block { get; set; }
 
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(ReturnType);
-            children.AddRange(Parameters);
-            children.Add(Block);
-            return children;
-        }
     }
 
     //"block" contains commands
@@ -368,15 +249,6 @@ public class ASTNodes
     public class BlockNode : ASTNode
     {
         public List<CommandNode> Commands { get; set; }
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            
-            if (Commands != null)
-                children.AddRange(Commands);
-            
-            return children;
-        }
     }
 
     //Abstract class for all listOperations
@@ -385,14 +257,6 @@ public class ASTNodes
     {
         public IdentifierNode Identifier { get; set; }
         public ExpressionNode Expression { get; set; }
-
-        public override List<ASTNode> GetChildren()
-        {
-            var children = new List<ASTNode>();
-            children.Add(Identifier);
-            children.Add(Expression);
-            return children;
-        }
     }
 
     #region List Operations

@@ -1,9 +1,5 @@
 using System;
 static void Main(string[] args)
 {
-int hej = 5;
-if(true)
-{
-int hej = 7;
-}
+int x;
 }
