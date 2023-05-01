@@ -1,1 +1,13 @@
-number test = 10;
+number x;
+boolean y;
+text z = "hej";
+list(number) l;
+
+x = 2;
+if (x is 2)
+{
+}
+
+repeat for each(number l1 in l)
+{
+}
