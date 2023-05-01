@@ -1,6 +1,9 @@
 using System;
 static void Main(string[] args)
 {
-List<int> superman = new();
-superman[4];
+int hej = 5;
+if(true)
+{
+int hej = 7;
+}
 }

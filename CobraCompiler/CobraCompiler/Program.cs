@@ -13,13 +13,12 @@ namespace CobraCompiler
     {
         static void Main(string[] args)
         {
-            var exprText = File.ReadAllText("../../../code.txt");
+            var exprText = File.ReadAllText("../../../Code.txt");
 
             if (string.IsNullOrWhiteSpace(exprText))
             {
                 Console.Write("> ");
                 exprText = Console.ReadLine();
-
             }
 
             if (string.IsNullOrWhiteSpace(exprText))
