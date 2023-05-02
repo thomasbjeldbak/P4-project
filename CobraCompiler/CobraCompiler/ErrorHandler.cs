@@ -20,7 +20,7 @@ public class ErrorHandler : BaseErrorListener, IAntlrErrorListener<IToken>
         string message, RecognitionException e)
     {
         var error =
-            $"Error: {message} at line {line}, position {charPositionInLine}. Caused by {offendingSymbol.Text}.";
+            $"Error line {line}: {message} Caused by {offendingSymbol.Text}.";
         _syntaxSyntaxErrorMessages.Add(error);
     }
 }
