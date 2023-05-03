@@ -1,6 +1,12 @@
 using System;
 class GeneratedProgram{static void Main(string[] args)
 {
-int test = 10;
+string hej;
+bool b = (10 < 10);
+if(b)
+{
+hej = "WAUW";
+}
+hej = "WAAAAUUUWWW";
 }
 }

@@ -8,7 +8,7 @@ using Antlr4.Runtime.Atn;
 using static ASTNodes;
 
 namespace CobraCompiler {
-    internal class Emitter: ASTVisitor<StringBuilder> {
+    internal class Emitter : ASTVisitor<StringBuilder> {
 
         private readonly StringBuilder _stringBuilder;
         private readonly SymbolTable _symbolTable;
@@ -49,6 +49,7 @@ namespace CobraCompiler {
                 }
             }
 
+            //stringBuilder.AppendLine("global::System.Console.WriteLine(hej);");
             stringBuilder.AppendLine("}");
             stringBuilder.AppendLine("}");
 
@@ -59,6 +60,12 @@ namespace CobraCompiler {
             _currentBlock = node;
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("{");
+
+            if (node.Commands == null)
+            {
+                stringBuilder.AppendLine("}");
+                return stringBuilder;
+            }
 
             foreach(var command in node.Commands)
             {
@@ -90,7 +97,7 @@ namespace CobraCompiler {
 
             stringBuilder.Append(_typeAlias[ConvertType(symbol.Type)]);
             stringBuilder.Append(' ');
-            stringBuilder.Append(node.Identifier.Name);
+            stringBuilder.Append(symbol.Name);
 
             if(node.Expression != null)
             {

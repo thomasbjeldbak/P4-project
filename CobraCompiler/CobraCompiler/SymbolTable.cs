@@ -167,7 +167,6 @@ namespace CobraCompiler
         public override ASTNode? Visit(DeclarationNode node)
         {
             Insert(node.Identifier);
-
             Visit(node.Identifier);
             Visit(node.Expression);
             return null;

@@ -1,8 +1,0 @@
-function test() {
-
-	if (hej)
-	{
-		text check = "5";
-	}
-
-}

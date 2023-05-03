@@ -57,8 +57,8 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
         var outputNode = new ProgramNode() { Line = cmds.start.Line };
 
-            prettyPrint("ProgramNode", context);
-            incrIndent();
+        prettyPrint("ProgramNode", context);
+        incrIndent();
 
         if (cmds != null)
         {

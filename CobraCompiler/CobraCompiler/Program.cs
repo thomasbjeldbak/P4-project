@@ -9,7 +9,7 @@ using System.CodeDom.Compiler;
 
 namespace CobraCompiler
 {
-    internal abstract class Program
+    internal class Program
     {
         static void Main(string[] args)
         {
@@ -33,6 +33,7 @@ namespace CobraCompiler
             parser.RemoveErrorListeners(); // remove the default ConsoleErrorListener
             parser.AddErrorListener(errorHandler); // set your ErrorHandler as the error listener'
 
+            //Get root of CST (which is program)
             var cst = parser.program();
             if (errorHandler.SyntaxErrorMessages.Count > 0)
             {
@@ -73,16 +74,8 @@ namespace CobraCompiler
             string path = Directory.GetCurrentDirectory();
             path += "\\GeneratedProgram.cs";
             
-
             File.WriteAllText("GeneratedProgram.cs", sb.ToString());
-
-            //[STAThread]
-            CompileMethods.CompileExecutable(path); //"GeneratedProgram.cs"
-            //var csc = new CSharpCodeProvider(new Dictionary<string, string>() { { "CompilerVersion", "v3.5" } });
-            //var parameters = new CompilerParameters(new[] { "mscorlib.dll", "System.Core.dll" }, "foo.exe", true);
-            //parameters.GenerateExecutable = true;
-            //CompilerResults results = csc.CompileAssemblyFromSource(parameters,sb.ToString());
-            //results.Errors.Cast<CompilerError>().ToList().ForEach(error => Console.WriteLine(error.ErrorText));
+            CompileMethods.CompileExecutable(path);
 
             #endregion
 

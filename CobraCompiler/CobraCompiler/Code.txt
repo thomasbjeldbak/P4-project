@@ -1,2 +1,3 @@
-number hej = 5;
-hej = "hej";
+if (true)
+{
+}

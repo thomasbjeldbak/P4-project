@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\ExprParser.txt by ANTLR 4.12.0
+// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\CobraCompiler\CobraCompiler\ExprParser.txt by ANTLR 4.12.0
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -21,12 +21,11 @@
 
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
-using CobraCompiler;
 using IToken = Antlr4.Runtime.IToken;
 
 /// <summary>
 /// This interface defines a complete generic visitor for a parse tree produced
-/// by <see cref="ExprParser_"/>.
+/// by <see cref="ExprParser"/>.
 /// </summary>
 /// <typeparam name="Result">The return type of the visit operation.</typeparam>
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.12.0")]
@@ -153,6 +152,12 @@ public interface IExprParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitBlock([NotNull] ExprParser.BlockContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ExprParser.commentStmt"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCommentStmt([NotNull] ExprParser.CommentStmtContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ExprParser.ctrlStrct"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -219,6 +224,12 @@ public interface IExprParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitListOpr([NotNull] ExprParser.ListOprContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ExprParser.listOprExpr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitListOprExpr([NotNull] ExprParser.ListOprExprContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ExprParser.funcCall"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -236,6 +247,12 @@ public interface IExprParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitFuncReturn([NotNull] ExprParser.FuncReturnContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ExprParser.funcReturnType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFuncReturnType([NotNull] ExprParser.FuncReturnTypeContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ExprParser.paramList"/>.
 	/// </summary>

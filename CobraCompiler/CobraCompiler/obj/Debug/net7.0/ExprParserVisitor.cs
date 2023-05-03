@@ -173,6 +173,13 @@ public interface IExprParserVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitBlock([NotNull] ExprParser.BlockContext context);
 
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ExprParser.commentStmt"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCommentStmt([NotNull] ExprParser.CommentStmtContext context);
+
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ExprParser.ctrlStrct"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -250,6 +257,13 @@ public interface IExprParserVisitor<Result> : IParseTreeVisitor<Result> {
 	Result VisitListOpr([NotNull] ExprParser.ListOprContext context);
 
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ExprParser.listOprExpr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitListOprExpr([NotNull] ExprParser.ListOprExprContext context);
+
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ExprParser.funcCall"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -269,6 +283,13 @@ public interface IExprParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitFuncReturn([NotNull] ExprParser.FuncReturnContext context);
+
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ExprParser.funcReturnType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFuncReturnType([NotNull] ExprParser.FuncReturnTypeContext context);
 
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ExprParser.paramList"/>.

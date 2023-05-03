@@ -252,6 +252,17 @@ public interface IExprParserListener : IParseTreeListener {
 	void ExitBlock([NotNull] ExprParser.BlockContext context);
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ExprParser.commentStmt"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterCommentStmt([NotNull] ExprParser.CommentStmtContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ExprParser.commentStmt"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitCommentStmt([NotNull] ExprParser.CommentStmtContext context);
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ExprParser.ctrlStrct"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -373,6 +384,17 @@ public interface IExprParserListener : IParseTreeListener {
 	void ExitListOpr([NotNull] ExprParser.ListOprContext context);
 
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ExprParser.listOprExpr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterListOprExpr([NotNull] ExprParser.ListOprExprContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ExprParser.listOprExpr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitListOprExpr([NotNull] ExprParser.ListOprExprContext context);
+
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ExprParser.funcCall"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -404,6 +426,17 @@ public interface IExprParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitFuncReturn([NotNull] ExprParser.FuncReturnContext context);
+
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ExprParser.funcReturnType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterFuncReturnType([NotNull] ExprParser.FuncReturnTypeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ExprParser.funcReturnType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitFuncReturnType([NotNull] ExprParser.FuncReturnTypeContext context);
 
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ExprParser.paramList"/>.

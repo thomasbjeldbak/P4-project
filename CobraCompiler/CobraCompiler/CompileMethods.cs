@@ -25,7 +25,6 @@ public static class CompileMethods
         {
             //Set the command to run
             command = $"xcrun --sdk macosx --find mcs";
-            path = "";
 
             startInfo.FileName = "bash";
             startInfo.Arguments = $"-c \"{command}\"";
@@ -59,8 +58,6 @@ public static class CompileMethods
 
             // Wait for the process to exit
             process.WaitForExit();
-
-            var test = process.ExitCode;
 
             // Check for errors
             if (process.ExitCode != 0)
