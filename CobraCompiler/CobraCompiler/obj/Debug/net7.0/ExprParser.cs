@@ -36,8 +36,8 @@ public partial class ExprParser : Parser {
 		TRUE=17, FALSE=18, ADD=19, SUB=20, MUL=21, DIV=22, BOOL=23, TEXT=24, NUM=25, 
 		DECIMAL=26, NOTHING=27, LIST=28, QUOTE=29, IF=30, ELSE=31, REPEAT=32, 
 		TIMES=33, WHILE=34, FOREACH=35, IN=36, FUNCTION=37, RETURN=38, CALL=39, 
-		COMMENT=40, PRINT=41, SCAN=42, LISTADD=43, LISTIDXOF=44, LISTDEL=45, LISTVALOF=46, 
-		COMM=47, STR=48, DEC=49, INT=50, ID=51, WS=52;
+		PRINT=40, SCAN=41, COMMENT=42, LISTADD=43, LISTIDXOF=44, LISTREPLACE=45, 
+		LISTVALOF=46, COMM=47, STR=48, DEC=49, INT=50, ID=51, WS=52;
 	public const int
 		RULE_program = 0, RULE_cmds = 1, RULE_cmd = 2, RULE_dcl = 3, RULE_ass = 4, 
 		RULE_stmt = 5, RULE_expr = 6, RULE_oprOr = 7, RULE_logicOr = 8, RULE_oprAnd = 9, 
@@ -65,16 +65,16 @@ public partial class ExprParser : Parser {
 		"'='", "','", "';'", "':'", "'('", "')'", "'{'", "'}'", "'true'", "'false'", 
 		"'+'", "'-'", "'*'", "'/'", "'boolean'", "'text'", "'number'", "'decimal'", 
 		"'nothing'", "'list'", "'\"'", "'if'", "'else'", "'repeat'", "'times'", 
-		"'while'", "'for each'", "'in'", "'function'", "'return'", "'call'", "'comment:'", 
-		"'output'", "'input'", "'Add'", "'IndexOf'", "'Delete'", "'ValueOf'"
+		"'while'", "'for each'", "'in'", "'function'", "'return'", "'call'", "'output'", 
+		"'input'", "'comment:'", "'Add'", "'IndexOf'", "'Replace'", "'ValueOf'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "OR", "AND", "EQUAL", "NOT", "GREAT", "LESS", "GREATEQL", "LESSEQL", 
 		"ASSIGN", "COMMA", "SEMI", "COLON", "LPAREN", "RPAREN", "LCURLY", "RCURLY", 
 		"TRUE", "FALSE", "ADD", "SUB", "MUL", "DIV", "BOOL", "TEXT", "NUM", "DECIMAL", 
 		"NOTHING", "LIST", "QUOTE", "IF", "ELSE", "REPEAT", "TIMES", "WHILE", 
-		"FOREACH", "IN", "FUNCTION", "RETURN", "CALL", "COMMENT", "PRINT", "SCAN", 
-		"LISTADD", "LISTIDXOF", "LISTDEL", "LISTVALOF", "COMM", "STR", "DEC", 
+		"FOREACH", "IN", "FUNCTION", "RETURN", "CALL", "PRINT", "SCAN", "COMMENT", 
+		"LISTADD", "LISTIDXOF", "LISTREPLACE", "LISTVALOF", "COMM", "STR", "DEC", 
 		"INT", "ID", "WS"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
@@ -454,9 +454,6 @@ public partial class ExprParser : Parser {
 			return GetRuleContext<CommentStmtContext>(0);
 		}
 		public ITerminalNode RETURN() { return GetToken(ExprParser.RETURN, 0); }
-		public TypeContext type() {
-			return GetRuleContext<TypeContext>(0);
-		}
 		public StmtContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -537,7 +534,7 @@ public partial class ExprParser : Parser {
 				EnterOuterAlt(_localctx, 7);
 				{
 				State = 126; Match(RETURN);
-				State = 127; type();
+				State = 127; expr();
 				State = 128; Match(SEMI);
 				}
 				break;
@@ -2144,7 +2141,7 @@ public partial class ExprParser : Parser {
 			return GetRuleContext<ArgListContext>(0);
 		}
 		public ITerminalNode RPAREN() { return GetToken(ExprParser.RPAREN, 0); }
-		public ITerminalNode LISTDEL() { return GetToken(ExprParser.LISTDEL, 0); }
+		public ITerminalNode LISTREPLACE() { return GetToken(ExprParser.LISTREPLACE, 0); }
 		public ListOprContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -2190,7 +2187,7 @@ public partial class ExprParser : Parser {
 				{
 				State = 301; Match(ID);
 				State = 302; Match(COLON);
-				State = 303; Match(LISTDEL);
+				State = 303; Match(LISTREPLACE);
 				State = 304; Match(LPAREN);
 				State = 305; argList();
 				State = 306; Match(RPAREN);
@@ -3054,9 +3051,9 @@ public partial class ExprParser : Parser {
 		"t\a\r\x2\x2t\x85\x3\x2\x2\x2u\x85\x5,\x17\x2vw\x5> \x2wx\a\r\x2\x2x\x85"+
 		"\x3\x2\x2\x2y\x85\x5\x46$\x2z{\x5\x44#\x2{|\a\r\x2\x2|\x85\x3\x2\x2\x2"+
 		"}~\x5*\x16\x2~\x7F\a\r\x2\x2\x7F\x85\x3\x2\x2\x2\x80\x81\a(\x2\x2\x81"+
-		"\x82\x5X-\x2\x82\x83\a\r\x2\x2\x83\x85\x3\x2\x2\x2\x84p\x3\x2\x2\x2\x84"+
-		"u\x3\x2\x2\x2\x84v\x3\x2\x2\x2\x84y\x3\x2\x2\x2\x84z\x3\x2\x2\x2\x84}"+
-		"\x3\x2\x2\x2\x84\x80\x3\x2\x2\x2\x85\r\x3\x2\x2\x2\x86\x87\x5\x12\n\x2"+
+		"\x82\x5\xE\b\x2\x82\x83\a\r\x2\x2\x83\x85\x3\x2\x2\x2\x84p\x3\x2\x2\x2"+
+		"\x84u\x3\x2\x2\x2\x84v\x3\x2\x2\x2\x84y\x3\x2\x2\x2\x84z\x3\x2\x2\x2\x84"+
+		"}\x3\x2\x2\x2\x84\x80\x3\x2\x2\x2\x85\r\x3\x2\x2\x2\x86\x87\x5\x12\n\x2"+
 		"\x87\x88\x5\x10\t\x2\x88\xF\x3\x2\x2\x2\x89\x8A\a\x3\x2\x2\x8A\x8B\x5"+
 		"\x12\n\x2\x8B\x8C\x5\x10\t\x2\x8C\x8F\x3\x2\x2\x2\x8D\x8F\x3\x2\x2\x2"+
 		"\x8E\x89\x3\x2\x2\x2\x8E\x8D\x3\x2\x2\x2\x8F\x11\x3\x2\x2\x2\x90\x91\x5"+
@@ -3122,9 +3119,9 @@ public partial class ExprParser : Parser {
 		"\x147\x3\x2\x2\x2\x146\x138\x3\x2\x2\x2\x146\x13F\x3\x2\x2\x2\x147\x43"+
 		"\x3\x2\x2\x2\x148\x149\a)\x2\x2\x149\x14A\a\x35\x2\x2\x14A\x14B\a\xF\x2"+
 		"\x2\x14B\x14C\x5R*\x2\x14C\x14D\a\x10\x2\x2\x14D\x15C\x3\x2\x2\x2\x14E"+
-		"\x14F\a)\x2\x2\x14F\x150\a+\x2\x2\x150\x151\a\xF\x2\x2\x151\x152\x5R*"+
+		"\x14F\a)\x2\x2\x14F\x150\a*\x2\x2\x150\x151\a\xF\x2\x2\x151\x152\x5R*"+
 		"\x2\x152\x153\a\x10\x2\x2\x153\x15C\x3\x2\x2\x2\x154\x155\a)\x2\x2\x155"+
-		"\x156\x5X-\x2\x156\x157\a,\x2\x2\x157\x158\a\xF\x2\x2\x158\x159\x5R*\x2"+
+		"\x156\x5X-\x2\x156\x157\a+\x2\x2\x157\x158\a\xF\x2\x2\x158\x159\x5R*\x2"+
 		"\x159\x15A\a\x10\x2\x2\x15A\x15C\x3\x2\x2\x2\x15B\x148\x3\x2\x2\x2\x15B"+
 		"\x14E\x3\x2\x2\x2\x15B\x154\x3\x2\x2\x2\x15C\x45\x3\x2\x2\x2\x15D\x15E"+
 		"\a\'\x2\x2\x15E\x15F\a\x35\x2\x2\x15F\x160\a\xF\x2\x2\x160\x161\x5L\'"+

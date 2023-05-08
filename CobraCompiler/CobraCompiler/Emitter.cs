@@ -133,7 +133,7 @@ namespace CobraCompiler {
                 case ForeachNode foreachNode:
                     stringBuilder.Append(Visit(foreachNode));
                     break;
-                case ListOperationNode listOperationNode:
+                case ListOprStatementNode listOperationNode:
                     stringBuilder.Append(Visit(listOperationNode));
                     break;
                 default:
@@ -353,7 +353,7 @@ namespace CobraCompiler {
             return stringBuilder;
         }
 
-        public override StringBuilder Visit(ListOperationNode node)
+        public override StringBuilder Visit(ListOprStatementNode node)
         {
             var stringBuilder = new StringBuilder();
             
@@ -386,7 +386,7 @@ namespace CobraCompiler {
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
 
             stringBuilder.Append($"{list.Name}.Add(");
-            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.Append(Visit(node.Arguments));
             stringBuilder.AppendLine(");");
             
             return stringBuilder;
@@ -410,7 +410,7 @@ namespace CobraCompiler {
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
 
             stringBuilder.Append($"{list.Name}.IndexOf(");
-            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.Append(Visit(node.Arguments));
             stringBuilder.AppendLine(");");
             
             return stringBuilder;
@@ -422,7 +422,7 @@ namespace CobraCompiler {
             Symbol list = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
 
             stringBuilder.Append($"{list.Name}[");
-            stringBuilder.Append(Visit(node.Expression));
+            stringBuilder.Append(Visit(node.Arguments));
             stringBuilder.AppendLine("];");
             
             return stringBuilder;

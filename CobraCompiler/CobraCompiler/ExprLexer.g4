@@ -43,17 +43,17 @@ IN: 'in';
 FUNCTION: 'function';
 RETURN: 'return';
 CALL: 'call';
-COMMENT: 'comment:';
 PRINT: 'output';
 SCAN: 'input';
+COMMENT: 'comment:';
 
 LISTADD: 'Add';
 LISTIDXOF: 'IndexOf';
-LISTDEL: 'Delete';
+LISTREPLACE: 'Replace';
 LISTVALOF: 'ValueOf';
 
-COMM: COMMENT [^"]*;
-STR: '"'[^"]*'"';
+COMM: 'comment:'~(';')*;
+STR: '"' ~('"') '"';
 DEC: [0-9]+'.'[0-9]+; 
 INT: [0-9]+ ; 
 ID: [a-zA-Z_][a-zA-Z_0-9]* ; 

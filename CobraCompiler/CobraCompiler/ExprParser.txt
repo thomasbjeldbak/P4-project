@@ -14,7 +14,7 @@ stmt: ID ASSIGN expr SEMI |
       funcDef |
       funcCall SEMI |
 	commentStmt SEMI |
-	RETURN type SEMI;  
+	RETURN expr SEMI;  
       
 expr: logicOr oprOr; 
 
@@ -59,7 +59,7 @@ foreachStmt: FOREACH LPAREN type ID IN ID RPAREN block;
 
 listStmt: listOpr | listOprExpr;
 listOpr: ID COLON LISTADD LPAREN argList RPAREN | 
-         ID COLON LISTDEL LPAREN argList RPAREN;
+         ID COLON LISTREPLACE LPAREN argList RPAREN;
 
 listOprExpr: ID COLON LISTIDXOF LPAREN argList RPAREN | 
              ID COLON LISTVALOF LPAREN argList RPAREN;

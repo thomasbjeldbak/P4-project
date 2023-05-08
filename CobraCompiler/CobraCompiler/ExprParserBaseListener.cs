@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\CobraCompiler\CobraCompiler\ExprParser.txt by ANTLR 4.12.0
+// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\CobraCompiler\CobraCompiler\ExprParser.g4 by ANTLR 4.12.0
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -21,6 +21,7 @@
 
 
 using Antlr4.Runtime.Misc;
+using CobraCompiler;
 using IErrorNode = Antlr4.Runtime.Tree.IErrorNode;
 using ITerminalNode = Antlr4.Runtime.Tree.ITerminalNode;
 using IToken = Antlr4.Runtime.IToken;

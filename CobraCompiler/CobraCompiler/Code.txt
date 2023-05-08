@@ -1,3 +1,7 @@
-if (true)
+function test(number n1, number n2) return number
 {
+	return n1 + n2;
 }
+
+
+number result = call test(1,2);

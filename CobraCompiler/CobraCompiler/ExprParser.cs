@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\CobraCompiler\CobraCompiler\ExprParser.txt by ANTLR 4.12.0
+// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\CobraCompiler\CobraCompiler\ExprParser.g4 by ANTLR 4.12.0
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -41,8 +41,8 @@ public partial class ExprParser : Parser {
 		TRUE=17, FALSE=18, ADD=19, SUB=20, MUL=21, DIV=22, BOOL=23, TEXT=24, NUM=25, 
 		DECIMAL=26, NOTHING=27, LIST=28, QUOTE=29, IF=30, ELSE=31, REPEAT=32, 
 		TIMES=33, WHILE=34, FOREACH=35, IN=36, FUNCTION=37, RETURN=38, CALL=39, 
-		COMMENT=40, PRINT=41, SCAN=42, LISTADD=43, LISTIDXOF=44, LISTDEL=45, LISTVALOF=46, 
-		COMM=47, STR=48, DEC=49, INT=50, ID=51, WS=52;
+		PRINT=40, SCAN=41, COMMENT=42, LISTADD=43, LISTIDXOF=44, LISTREPLACE=45, 
+		LISTVALOF=46, COMM=47, STR=48, DEC=49, INT=50, ID=51, WS=52;
 	public const int
 		RULE_program = 0, RULE_cmds = 1, RULE_cmd = 2, RULE_dcl = 3, RULE_ass = 4, 
 		RULE_stmt = 5, RULE_expr = 6, RULE_oprOr = 7, RULE_logicOr = 8, RULE_oprAnd = 9, 
@@ -70,16 +70,16 @@ public partial class ExprParser : Parser {
 		"'='", "','", "';'", "':'", "'('", "')'", "'{'", "'}'", "'true'", "'false'", 
 		"'+'", "'-'", "'*'", "'/'", "'boolean'", "'text'", "'number'", "'decimal'", 
 		"'nothing'", "'list'", "'\"'", "'if'", "'else'", "'repeat'", "'times'", 
-		"'while'", "'for each'", "'in'", "'function'", "'return'", "'call'", "'comment:'", 
-		"'output'", "'input'", "'Add'", "'IndexOf'", "'Delete'", "'ValueOf'"
+		"'while'", "'for each'", "'in'", "'function'", "'return'", "'call'", "'output'", 
+		"'input'", "'comment:'", "'Add'", "'IndexOf'", "'Replace'", "'ValueOf'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "OR", "AND", "EQUAL", "NOT", "GREAT", "LESS", "GREATEQL", "LESSEQL", 
 		"ASSIGN", "COMMA", "SEMI", "COLON", "LPAREN", "RPAREN", "LCURLY", "RCURLY", 
 		"TRUE", "FALSE", "ADD", "SUB", "MUL", "DIV", "BOOL", "TEXT", "NUM", "DECIMAL", 
 		"NOTHING", "LIST", "QUOTE", "IF", "ELSE", "REPEAT", "TIMES", "WHILE", 
-		"FOREACH", "IN", "FUNCTION", "RETURN", "CALL", "COMMENT", "PRINT", "SCAN", 
-		"LISTADD", "LISTIDXOF", "LISTDEL", "LISTVALOF", "COMM", "STR", "DEC", 
+		"FOREACH", "IN", "FUNCTION", "RETURN", "CALL", "PRINT", "SCAN", "COMMENT", 
+		"LISTADD", "LISTIDXOF", "LISTREPLACE", "LISTVALOF", "COMM", "STR", "DEC", 
 		"INT", "ID", "WS"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
@@ -93,11 +93,11 @@ public partial class ExprParser : Parser {
 		}
 	}
 
-	public override string GrammarFileName { get { return "ExprParser.txt"; } }
+	public override string GrammarFileName { get { return "ExprParser.g4"; } }
 
 	public override string[] RuleNames { get { return ruleNames; } }
 
-	public override int[] SerializedAtn { get { return _serializedATN; } }
+	public int[] SerializedAtn { get { return _serializedATN; } }
 
 	static ExprParser() {
 		decisionToDFA = new DFA[_ATN.NumberOfDecisions];
@@ -109,9 +109,9 @@ public partial class ExprParser : Parser {
 		public ExprParser(ITokenStream input) : this(input, Console.Out, Console.Error) { }
 
 		public ExprParser(ITokenStream input, TextWriter output, TextWriter errorOutput)
-		: base(input, output, errorOutput)
+		: base(input)
 	{
-		Interpreter = new ParserATNSimulator(this, _ATN, decisionToDFA, sharedContextCache);
+		Interpreter = new ParserATNSimulator(_ATN);
 	}
 
 	public partial class ProgramContext : ParserRuleContext {
@@ -2339,7 +2339,7 @@ public partial class ExprParser : Parser {
 			return GetRuleContext<ArgListContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAREN() { return GetToken(ExprParser.RPAREN, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LISTDEL() { return GetToken(ExprParser.LISTDEL, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LISTREPLACE() { return GetToken(ExprParser.LISTREPLACE, 0); }
 		public ListOprContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -2396,7 +2396,7 @@ public partial class ExprParser : Parser {
 				State = 302;
 				Match(COLON);
 				State = 303;
-				Match(LISTDEL);
+				Match(LISTREPLACE);
 				State = 304;
 				Match(LPAREN);
 				State = 305;
@@ -3399,9 +3399,9 @@ public partial class ExprParser : Parser {
 		320,5,46,0,0,320,321,5,13,0,0,321,322,3,80,40,0,322,323,5,14,0,0,323,325,
 		1,0,0,0,324,310,1,0,0,0,324,317,1,0,0,0,325,65,1,0,0,0,326,327,5,39,0,
 		0,327,328,5,51,0,0,328,329,5,13,0,0,329,330,3,80,40,0,330,331,5,14,0,0,
-		331,346,1,0,0,0,332,333,5,39,0,0,333,334,5,41,0,0,334,335,5,13,0,0,335,
+		331,346,1,0,0,0,332,333,5,39,0,0,333,334,5,40,0,0,334,335,5,13,0,0,335,
 		336,3,80,40,0,336,337,5,14,0,0,337,346,1,0,0,0,338,339,5,39,0,0,339,340,
-		3,86,43,0,340,341,5,42,0,0,341,342,5,13,0,0,342,343,3,80,40,0,343,344,
+		3,86,43,0,340,341,5,41,0,0,341,342,5,13,0,0,342,343,3,80,40,0,343,344,
 		5,14,0,0,344,346,1,0,0,0,345,326,1,0,0,0,345,332,1,0,0,0,345,338,1,0,0,
 		0,346,67,1,0,0,0,347,348,5,37,0,0,348,349,5,51,0,0,349,350,5,13,0,0,350,
 		351,3,74,37,0,351,352,5,14,0,0,352,353,3,70,35,0,353,354,3,38,19,0,354,
@@ -3423,7 +3423,7 @@ public partial class ExprParser : Parser {
 	};
 
 	public static readonly ATN _ATN =
-		new ATNDeserializer().Deserialize(_serializedATN);
+		new ATNDeserializer().Deserialize(_serializedATN.ToString().ToArray());
 
 
 }

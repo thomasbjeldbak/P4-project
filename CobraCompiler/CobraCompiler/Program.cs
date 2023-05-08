@@ -67,17 +67,17 @@ namespace CobraCompiler
                 Environment.Exit(1);
             }
 
-            #region CodeGeneration
-            var sb = new StringBuilder();
-            sb = new Emitter(sb, st).Visit((ProgramNode)ast);
+            //#region CodeGeneration
+            //var sb = new StringBuilder();
+            //sb = new Emitter(sb, st).Visit((ProgramNode)ast);
 
-            string path = Directory.GetCurrentDirectory();
-            path += "\\GeneratedProgram.cs";
-            
-            File.WriteAllText("GeneratedProgram.cs", sb.ToString());
-            CompileMethods.CompileExecutable(path);
+            //string path = Directory.GetCurrentDirectory();
+            //path += "\\GeneratedProgram.cs";
 
-            #endregion
+            //File.WriteAllText("GeneratedProgram.cs", sb.ToString());
+            //CompileMethods.CompileExecutable(path);
+
+            //#endregion
 
             Console.WriteLine("DONE!");
         
