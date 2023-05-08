@@ -1,5 +1,1 @@
-list(number) hej;
-
-hej:Add(5);
-hej:Add(7);
-hej:Replace(0, 1);
+decimal hej = 0.1;

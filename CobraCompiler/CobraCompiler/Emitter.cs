@@ -223,6 +223,9 @@ namespace CobraCompiler {
                 case NumberNode numberNode:
                     stringBuilder.Append(numberNode.Value.ToString());
                     break;
+                case DecimalNode decimalNode:
+                    stringBuilder.Append(decimalNode.Value.ToString().Replace(',', '.'));
+                    break;
                 case TextNode textNode:
                     stringBuilder.Append(textNode.Value);
                     break;

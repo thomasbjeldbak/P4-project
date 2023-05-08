@@ -17,8 +17,8 @@ public static class CompileMethods
         string path;
         string command;
         ProcessStartInfo startInfo = new ProcessStartInfo();
-        startInfo.RedirectStandardOutput = true;
-        startInfo.UseShellExecute = false;
+        //startInfo.RedirectStandardOutput = true;
+        //startInfo.UseShellExecute = false;
 
         //Check operating system
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
@@ -31,15 +31,17 @@ public static class CompileMethods
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            //Set path
-            path = "\"C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe\"";
-            // Set the command to run
-            command = $"{path} {filePath}";
+            string fileName = "\"\\..\\..\\..\\GeneratedProgram.c\"";
+            string arguments = "-o \"\\..\\..\\..\\GeneratedProgram.exe\"";
 
-            // Create a ProcessStartInfo instance
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = $"/C {command}";
+            startInfo.FileName = "gcc";
+            startInfo.Arguments = $"{fileName} {arguments}";
 
+            Process process = new Process();
+            process.StartInfo = startInfo;
+            process.Start();
+
+            process.WaitForExit();
         }
         else
         {
