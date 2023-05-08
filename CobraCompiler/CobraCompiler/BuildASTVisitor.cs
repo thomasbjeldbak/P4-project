@@ -231,20 +231,28 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         else if ((funcCall != null && funcCall.ChildCount > 0) &&
                  (SEMI != null))
         {
-            var functionCallExprNode = (FunctionCallExprNode)Visit(funcCall);
-            var output = new FunctionCallStmtNode();
-            output.Arguments = functionCallExprNode.Arguments;
-            output.Name = functionCallExprNode.Name;
-            output.Line = functionCallExprNode.Line;
-
-            switch (functionCallExprNode)
+            var funcCallNode = (FunctionCallExprNode)Visit(funcCall);
+            switch (funcCallNode)
             {
-                case InputExprNode:
-                    return (InputStmtNode)output;
-                case OutputExprNode: 
-                    return (OutputStmtNode)output;
+                case InputExprNode inputExprNode:
+                    var inputStmtNode = new InputStmtNode();
+                    inputStmtNode.Arguments = funcCallNode.Arguments;
+                    inputStmtNode.Name = inputExprNode.Name;
+                    inputStmtNode.Line = inputExprNode.Line;
+                    inputStmtNode.Type = inputExprNode.Type;
+                    return inputStmtNode;
+                case OutputExprNode:
+                    var outputStmtNode = new OutputStmtNode();
+                    outputStmtNode.Arguments = funcCallNode.Arguments;
+                    outputStmtNode.Name = funcCallNode.Name;
+                    outputStmtNode.Line = funcCallNode.Line;
+                    return outputStmtNode;
                 case FunctionCallExprNode:
-                    return output;
+                    var functionCallStmtNode = new FunctionCallStmtNode();
+                    functionCallStmtNode.Arguments = funcCallNode.Arguments;
+                    functionCallStmtNode.Name = funcCallNode.Name;
+                    functionCallStmtNode.Line = funcCallNode.Line;
+                    return functionCallStmtNode;
                 default:
                     throw new Exception();
             }
@@ -1435,8 +1443,6 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var SCAN = context.SCAN();
         var type = context.type();
 
-        var outputNode = new FunctionCallExprNode();
-
         if ((CALL != null) &&
             (ID != null) &&
             (LPAREN != null) &&
@@ -1446,11 +1452,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             prettyPrint("FunctionCallNode", context);
             incrIndent();
 
+            var outputNode = new FunctionCallExprNode();
             outputNode.Line = CALL.Symbol.Line;
             var arguments = (ArgumentsNode)Visit(argList);
 
             outputNode.Name = ID.ToString();
             outputNode.Arguments = arguments;
+            return outputNode;
         }
         else if ((CALL != null) &&
             (PRINT != null) &&
@@ -1461,12 +1469,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             prettyPrint("OutputNode", context);
             incrIndent();
 
-            outputNode = new OutputExprNode();
+            var outputNode = new OutputExprNode();
             outputNode.Line = CALL.Symbol.Line;
             var arguments = (ArgumentsNode)Visit(argList);
 
-            outputNode.Name = ID.ToString();
+            outputNode.Name = PRINT.ToString();
             outputNode.Arguments = arguments;
+            return outputNode;
         }
         else if ((CALL != null) &&
             (SCAN != null) &&
@@ -1478,17 +1487,18 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             prettyPrint("InputNode", context);
             incrIndent();
 
-            outputNode = new InputExprNode();
+            var outputNode = new InputExprNode();
             outputNode.Line = CALL.Symbol.Line;
+            outputNode.Type = (TypeNode)Visit(type);
+            incrIndent(); //MÅSKE SKAL FJERNES HER
             var arguments = (ArgumentsNode)Visit(argList);
 
-            outputNode.Name = ID.ToString();
+            outputNode.Name = SCAN.ToString();
             outputNode.Arguments = arguments;
+            return outputNode;
         }
         else
             throw new Exception();
-
-        return outputNode;
     }
 
     //funcDef: FUNCTION ID LPAREN paramList RPAREN funcReturn block;
@@ -1518,10 +1528,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             var returnTypeNode = (TypeNode)Visit(funcReturn);
             var blockNode = (BlockNode)Visit(block);
 
+            var funcBlockNode = new FunctionBlockNode() { Line = blockNode.Line };
+            funcBlockNode.Parameters = parametersNode;
+            funcBlockNode.ReturnExpression = blockNode.Commands.OfType<ReturnNode>().First().Expression;
+            
+            functionDec.Block = funcBlockNode;
             functionDec.Name = ID.ToString();
-            functionDec.Parameters = parametersNode;
             functionDec.ReturnType = returnTypeNode;
-            functionDec.Block = blockNode;
 
             return functionDec;
         }

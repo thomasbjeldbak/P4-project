@@ -1,7 +1,5 @@
-function test(number n1, number n2) return number
-{
-	return n1 + n2;
-}
+list(number) hej;
 
-
-number result = call test(1,2);
+hej:Add(5);
+hej:Add(7);
+hej:Replace(0, 1);

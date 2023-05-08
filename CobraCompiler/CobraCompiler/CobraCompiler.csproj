@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Emitter.cs" />
     <Compile Remove="ExprLexer.cs" />
     <Compile Remove="ExprParser.cs" />
   </ItemGroup>

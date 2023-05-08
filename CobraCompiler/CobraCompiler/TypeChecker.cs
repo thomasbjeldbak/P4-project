@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +30,10 @@ namespace CobraCompiler
             _currentBlock = node;
 
             if (node.Commands == null)
+            {
+                _currentBlock = node;
                 return null;
+            }
 
             foreach (var cmd in node.Commands)
             {
@@ -58,7 +62,10 @@ namespace CobraCompiler
             _currentBlock = node;
 
             if (node.Commands == null)
+            {
+                _currentBlock = node;
                 return null;
+            }
 
             foreach (var cmd in node.Commands)
             {
@@ -70,6 +77,8 @@ namespace CobraCompiler
                     case AssignNode assignNode:
                         Visit(assignNode);
                         break;
+                    case ReturnNode returnNode:
+                        return Visit(returnNode);
                     case StatementNode statementNode:
                         Visit(statementNode);
                         break;
@@ -93,7 +102,7 @@ namespace CobraCompiler
             {
                 TypeNode? exprNode = Visit(node.Expression);
 
-                if (symbol.Type != exprNode.Type)
+                if (exprNode != null && symbol.Type != exprNode.Type)
                 {
                     TypeError(node, $"Initialization of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}");
                 }
@@ -141,9 +150,6 @@ namespace CobraCompiler
                     break;
                 case FunctionCallStmtNode functionCallStmtNode:
                     Visit(functionCallStmtNode);
-                    break;
-                case ReturnNode returnNode:
-                    Visit(returnNode);
                     break;
                 default:
                     throw new Exception();
@@ -221,13 +227,13 @@ namespace CobraCompiler
                     type = decimalNode;
                     break;
                 case InputExprNode inputExprNode:
-                    Visit(inputExprNode);
+                    type = Visit(inputExprNode);
                     break;
                 case OutputExprNode outputExprNode:
-                    Visit(outputExprNode);
+                    type = Visit(outputExprNode);
                     break;
                 case FunctionCallExprNode functionCallExprNode:
-                    Visit(functionCallExprNode);
+                    type = Visit(functionCallExprNode);
                     break;
                 default:
                     throw new Exception();
@@ -1089,7 +1095,7 @@ namespace CobraCompiler
             Symbol? sym = _symbolTable.Lookup(node.Name, _currentBlock);
             FunctionDeclarationNode declaration = ((FunctionDeclarationNode)sym.Reference);
 
-            List<DeclarationNode> parameters = declaration.Parameters.Declarations;
+            List<DeclarationNode> parameters = declaration.Block.Parameters.Declarations;
             List<ExpressionNode> arguments = node.Arguments.Expressions;
 
             if (parameters.Count != arguments.Count)
@@ -1110,46 +1116,234 @@ namespace CobraCompiler
                 }
             }
 
-            Visit(declaration.Block);
-            return null;
+            declaration.Block.Arguments = new ArgumentsNode();
+            declaration.Block.Arguments.Expressions = arguments;
+
+            return Visit(declaration.Block);
         }
 
         public override TypeNode? Visit(InputExprNode node)
         {
-            throw new NotImplementedException();
+            List<ExpressionNode> arguments = node.Arguments.Expressions;
+
+            if (arguments.Count != 0)
+            {
+                TypeError(node, $"'Input()' takes 0 arguments");
+            }
+
+            string input = Console.ReadLine();
+
+            switch (node.Type)
+            {
+                case NumberNode numberNode:
+                    int number = 0;
+                    if (!int.TryParse(input, out number))
+                    {
+                        TypeError(node, $"'Input()' Expected of type {numberNode.Type}");
+                        return null;
+                    }
+                    numberNode.Value = number;
+                    return numberNode;
+                case DecimalNode decimalNode:
+                    float _decimal = 0;
+                    if (!float.TryParse(input, CultureInfo.InvariantCulture, out _decimal))
+                    {
+                        TypeError(node, $"'Input()' Expected type {decimalNode.Type}");
+                        return null;
+                    }
+                    decimalNode.Value = _decimal;
+                    return decimalNode;
+                case BooleanNode boolNode:
+                    bool boolean = false;
+                    if (!bool.TryParse(input, out boolean))
+                    {
+                        TypeError(node, $"'Input()' Expected type {boolNode.Type}");
+                        return null;
+                    }
+                    boolNode.Value = boolean;
+                    return boolNode;
+                case TextNode textNode:
+                    textNode.Value = input;
+                    return textNode;
+                default:
+                    TypeError(node, "Invalid typing for 'Input()'");
+                    return null;
+            }
         }
 
         public override TypeNode? Visit(OutputExprNode node)
         {
-            throw new NotImplementedException();
+            List<ExpressionNode> arguments = node.Arguments.Expressions;
+
+            if (arguments.Count == 1)
+            {
+                TypeError(node, $"'Output()' takes 1 arguments");
+            }
+
+            var expression0 = arguments[0];
+            TypeNode argument0 = Visit(expression0);
+
+            if (argument0.Type != TypeEnum.text)
+            {
+                TypeError(node, $"'Output()' Expected type {TypeEnum.text}");
+            }
+
+            return null;
         }
 
         public override TypeNode? Visit(FunctionDeclarationNode node)
         {
-            foreach (var decl in node.Parameters.Declarations)
-                Visit(decl);
-
             return Visit(node.Block);
         }
 
         public override TypeNode? Visit(FunctionCallStmtNode node)
         {
-            throw new NotImplementedException();
+            Symbol? sym = _symbolTable.Lookup(node.Name, _currentBlock);
+            FunctionDeclarationNode declaration = ((FunctionDeclarationNode)sym.Reference);
+
+            List<DeclarationNode> parameters = declaration.Block.Parameters.Declarations;
+            List<ExpressionNode> arguments = node.Arguments.Expressions;
+
+            if (parameters.Count != arguments.Count)
+            {
+                TypeError(node, $"{sym.Name} expects {parameters} arguments");
+                return null;
+            }
+
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                Symbol? paramSymbol = _symbolTable.Lookup(parameters[i].Identifier.Name, _currentBlock);
+                var argumentType = (TypeNode)arguments[i];
+
+                if (paramSymbol.Type != argumentType.Type)
+                {
+                    TypeError(node, $"{sym.Name} parameter of type {paramSymbol.Type} doesn't match argument of type {argumentType.Type}.");
+                    return null;
+                }
+            }
+
+            declaration.Block.Arguments = new ArgumentsNode();
+            declaration.Block.Arguments.Expressions = arguments;
+
+            return Visit(declaration.Block);
         }
 
         public override TypeNode? Visit(InputStmtNode node)
         {
-            throw new NotImplementedException();
+            List<ExpressionNode> arguments = node.Arguments.Expressions;
+
+            if (arguments.Count != 0)
+            {
+                TypeError(node, $"'Input()' takes 0 arguments");
+            }
+
+            string input = Console.ReadLine();
+
+            switch (node.Type)
+            {
+                case NumberNode numberNode:
+                    int number = 0;
+                    if (!int.TryParse(input, out number))
+                    {
+                        TypeError(node, $"'Input()' Expected type {numberNode.Type}");
+                        return null;
+                    }
+                    numberNode.Value = number;
+                    return numberNode;
+                case DecimalNode decimalNode:
+                    float _decimal = 0;
+                    if (!float.TryParse(input, CultureInfo.InvariantCulture, out _decimal))
+                    {
+                        TypeError(node, $"'Input()' Expected type {decimalNode.Type}");
+                        return null;
+                    }
+                    decimalNode.Value = _decimal;
+                    return decimalNode;
+                case BooleanNode boolNode:
+                    bool boolean = false;
+                    if (!bool.TryParse(input, out boolean))
+                    {
+                        TypeError(node, $"'Input()' Expected type {boolNode.Type}");
+                        return null;
+                    }
+                    boolNode.Value = boolean;
+                    return boolNode;
+                case TextNode textNode:
+                    textNode.Value = input;
+                    return textNode;
+                default:
+                    TypeError(node, "Invalid typing for 'Input()'");
+                    return null;
+            }
         }
 
         public override TypeNode? Visit(OutputStmtNode node)
         {
-            throw new NotImplementedException();
+            List<ExpressionNode> arguments = node.Arguments.Expressions;
+
+            if (arguments.Count == 1)
+            {
+                TypeError(node, $"'Output()' takes 1 arguments");
+            }
+
+            var expression0 = arguments[0];
+            TypeNode argument0 = Visit(expression0);
+
+            if (argument0.Type != TypeEnum.text)
+            {
+                TypeError(node, $"'Output()' Expected type {TypeEnum.text}");
+            }
+
+            return null;
         }
 
         public override TypeNode? Visit(ReturnNode node)
         {
             return Visit(node.Expression);
+        }
+
+        public override TypeNode? Visit(FunctionBlockNode node)
+        {
+            _currentBlock = node;
+
+            var declarations = node.Parameters.Declarations;
+
+
+            if (node.Arguments != null)
+            {
+                for (int i = 0; i < declarations.Count; i++)
+                {
+                    var sym = _symbolTable.Lookup(declarations[i].Identifier.Name, _currentBlock);
+                    var declarationSymbol = (DeclarationNode)sym.Reference;
+                    declarationSymbol.Expression = Visit(node.Arguments.Expressions[i]);
+                }
+            }
+
+            if (node.Commands == null)
+            {
+                _currentBlock = node;
+                return Visit(node.ReturnExpression);
+            }
+
+            foreach (var cmd in node.Commands)
+            {
+                switch (cmd)
+                {
+                    case DeclarationNode declarationNode:
+                        Visit(declarationNode);
+                        break;
+                    case AssignNode assignNode:
+                        Visit(assignNode);
+                        break;
+                    case StatementNode statementNode:
+                        Visit(statementNode);
+                        break;
+                }
+            }
+
+            _currentBlock = node;
+
+            return Visit(node.ReturnExpression);
         }
 
         #region List helper functions

@@ -67,9 +67,10 @@ namespace CobraCompiler
                 Environment.Exit(1);
             }
 
-            //#region CodeGeneration
-            //var sb = new StringBuilder();
-            //sb = new Emitter(sb, st).Visit((ProgramNode)ast);
+            #region CodeGeneration
+            var sb = new Emitter(st).Visit((ProgramNode)ast);
+
+            File.WriteAllText(@"C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\CobraCompiler\CobraCompiler\TextFile.txt", sb.ToString());
 
             //string path = Directory.GetCurrentDirectory();
             //path += "\\GeneratedProgram.cs";
@@ -77,7 +78,7 @@ namespace CobraCompiler
             //File.WriteAllText("GeneratedProgram.cs", sb.ToString());
             //CompileMethods.CompileExecutable(path);
 
-            //#endregion
+            #endregion
 
             Console.WriteLine("DONE!");
         

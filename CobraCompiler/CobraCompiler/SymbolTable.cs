@@ -118,7 +118,10 @@ namespace CobraCompiler
             NewScope(node);
 
             if (node.Commands == null)
+            {
+                ExitScope();
                 return null;
+            }
 
             foreach (var cmd in node.Commands)
             {
@@ -146,7 +149,10 @@ namespace CobraCompiler
             NewScope(node);
 
             if (node.Commands == null)
+            {
+                ExitScope();
                 return null;
+            }
 
             foreach (var cmd in node.Commands)
             {
@@ -164,6 +170,7 @@ namespace CobraCompiler
                 }
             }
 
+            ExitScope();
             return null;
         }
 
@@ -303,8 +310,6 @@ namespace CobraCompiler
             //If any - visit ElseIfs and/Or Else
             Visit(node.Condition);
             Visit(node.Block);
-            ExitScope();
-            ExitScope();
 
             foreach (var @else in node.ElseIfs)
             {
@@ -327,14 +332,12 @@ namespace CobraCompiler
             //Visit Condition & Block
             Visit(node.Condition);
             Visit(node.Block);
-            ExitScope();
             return null;
         }
 
         public override ASTNode? Visit(ElseNode node)
         {
             Visit(node.Block);
-            ExitScope();
             return null;
         }
 
@@ -342,7 +345,6 @@ namespace CobraCompiler
         {
             Visit(node.Expression);
             Visit(node.Block);
-            ExitScope();
             return null;
         }
 
@@ -350,7 +352,6 @@ namespace CobraCompiler
         {
             Visit(node.Condition);
             Visit(node.Block);
-            ExitScope();
             return null;
         }
 
@@ -359,7 +360,6 @@ namespace CobraCompiler
             Visit(node.LocalVariable);
             Visit(node.List);
             Visit(node.Block);
-            ExitScope();
             return null;
         }
 
@@ -535,11 +535,6 @@ namespace CobraCompiler
 
             Visit(node.Block);
 
-            foreach (var decl in node.Parameters.Declarations)
-                Visit(decl);
-
-            ExitScope();
-
             return null;
         }
 
@@ -587,6 +582,41 @@ namespace CobraCompiler
 
         public override ASTNode? Visit(ReturnNode node)
         {
+            return null;
+        }
+
+        public override ASTNode? Visit(FunctionBlockNode node)
+        {
+            NewScope(node);
+
+            foreach (var decl in node.Parameters.Declarations)
+                Visit(decl);
+
+            if (node.Commands == null)
+            {
+                ExitScope();
+                return null;
+            }
+
+            foreach (var cmd in node.Commands)
+            {
+                switch (cmd)
+                {
+                    case DeclarationNode declarationNode:
+                        Visit(declarationNode);
+                        break;
+                    case AssignNode assignNode:
+                        Visit(assignNode);
+                        break;
+                    case StatementNode statementNode:
+                        Visit(statementNode);
+                        break;
+                }
+            }
+
+            Visit(node.ReturnExpression);
+
+            ExitScope();
             return null;
         }
 
