@@ -665,7 +665,6 @@ namespace CobraCompiler
 
             stringBuilder.Append("(");
 
-
             for (int i = 0; i < node.Parameters.Declarations.Count; i++)
             {
                 var expr = node.Parameters.Declarations[i];

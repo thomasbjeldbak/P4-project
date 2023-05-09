@@ -1329,7 +1329,6 @@ namespace CobraCompiler
 
             var declarations = node.Parameters.Declarations;
 
-
             if (node.Arguments != null)
             {
                 for (int i = 0; i < declarations.Count; i++)
@@ -1342,8 +1341,9 @@ namespace CobraCompiler
 
             if (node.Commands == null)
             {
+                var returnExpr = Visit(node.ReturnExpression);
                 _currentBlock = node;
-                return Visit(node.ReturnExpression);
+                return returnExpr;
             }
 
             foreach (var cmd in node.Commands)

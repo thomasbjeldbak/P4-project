@@ -53,8 +53,8 @@ AddToList(&hej, 1);
 AddToList(&hej, 2);
 AddToList(&hej, 3);
 AddToList(&hej, 4);
-void printList(struct node *hej = NULL;
-)
+void printList(struct node *hej)
 {
 }
-printList(hej);}
+printList(hej); 
+}
