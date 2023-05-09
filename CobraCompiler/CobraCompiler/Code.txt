@@ -1,2 +1,1 @@
-number hej = 5;
-hej = "hej";
+decimal hej = 0.1;

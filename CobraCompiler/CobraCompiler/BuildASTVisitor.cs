@@ -4,11 +4,15 @@ using Antlr4.Runtime.Tree;
 using CobraCompiler;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using static Antlr4.Runtime.Atn.SemanticContext;
 using static ASTNodes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 {
@@ -57,13 +61,15 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
         var outputNode = new ProgramNode() { Line = cmds.start.Line };
 
-            prettyPrint("ProgramNode", context);
-            incrIndent();
+        prettyPrint("ProgramNode", context);
+        incrIndent();
 
         if (cmds != null)
         {
             var blockNode = (BlockNode)Visit(cmds);
-            outputNode.Commands = blockNode.Commands;
+
+            if (blockNode.Commands != null)
+                outputNode.Commands = blockNode.Commands;
         }
 
         return outputNode;
@@ -167,16 +173,19 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         return Visit(context.expr());
     }
 
-    //stmt: ID ASSIGN expr SEMI | ctrlStrct | listStmt SEMI | funcDef | funcCall SEMI;
+    //stmt: ID ASSIGN expr SEMI | ctrlStrct | listStmt SEMI | funcDef |
+    //      funcCall SEMI | commentStmt SEMI | RETURN type SEMI;   
     public override ASTNode VisitStmt([NotNull] ExprParser.StmtContext context)
     {
         //outputNode = StatementNode
         //Visit(expr) -> Get ExpressionNode
         //  ExpressionNode and ID is assigned to an AssignNode which is returned
         //Visit(ctrlStrct) -> Gets and returns a ControlStructureNode
-        //Visit(listStmt) -> Gets and returns a ListOperationNode
+        //Visit(listStmt) -> Gets and returns a ListOprStatementNode
         //Visit(funcDef) -> Gets and returns a FunctionDefinitionNode
         //Visit(funcCall) -> Gets and returns a FunctionCallNode
+        //Visit(commentStmt) -> Gets and returns a CommentNode
+        //Visit(type) -> get the TypeNode, assigns it to a ReturnNode and returns it
 
         var ID = context.ID();
         var ASSIGN = context.ASSIGN();
@@ -186,10 +195,10 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var listStmt = context.listStmt();
         var funcDef = context.funcDef();
         var funcCall = context.funcCall();
+        var commentStmt = context.commentStmt();
+        var RETURN = context.RETURN();
 
-        StatementNode outputNode = null;
-
-        if ((ID != null) && 
+        if ((ID != null) &&
             (ASSIGN != null) &&
             (expr != null && expr.ChildCount > 0) &&
             SEMI != null)
@@ -205,29 +214,67 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             var expression = (ExpressionNode)Visit(expr);
             assignNode.Expression = expression;
             assignNode.Identifier = identifier;
-            outputNode = assignNode;
+            return assignNode;
         }
         else if (ctrlStrct != null && ctrlStrct.ChildCount > 0)
         {
-            outputNode = (StatementNode)Visit(ctrlStrct);
+            return (ControlStructureNode)Visit(ctrlStrct);
         }
         else if (listStmt != null && listStmt.ChildCount > 0)
         {
-            outputNode = (StatementNode)Visit(listStmt);
+            return (ListOprStatementNode)Visit(listStmt);
         }
         else if (funcDef != null && funcDef.ChildCount > 0)
         {
-            Visit(funcDef);
+            return (FunctionDeclarationNode)Visit(funcDef);
         }
         else if ((funcCall != null && funcCall.ChildCount > 0) &&
                  (SEMI != null))
         {
-            Visit(funcCall);
+            var funcCallNode = (FunctionCallExprNode)Visit(funcCall);
+            switch (funcCallNode)
+            {
+                case InputExprNode inputExprNode:
+                    var inputStmtNode = new InputStmtNode();
+                    inputStmtNode.Arguments = funcCallNode.Arguments;
+                    inputStmtNode.Name = inputExprNode.Name;
+                    inputStmtNode.Line = inputExprNode.Line;
+                    inputStmtNode.Type = inputExprNode.Type;
+                    return inputStmtNode;
+                case OutputExprNode:
+                    var outputStmtNode = new OutputStmtNode();
+                    outputStmtNode.Arguments = funcCallNode.Arguments;
+                    outputStmtNode.Name = funcCallNode.Name;
+                    outputStmtNode.Line = funcCallNode.Line;
+                    return outputStmtNode;
+                case FunctionCallExprNode:
+                    var functionCallStmtNode = new FunctionCallStmtNode();
+                    functionCallStmtNode.Arguments = funcCallNode.Arguments;
+                    functionCallStmtNode.Name = funcCallNode.Name;
+                    functionCallStmtNode.Line = funcCallNode.Line;
+                    return functionCallStmtNode;
+                default:
+                    throw new Exception();
+            }
+        }
+        else if ((commentStmt != null && commentStmt.ChildCount > 0) &&
+                (SEMI != null))
+        {
+            return (CommentNode)Visit(commentStmt);
+        }
+        else if ((RETURN != null) &&
+                (expr != null && expr.ChildCount > 0) &&
+                (SEMI != null))
+        {
+            prettyPrint("ReturnNode", context);
+            incrIndent();
+            var returnNode = new ReturnNode();
+            returnNode.Expression = (ExpressionNode)Visit(expr);
+            decrIndent();
+            return returnNode;
         }
         else
             throw new Exception();
-
-        return outputNode;
     }
 
     //expr: logicOr oprOr;
@@ -632,7 +679,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         if (oprTerm != null && oprTerm.ChildCount > 0)
         {
             var expressionNode = (InfixExpressionNode)Visit(oprTerm);
-            
+
             incrIndent();
             expressionNode.Left = (ExpressionNode)Visit(factor);
             decrIndent();
@@ -695,25 +742,29 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         }
     }
 
-    //factor: LPAREN expr RPAREN | INT | STR | ID | boolean;
+    //factor: LPAREN expr RPAREN | funcCall | listOprExpr | INT | DEC | STR | ID | boolean;
     public override ASTNode VisitFactor([NotNull] ExprParser.FactorContext context)
     {
         //Returns an ExpressionNode
         //Visit(expr) -> Get and return ExpressionNode
         //Visit(boolean) -> Get and return BooleanNode
-        //If ID != null -> Get and return IdentifierNode
+        //Visit(funcCall) -> Get and return FunctionCallNode
+        //Visit(listOprExpr) -> Get and return ListOprExpressionNode
         //If INT != null -> Get and return NumberNode
+        //If DEC != null -> Get and return DecimalNode
+        //If ID != null -> Get and return IdentifierNode
         //If STR != null -> Get and return TextNode
 
+        var LPAREN = context.LPAREN();
+        var expr = context.expr();
+        var RPAREN = context.RPAREN();
+        var funcCall = context.funcCall();
+        var listOprExpr = context.listOprExpr();
         var INT = context.INT();
+        var DEC = context.DEC();
         var STR = context.STR();
         var ID = context.ID();
-        var LPAREN = context.LPAREN();
-        var RPAREN = context.RPAREN();
-        var expr = context.expr();
         var boolean = context.boolean();
-
-        ExpressionNode expression;
 
         if (INT != null)
         {
@@ -722,34 +773,45 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             numberNode.Value = int.Parse(INT.ToString());
             return numberNode;
         }
-
-        if (ID != null)
+        else if (DEC != null)
+        {
+            prettyPrint("DecimalNode", context);
+            var decimalNode = new DecimalNode() { Line = DEC.Symbol.Line };
+            decimalNode.Value = float.Parse(DEC.ToString(), CultureInfo.InvariantCulture);
+            return decimalNode;
+        }
+        else if (ID != null)
         {
             prettyPrint("IdentifierNode", context);
             var identifierNode = new IdentifierNode() { Line = ID.Symbol.Line };
             identifierNode.Name = ID.ToString();
             return identifierNode;
         }
-
-        if ((LPAREN != null) &&
-            (expr != null && expr.ChildCount > 0) &&
-            (RPAREN != null))
+        else if ((LPAREN != null) &&
+                (expr != null && expr.ChildCount > 0) &&
+                (RPAREN != null))
         {
             return (ExpressionNode)Visit(expr);
         }
-
-        if (boolean != null)
+        else if (funcCall != null)
+        {
+            return (FunctionCallExprNode)Visit(funcCall);
+        }
+        else if (listOprExpr != null)
+        {
+            return (ListOprExpressionNode)Visit(listOprExpr);
+        }
+        else if (boolean != null)
         {
             prettyPrint("booleanNode", context);
             var booleanNode = Visit(boolean);
             return booleanNode;
         }
-
-        if (STR != null)
+        else if (STR != null)
         {
             prettyPrint("TextNode", context);
             var textNode = new TextNode() { Line = STR.Symbol.Line };
-            textNode.Value = STR.ToString();
+            textNode.Value = STR.ToString().Substring(1, STR.ToString().Length - 2);
             return textNode;
         }
 
@@ -813,6 +875,25 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         return outputNode;
     }
 
+    //commentStmt: COMM;
+    public override ASTNode VisitCommentStmt([NotNull] ExprParser.CommentStmtContext context)
+    {
+        //COMM != null -> Assign COMM to a new CommentNode and return
+
+        var COMM = context.COMM();
+
+        if (COMM != null)
+        {
+            prettyPrint("CommentNode", context);
+            var commentNode = new CommentNode();
+            var _string = COMM.ToString();
+            commentNode.Comment = _string.Substring("comment:".Length, _string.Length - "comment:".Length);
+            return commentNode;
+        }
+        else
+            throw new Exception();
+    }
+
     //ctrlStrct: ifStmt | loop;
     public override ASTNode VisitCtrlStrct([NotNull] ExprParser.CtrlStrctContext context)
     {
@@ -871,7 +952,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         }
         else
             throw new Exception();
-        
+
         decrIndent();
         return outputNode;
     }
@@ -922,7 +1003,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             elseIfNode.Condition = (ExpressionNode)Visit(expr);
             elseIfNode.Block = (BlockNode)Visit(block);
             outputNode.ElseIfs.Add(elseIfNode);
-            
+
             if (elseIfStmt != null && elseIfStmt.ChildCount > 0)
             {
                 decrIndent();
@@ -934,7 +1015,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         return outputNode;
     }
 
-    //else: ELSE block | /*epsilon*/;
+    //else: ELSE block;
     public override ASTNode VisitElse([NotNull] ExprParser.ElseContext context)
     {
         //outputNode = ElseNode
@@ -1027,7 +1108,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         {
             outputNode.Line = LPAREN.Symbol.Line;
             outputNode.Block = (BlockNode)Visit(block);
-            outputNode.Expression = (ExpressionNode)Visit(expr); 
+            outputNode.Expression = (ExpressionNode)Visit(expr);
         }
         else
             throw new Exception();
@@ -1131,14 +1212,14 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         return outputNode;
     }
 
-    //type: BOOL | TEXT | NUM | LIST LPAREN type RPAREN;
+    //type: BOOL | TEXT | NUM | LIST LPAREN type RPAREN | DECIMAL;
     public override ASTNode VisitType([NotNull] ExprParser.TypeContext context)
     {
         //BOOl != null -> Return empty BooleanNode
         //TEXT != null -> Return empty TextNode
         //NUM != null -> Return empty NumberNode
         //LIST != null -> Get empty ListNode
-            //Visit(type) -> Get TypeNode and assign its Type to ListNode
+        //Visit(type) -> Get TypeNode and assign its Type to ListNode
 
         var BOOl = context.BOOL();
         var TEXT = context.TEXT();
@@ -1147,10 +1228,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var LPAREN = context.LPAREN();
         var type = context.type();
         var RPAREN = context.RPAREN();
+        var DECIMAL = context.DECIMAL();
 
         if (BOOl != null)
         {
-            prettyPrint("BooleanNode",context);
+            prettyPrint("BooleanNode", context);
             var outputNode = new BooleanNode() { Line = BOOl.Symbol.Line };
             decrIndent();
             return outputNode;
@@ -1166,6 +1248,13 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         {
             prettyPrint("NumberNode", context);
             var outputNode = new NumberNode() { Line = NUM.Symbol.Line };
+            decrIndent();
+            return outputNode;
+        }
+        else if (DECIMAL != null)
+        {
+            prettyPrint("DecimalNode", context);
+            var outputNode = new DecimalNode() { Line = DECIMAL.Symbol.Line };
             decrIndent();
             return outputNode;
         }
@@ -1186,33 +1275,305 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             throw new Exception();
     }
 
-    //listStmt: ID COLON listOpr;
+    //listStmt: listOpr | listOprExpr;
     public override ASTNode VisitListStmt([NotNull] ExprParser.ListStmtContext context)
     {
+        //Visit(listOpr) -> Get ListOprStatementNode and return
+        //Visit(listOprExpr) -> Get ListOprExpressionNode and return
+
+        var listOpr = context.listOpr();
+        var listOprExpr = context.listOprExpr();
+
+        if (listOpr != null)
+        {
+            return (ListOprStatementNode)Visit(listOpr);
+        }
+        else if (listOprExpr != null)
+        {
+            return (ListOprExpressionNode)Visit(listOpr);
+        }
+        else
+            throw new Exception();
+    }
+
+    //listOpr: ID COLON LISTADD LPAREN argList RPAREN | ID COLON LISTDEL LPAREN argList RPAREN;
+    public override ASTNode VisitListOpr([NotNull] ExprParser.ListOprContext context)
+    {
         //outputNode = ListOperationNode
-        //Visit(listOpr) -> Get ListOperationNode and assing outputNode to it
-        //ID != null -> Set Name of an IdentifierNode
-        //Set TypeNode of IdentifierNode to ListNode
-        //Assign IdentifierNode to outputNode
+        //Visit(expr) -> Get ExpressionNode and assign to outputNode
 
         var ID = context.ID();
         var COLON = context.COLON();
-        var listOpr = context.listOpr();
+        var LISTADD = context.LISTADD();
+        var LPAREN = context.LPAREN();
+        var argList = context.argList();
+        var RPAREN = context.RPAREN();
+        var LISTREPLACE = context.LISTREPLACE();
 
-        ListOperationNode outputNode;
+        ListOprStatementNode outputNode;
 
-        if (ID != null && COLON != null && listOpr != null)
+        if ((ID != null) &&
+            (COLON != null) &&
+            (LISTADD != null) &&
+            (LPAREN != null) &&
+            (argList != null) &&
+            (RPAREN != null))
         {
-            var identifierNode = new IdentifierNode() { Line = ID.Symbol.Line };
-            identifierNode.Name = ID.ToString();
-            identifierNode.TypeNode = new ListNode(TypeEnum.list_object) { Line = ID.Symbol.Line };
-
-            outputNode = (ListOperationNode)Visit(listOpr);
-            outputNode.Identifier = identifierNode;
+            prettyPrint("ListAddNode", context);
+            incrIndent();
 
             incrIndent();
             prettyPrint("IdentifierNode", context);
             decrIndent();
+
+            var identifierNode = new IdentifierNode() { Line = ID.Symbol.Line };
+            identifierNode.Name = ID.ToString();
+            identifierNode.TypeNode = new ListNode(TypeEnum.list_object) { Line = ID.Symbol.Line };
+
+            outputNode = new ListAddNode() { Line = LISTADD.Symbol.Line };
+            outputNode.Identifier = identifierNode;
+            outputNode.Arguments = (ArgumentsNode)Visit(argList);
+        }
+        else if ((ID != null) &&
+                (COLON != null) &&
+                (LISTREPLACE != null) &&
+                (LPAREN != null) &&
+                (argList != null) &&
+                (RPAREN != null))
+        {
+            prettyPrint("ListReplaceNode", context);
+            incrIndent();
+
+            incrIndent();
+            prettyPrint("IdentifierNode", context);
+            decrIndent();
+
+            var identifierNode = new IdentifierNode() { Line = ID.Symbol.Line };
+            identifierNode.Name = ID.ToString();
+            identifierNode.TypeNode = new ListNode(TypeEnum.list_object) { Line = ID.Symbol.Line };
+
+            outputNode = new ListReplaceNode() { Line = LISTREPLACE.Symbol.Line };
+            outputNode.Identifier = identifierNode;
+            outputNode.Arguments = (ArgumentsNode)Visit(argList);
+        }
+        else
+            throw new Exception();
+
+        decrIndent();
+        return outputNode;
+    }
+
+    //listOpr: ID COLON LISTADD LPAREN argList RPAREN | ID COLON LISTDEL LPAREN argList RPAREN;
+    public override ASTNode VisitListOprExpr([NotNull] ExprParser.ListOprExprContext context)
+    {
+        //outputNode = ListOperationNode
+        //Visit(expr) -> Get ExpressionNode and assign to outputNode
+
+        var ID = context.ID();
+        var COLON = context.COLON();
+        var LISTVALOF = context.LISTVALOF();
+        var LPAREN = context.LPAREN();
+        var argList = context.argList();
+        var RPAREN = context.RPAREN();
+        var LISTIDXOF = context.LISTIDXOF();
+
+        ListOprExpressionNode outputNode;
+
+        if ((ID != null) &&
+            (COLON != null) &&
+            (LISTVALOF != null) &&
+            (LPAREN != null) &&
+            (argList != null) &&
+            (RPAREN != null))
+        {
+            prettyPrint("ListValueOfNode", context);
+            incrIndent();
+
+            incrIndent();
+            prettyPrint("IdentifierNode", context);
+            decrIndent();
+
+            var identifierNode = new IdentifierNode() { Line = ID.Symbol.Line };
+            identifierNode.Name = ID.ToString();
+            identifierNode.TypeNode = new ListNode(TypeEnum.list_object) { Line = ID.Symbol.Line };
+
+            outputNode = new ListValueOfNode() { Line = LISTVALOF.Symbol.Line };
+            outputNode.Identifier = identifierNode;
+            outputNode.Arguments = (ArgumentsNode)Visit(argList);
+        }
+        else if ((ID != null) &&
+                (COLON != null) &&
+                (LISTIDXOF != null) &&
+                (LPAREN != null) &&
+                (argList != null) &&
+                (RPAREN != null))
+        {
+            prettyPrint("ListIndexOfNode", context);
+            incrIndent();
+
+            incrIndent();
+            prettyPrint("IdentifierNode", context);
+            decrIndent();
+
+            var identifierNode = new IdentifierNode() { Line = ID.Symbol.Line };
+            identifierNode.Name = ID.ToString();
+            identifierNode.TypeNode = new ListNode(TypeEnum.list_object) { Line = ID.Symbol.Line };
+
+            outputNode = new ListIndexOfNode() { Line = LISTIDXOF.Symbol.Line };
+            outputNode.Identifier = identifierNode;
+            outputNode.Arguments = (ArgumentsNode)Visit(argList);
+        }
+        else
+            throw new Exception();
+
+        decrIndent();
+        return outputNode;
+    }
+
+    //funcCall: CALL ID LPAREN argList RPAREN | CALL PRINT LPAREN argList RPAREN |
+    //          CALL type SCAN LPAREN argList RPAREN;
+    public override ASTNode VisitFuncCall([NotNull] ExprParser.FuncCallContext context)
+    {
+        var CALL = context.CALL();
+        var ID = context.ID();
+        var LPAREN = context.LPAREN();
+        var argList = context.argList();
+        var RPAREN = context.RPAREN();
+        var PRINT = context.PRINT();
+        var SCAN = context.SCAN();
+        var type = context.type();
+
+        if ((CALL != null) &&
+            (ID != null) &&
+            (LPAREN != null) &&
+            (argList != null) &&
+            (RPAREN != null))
+        {
+            prettyPrint("FunctionCallNode", context);
+            incrIndent();
+
+            var outputNode = new FunctionCallExprNode();
+            outputNode.Line = CALL.Symbol.Line;
+            var arguments = (ArgumentsNode)Visit(argList);
+
+            outputNode.Name = ID.ToString();
+            outputNode.Arguments = arguments;
+            return outputNode;
+        }
+        else if ((CALL != null) &&
+            (PRINT != null) &&
+            (LPAREN != null) &&
+            (argList != null) &&
+            (RPAREN != null))
+        {
+            prettyPrint("OutputNode", context);
+            incrIndent();
+
+            var outputNode = new OutputExprNode();
+            outputNode.Line = CALL.Symbol.Line;
+            var arguments = (ArgumentsNode)Visit(argList);
+
+            outputNode.Name = PRINT.ToString();
+            outputNode.Arguments = arguments;
+            return outputNode;
+        }
+        else if ((CALL != null) &&
+            (SCAN != null) &&
+            (type != null) &&
+            (LPAREN != null) &&
+            (argList != null) &&
+            (RPAREN != null))
+        {
+            prettyPrint("InputNode", context);
+            incrIndent();
+
+            var outputNode = new InputExprNode();
+            outputNode.Line = CALL.Symbol.Line;
+            outputNode.Type = (TypeNode)Visit(type);
+            incrIndent(); //MÅSKE SKAL FJERNES HER
+            var arguments = (ArgumentsNode)Visit(argList);
+
+            outputNode.Name = SCAN.ToString();
+            outputNode.Arguments = arguments;
+            return outputNode;
+        }
+        else
+            throw new Exception();
+    }
+
+    //funcDef: FUNCTION ID LPAREN paramList RPAREN funcReturn block;
+    public override ASTNode VisitFuncDef([NotNull] ExprParser.FuncDefContext context)
+    {
+        var FUNCTION = context.FUNCTION();
+        var ID = context.ID();
+        var LPAREN = context.LPAREN();
+        var paramList = context.paramList();
+        var RPAREN = context.RPAREN();
+        var funcReturn = context.funcReturn();
+        var block = context.block();
+
+        if ((FUNCTION != null) &&
+            (ID != null) &&
+            (LPAREN != null) &&
+            (paramList != null) &&
+            (RPAREN != null) &&
+            (funcReturn != null) &&
+            (block != null))
+        {
+            prettyPrint("FunctionDeclarationNode", context);
+            incrIndent();
+
+            var functionDec = new FunctionDeclarationNode() { Line = FUNCTION.Symbol.Line };
+            var parametersNode = (ParametersNode)Visit(paramList);
+            var returnTypeNode = (TypeNode)Visit(funcReturn);
+            var blockNode = (BlockNode)Visit(block);
+
+            var funcBlockNode = new FunctionBlockNode() { Line = blockNode.Line };
+            funcBlockNode.Parameters = parametersNode;
+            funcBlockNode.ReturnExpression = blockNode.Commands.OfType<ReturnNode>().First().Expression;
+            
+            functionDec.Block = funcBlockNode;
+            functionDec.Name = ID.ToString();
+            functionDec.ReturnType = returnTypeNode;
+
+            return functionDec;
+        }
+        else
+            throw new Exception();
+    }
+
+    //funcReturn: RETURN funcReturnType;
+    public override ASTNode VisitFuncReturn([NotNull] ExprParser.FuncReturnContext context)
+    {
+        var RETURN = context.RETURN();
+        var funcReturnType = context.funcReturnType();
+
+        if ((RETURN != null) &&
+            (funcReturnType != null))
+        {
+            return (TypeNode)Visit(funcReturnType);
+        }
+        else
+            throw new Exception();
+    }
+
+    //funcReturnType: type | NOTHING;
+    public override ASTNode VisitFuncReturnType([NotNull] ExprParser.FuncReturnTypeContext context)
+    {
+        var type = context.type();
+        var NOTHING = context.NOTHING();
+
+        TypeNode outputNode;
+
+        if (type != null)
+        {
+            outputNode = (TypeNode)Visit(type);
+            incrIndent();
+        }
+        else if (NOTHING != null)
+        {
+            prettyPrint("NothingNode", context);
+            outputNode = new NothingNode();
         }
         else
             throw new Exception();
@@ -1220,65 +1581,147 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         return outputNode;
     }
 
-    //listOpr: LISTADD LPAREN expr RPAREN | LISTDEL LPAREN expr RPAREN | LISTIDXOF LPAREN expr RPAREN | LISTVALOF LPAREN expr RPAREN;
-    public override ASTNode VisitListOpr([NotNull] ExprParser.ListOprContext context)
+    //paramList: param paramTail | /*epsilon*/;
+    public override ASTNode VisitParamList([NotNull] ExprParser.ParamListContext context)
     {
-        //outputNode = ListOperationNode
-        //Visit(expr) -> Get ExpressionNode and assign to outputNode
+        var param = context.param();
+        var paramTail = context.paramTail();
 
-        var LISTADD = context.LISTADD();
-        var LPAREN = context.LPAREN();
-        var expr = context.expr();
-        var RPAREN = context.RPAREN();
-        var LISTDEL = context.LISTDEL();
-        var LISTIDXOF = context.LISTIDXOF();
-        var LISTVALOF = context.LISTVALOF();
+        var outputNode = new ParametersNode();
+        outputNode.Declarations = new List<DeclarationNode>();
 
-        ListOperationNode outputNode;
-
-        if (LPAREN != null && expr != null && RPAREN != null)
+        if (param != null)
         {
-            if (LISTADD != null)
-            {
-                prettyPrint("ListAddNode", context);
-                incrIndent();
+            prettyPrint("ParametersNode", context);
+            incrIndent();
 
-                outputNode = new ListAddNode() { Line = LISTADD.Symbol.Line };
-                outputNode.Expression = (ExpressionNode)Visit(expr);
-            }
-            else if (LISTDEL != null)
-            {
-                prettyPrint("ListDeleteNode", context);
-                incrIndent();
+            outputNode.Line = param.start.Line;
+            var declaration = (DeclarationNode)Visit(param);
+            outputNode.Declarations.Add(declaration);
 
-                outputNode = new ListDeleteNode() { Line = LISTDEL.Symbol.Line };
-                outputNode.Expression = (ExpressionNode)Visit(expr);
-            }
-            else if (LISTIDXOF != null)
+            if (paramTail != null)
             {
-                prettyPrint("ListIndexOfNode", context);
-                incrIndent();
+                var parameters = (ParametersNode)Visit(paramTail);
 
-                outputNode = new ListIndexOfNode() { Line = LISTIDXOF.Symbol.Line };
-                outputNode.Expression = (ExpressionNode)Visit(expr);
+                if (parameters.Declarations != null)
+                    outputNode.Declarations.AddRange(parameters.Declarations);
             }
-            else if (LISTVALOF != null)
-            {
-                prettyPrint("ListValueOfNode", context);
-                incrIndent();
-
-                outputNode = new ListValueOfNode() { Line = LISTVALOF.Symbol.Line };
-                outputNode.Expression = (ExpressionNode)Visit(expr);
-            }
-            else
-                throw new Exception();
         }
-        else
-            throw new Exception();
 
         decrIndent();
         return outputNode;
-            
-            
+    }
+
+    //paramTail: COMMA param paramTail | /*epsilon*/;
+    public override ASTNode VisitParamTail([NotNull] ExprParser.ParamTailContext context)
+    {
+        var COMMA = context.COMMA();
+        var param = context.param();
+        var paramTail = context.paramTail();
+
+        var outputNode = new ParametersNode();
+
+        if ((COMMA != null) &&
+            (param != null))
+        {
+            outputNode.Line = param.start.Line;
+            outputNode.Declarations = new List<DeclarationNode>();
+
+            var declaration = (DeclarationNode)Visit(param);
+            outputNode.Declarations.Add(declaration);
+
+            if (paramTail != null)
+            {
+                var parameters = (ParametersNode)Visit(paramTail);
+                if (parameters.Declarations != null)
+                    outputNode.Declarations.AddRange(parameters.Declarations);
+            }
+        }
+        return outputNode;
+    }
+
+    //param: type ID;
+    public override ASTNode VisitParam([NotNull] ExprParser.ParamContext context)
+    {
+        var type = context.type();
+        var ID = context.ID();
+
+        if ((type != null) &&
+            (ID != null))
+        {
+            prettyPrint("DeclarationNode", context);
+            incrIndent();
+
+            var typeNode = (TypeNode)Visit(type);
+            var declarationNode = new DeclarationNode() { Line = type.start.Line };
+            var identifier = new IdentifierNode() { Line = ID.Symbol.Line };
+            identifier.TypeNode = typeNode;
+            identifier.Name = ID.ToString();
+            declarationNode.Identifier = identifier;
+
+            return declarationNode;
+        }
+        else
+            throw new Exception();
+    }
+
+    //argList: expr argTail | /*epsilon*/;
+    public override ASTNode VisitArgList([NotNull] ExprParser.ArgListContext context)
+    {
+        var expr = context.expr();
+        var argTail = context.argTail();
+
+        var outputNode = new ArgumentsNode();
+        outputNode.Expressions = new List<ExpressionNode>();
+
+        if (expr != null)
+        {
+            prettyPrint("ArugmentsNode", context);
+            incrIndent();
+
+            outputNode.Line = expr.start.Line;
+
+            var expression = (ExpressionNode)Visit(expr);
+            outputNode.Expressions.Add(expression);
+
+            if (argTail != null)
+            {
+                var arguments = (ArgumentsNode)Visit(argTail);
+
+                if (arguments.Expressions != null)
+                    outputNode.Expressions.AddRange(arguments.Expressions);
+            }
+        }
+
+        decrIndent();
+        return outputNode;
+    }
+
+    //argTail: COMMA expr argTail | /*epsilon*/;
+    public override ASTNode VisitArgTail([NotNull] ExprParser.ArgTailContext context)
+    {
+        var COMMA = context.COMMA();
+        var expr = context.expr();
+        var argTail = context.argTail();
+
+        var outputNode = new ArgumentsNode();
+
+        if ((COMMA != null) &&
+            (expr != null))
+        {
+            outputNode.Line = expr.start.Line;
+            outputNode.Expressions = new List<ExpressionNode>();
+
+            var expression = (ExpressionNode)Visit(expr);
+            outputNode.Expressions.Add(expression);
+
+            if (argTail != null)
+            {
+                var arguments = (ArgumentsNode)Visit(argTail);
+                if (arguments.Expressions != null)
+                    outputNode.Expressions.AddRange(arguments.Expressions);
+            }
+        }
+        return outputNode;
     }
 }

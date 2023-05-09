@@ -17,30 +17,31 @@ public static class CompileMethods
         string path;
         string command;
         ProcessStartInfo startInfo = new ProcessStartInfo();
-        startInfo.RedirectStandardOutput = true;
-        startInfo.UseShellExecute = false;
+        //startInfo.RedirectStandardOutput = true;
+        //startInfo.UseShellExecute = false;
 
         //Check operating system
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             //Set the command to run
             command = $"xcrun --sdk macosx --find mcs";
-            path = "";
 
             startInfo.FileName = "bash";
             startInfo.Arguments = $"-c \"{command}\"";
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            //Set path
-            path = "\"C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe\"";
-            // Set the command to run
-            command = $"{path} {filePath}";
+            string fileName = "\"\\..\\..\\..\\GeneratedProgram.c\"";
+            string arguments = "-o \"\\..\\..\\..\\GeneratedProgram.exe\"";
 
-            // Create a ProcessStartInfo instance
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = $"/C {command}";
+            startInfo.FileName = "gcc";
+            startInfo.Arguments = $"{fileName} {arguments}";
 
+            Process process = new Process();
+            process.StartInfo = startInfo;
+            process.Start();
+
+            process.WaitForExit();
         }
         else
         {
@@ -59,8 +60,6 @@ public static class CompileMethods
 
             // Wait for the process to exit
             process.WaitForExit();
-
-            var test = process.ExitCode;
 
             // Check for errors
             if (process.ExitCode != 0)

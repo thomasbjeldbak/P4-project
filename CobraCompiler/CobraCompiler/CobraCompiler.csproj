@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ExprLexer.cs" />
+    <Compile Remove="ExprParser.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Antlr4" Version="4.6.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

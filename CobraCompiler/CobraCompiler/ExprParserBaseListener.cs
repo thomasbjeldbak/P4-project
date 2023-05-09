@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\ExprParser.txt by ANTLR 4.12.0
+// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\CobraCompiler\CobraCompiler\ExprParser.g4 by ANTLR 4.12.0
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -277,6 +277,18 @@ public partial class ExprParserBaseListener : IExprParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitBlock([NotNull] ExprParser.BlockContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ExprParser.commentStmt"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterCommentStmt([NotNull] ExprParser.CommentStmtContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ExprParser.commentStmt"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitCommentStmt([NotNull] ExprParser.CommentStmtContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ExprParser.ctrlStrct"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -409,6 +421,18 @@ public partial class ExprParserBaseListener : IExprParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitListOpr([NotNull] ExprParser.ListOprContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ExprParser.listOprExpr"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterListOprExpr([NotNull] ExprParser.ListOprExprContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ExprParser.listOprExpr"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitListOprExpr([NotNull] ExprParser.ListOprExprContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ExprParser.funcCall"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -444,6 +468,18 @@ public partial class ExprParserBaseListener : IExprParserListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitFuncReturn([NotNull] ExprParser.FuncReturnContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ExprParser.funcReturnType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFuncReturnType([NotNull] ExprParser.FuncReturnTypeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ExprParser.funcReturnType"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFuncReturnType([NotNull] ExprParser.FuncReturnTypeContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ExprParser.paramList"/>.
 	/// <para>The default implementation does nothing.</para>

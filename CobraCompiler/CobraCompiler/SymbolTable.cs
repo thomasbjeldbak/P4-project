@@ -12,6 +12,7 @@ using Antlr4.Runtime.Atn;
 using static ASTNodes;
 using static ASTNodes.ASTNode;
 using static CobraCompiler.Symbol;
+using System.Runtime.CompilerServices;
 
 namespace CobraCompiler
 {
@@ -20,6 +21,7 @@ namespace CobraCompiler
     {
         public string Name { get; set; } //ID (name) of the variable
         public TypeEnum Type { get; set; } //Type of the variable
+        public ASTNode Reference { get; set; } //Reference to the declared node
     }
 
     public class Scope //Scope in the symbol table
@@ -30,15 +32,15 @@ namespace CobraCompiler
         }
         public Dictionary<string, Symbol> Symbols { get; set; } //Key = ID (name), Value = Symbol
         public Scope Parent { get; set; } //Outter Scope (parent scope)
+        public BlockNode Block { get; set; }
     }
 
     internal class SymbolTable : ASTVisitor<ASTNode?>
     {
         private Dictionary<BlockNode, Scope> _scopes; //Key = BlockNode belonging to the Scope, Value = Scope
         private Stack<Scope> _stackScopes; //Stack of scopes for building _scopes
-        private BlockNode _currentBlock; //The current Block (used for look-up)
         private ErrorHandler symbolErrorhandler;
-
+        private BlockNode _currentBlock;
         public SymbolTable(ErrorHandler errorHandler)
         {
             symbolErrorhandler = errorHandler;
@@ -56,34 +58,37 @@ namespace CobraCompiler
         private void NewScope(BlockNode blockNode)
         {
             var scope = new Scope();
+            scope.Block = blockNode;
 
             if (_stackScopes.Count > 0)
                 scope.Parent= _stackScopes.Peek();
 
             _scopes.Add(blockNode, scope);
             _stackScopes.Push(scope);
-            _currentBlock = blockNode;
+            _currentBlock = _stackScopes.Peek().Block;
         }
 
         //Pop the stack of scopes
         private void ExitScope()
         {
             _stackScopes.Pop();
+            if (_currentBlock is not ProgramNode)
+                _currentBlock = _stackScopes.Peek().Block;
         }
 
         //Insert ID (name) and Type for a variable into the
         //scope at the top of the stack
-        private void Insert(IdentifierNode node)
+        private void Insert(string name, TypeEnum type, ASTNode node)
         {
-            if (_stackScopes.Peek().Symbols.ContainsKey(node.Name))
+            if (_stackScopes.Peek().Symbols.ContainsKey(name))
             {
-                SymbolError(node, $"The variable '{node.Name}' is defined twice within the same scope.");
+                SymbolError(node, $"The variable '{name}' is defined twice within the same scope.");
                 return;
             }
 
-            _stackScopes.Peek().Symbols.Add(node.Name, new Symbol 
+            _stackScopes.Peek().Symbols.Add(name, new Symbol 
             { 
-                Name = node.Name, Type = node.TypeNode.Type
+                Name = name, Type = type, Reference = node
             });
         }
 
@@ -113,7 +118,10 @@ namespace CobraCompiler
             NewScope(node);
 
             if (node.Commands == null)
+            {
+                ExitScope();
                 return null;
+            }
 
             foreach (var cmd in node.Commands)
             {
@@ -141,7 +149,10 @@ namespace CobraCompiler
             NewScope(node);
 
             if (node.Commands == null)
+            {
+                ExitScope();
                 return null;
+            }
 
             foreach (var cmd in node.Commands)
             {
@@ -160,19 +171,16 @@ namespace CobraCompiler
             }
 
             ExitScope();
-
             return null;
         }
 
         public override ASTNode? Visit(DeclarationNode node)
         {
-            Insert(node.Identifier);
-
+            Insert(node.Identifier.Name, node.Identifier.TypeNode.Type, node);
             Visit(node.Identifier);
             Visit(node.Expression);
             return null;
         }
-
 
         public override ASTNode? Visit(StatementNode node)
         {
@@ -187,11 +195,29 @@ namespace CobraCompiler
                 case WhileNode whileNode:
                     Visit(whileNode);
                     break;
-                case ListOperationNode listOperationNode:
-                    Visit(listOperationNode);
+                case ListOprStatementNode listOprStatementNode:
+                    Visit(listOprStatementNode);
                     break;
                 case ForeachNode foreachNode:
                     Visit(foreachNode);
+                    break;
+                case FunctionDeclarationNode functionDeclarationNode: 
+                    Visit(functionDeclarationNode);
+                    break;
+                case CommentNode commentNode:
+                    Visit(commentNode);
+                    break;
+                case InputStmtNode inputStmtNode:
+                    Visit(inputStmtNode);
+                    break;
+                case OutputStmtNode outputNode:
+                    Visit(outputNode);
+                    break;
+                case FunctionCallStmtNode functionCallStmtNode:
+                    Visit(functionCallStmtNode);
+                    break;
+                case ReturnNode returnNode:
+                    Visit(returnNode);
                     break;
             }
             return null;
@@ -214,6 +240,18 @@ namespace CobraCompiler
                     break;
                 case IdentifierNode identifierNode:
                     Visit(identifierNode);
+                    break;
+                case ListOprExpressionNode listOprExpressionNode:
+                    Visit(listOprExpressionNode);
+                    break;
+                case InputExprNode inputExprNode:
+                    Visit(inputExprNode);
+                    break;
+                case OutputExprNode outputExprNode:
+                    Visit(outputExprNode);
+                    break;
+                case FunctionCallExprNode functionCallExprNode:
+                    Visit(functionCallExprNode);
                     break;
             }
 
@@ -325,17 +363,26 @@ namespace CobraCompiler
             return null;
         }
 
-        public override ASTNode? Visit(ListOperationNode node)
+        public override ASTNode? Visit(ListOprStatementNode node)
         {
-            //Visits based on type of ListOperationNode
+            //Visits based on type of ListOprStatementNode
             switch (node)
             {
                 case ListAddNode listAddNode:
                     Visit(listAddNode);
                     break;
-                case ListDeleteNode listDeleteNode:
+                case ListReplaceNode listDeleteNode:
                     Visit(listDeleteNode);
                     break;
+            }
+            return null;
+        }
+
+        public override ASTNode? Visit(ListOprExpressionNode node)
+        {
+            //Visits based on type of ListOprExpressionNode
+            switch (node)
+            {
                 case ListValueOfNode listValueOfNode:
                     Visit(listValueOfNode);
                     break;
@@ -348,29 +395,29 @@ namespace CobraCompiler
 
         public override ASTNode? Visit(ListAddNode node)
         {
-            Visit(node.Identifier); 
-            Visit(node.Expression);
+            Visit(node.Identifier);
+            Visit(node.Arguments);
             return null;
         }
 
-        public override ASTNode? Visit(ListDeleteNode node)
+        public override ASTNode? Visit(ListReplaceNode node)
         {
             Visit(node.Identifier);
-            Visit(node.Expression);
+            Visit(node.Arguments);
             return null;
         }
 
         public override ASTNode? Visit(ListIndexOfNode node)
         {
             Visit(node.Identifier);
-            Visit(node.Expression);
+            Visit(node.Arguments);
             return null;
         }
 
         public override ASTNode? Visit(ListValueOfNode node)
         {
             Visit(node.Identifier);
-            Visit(node.Expression);
+            Visit(node.Arguments);
             return null;
         }
 
@@ -457,6 +504,122 @@ namespace CobraCompiler
             Visit(node.Right);
             return null;
         }
+
+        public override ASTNode Visit(CommentNode node)
+        {
+            return null;
+        }
+
+        public override ASTNode Visit(FunctionCallExprNode node)
+        {
+            var sym = Lookup(node.Name, _currentBlock);
+            if (sym == null)
+            {
+                SymbolError(node, $"{node.Name} is not found. Declare your function before calling.");
+            }
+
+            foreach (var expr in node.Arguments.Expressions)
+                Visit(expr);
+
+            return null;
+        }
+
+        public override ASTNode Visit(FunctionDeclarationNode node)
+        {
+            if (_currentBlock is not ProgramNode)
+            {
+                SymbolError(node, $"The function '{node.Name}' is declared within a scope");
+            }
+
+            Insert(node.Name, node.ReturnType.Type, node);
+
+            Visit(node.Block);
+
+            return null;
+        }
+
+        public override ASTNode Visit(InputExprNode node)
+        {
+            foreach (var expr in node.Arguments.Expressions)
+                Visit(expr);
+
+            return null;
+        }
+
+        public override ASTNode Visit(OutputExprNode node)
+        {
+            foreach (var expr in node.Arguments.Expressions)
+                Visit(expr);
+
+            return null;
+        }
+
+        public override ASTNode? Visit(FunctionCallStmtNode node)
+        {
+            var sym = Lookup(node.Name, _currentBlock);
+            if (sym == null)
+            {
+                SymbolError(node, $"{node.Name} is not found. Declare your variable before use.");
+            }
+            foreach (var expr in node.Arguments.Expressions)
+                Visit(expr);
+            return null;
+        }
+        
+        public override ASTNode? Visit(InputStmtNode node)
+        {
+            foreach (var expr in node.Arguments.Expressions)
+                Visit(expr);
+            return null;
+        }
+        
+        public override ASTNode? Visit(OutputStmtNode node)
+        {
+            foreach (var expr in node.Arguments.Expressions)
+                Visit(expr);
+            return null;
+        }
+
+        public override ASTNode? Visit(ReturnNode node)
+        {
+            return null;
+        }
+
+        public override ASTNode? Visit(FunctionBlockNode node)
+        {
+            NewScope(node);
+
+            foreach (var decl in node.Parameters.Declarations)
+                Visit(decl);
+
+            if (node.Commands == null)
+            {
+                ExitScope();
+                return null;
+            }
+
+            foreach (var cmd in node.Commands)
+            {
+                switch (cmd)
+                {
+                    case DeclarationNode declarationNode:
+                        Visit(declarationNode);
+                        break;
+                    case AssignNode assignNode:
+                        Visit(assignNode);
+                        break;
+                    case StatementNode statementNode:
+                        Visit(statementNode);
+                        break;
+                }
+            }
+
+            Visit(node.ReturnExpression);
+
+            ExitScope();
+            return null;
+        }
+
         public void Visit(IdentifierNode node)
         {
             var sym = Lookup(node.Name, _currentBlock);
@@ -470,6 +633,7 @@ namespace CobraCompiler
         {
             symbolErrorhandler.SymbolErrorMessages.Add($"Error line {node.Line}: {error}");
         }
+
     }
 }
 

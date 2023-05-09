@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\ExprParser.txt by ANTLR 4.12.0
+// Generated from C:\Users\chris\OneDrive\Dokumenter\GitHub\P4-project\CobraCompiler\CobraCompiler\ExprParser.g4 by ANTLR 4.12.0
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -19,7 +19,6 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
-using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using CobraCompiler;
 using IParseTreeListener = Antlr4.Runtime.Tree.IParseTreeListener;
@@ -27,7 +26,7 @@ using IToken = Antlr4.Runtime.IToken;
 
 /// <summary>
 /// This interface defines a complete listener for a parse tree produced by
-/// <see cref="ExprParser_"/>.
+/// <see cref="ExprParser"/>.
 /// </summary>
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.12.0")]
 [System.CLSCompliant(false)]
@@ -233,6 +232,16 @@ public interface IExprParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitBlock([NotNull] ExprParser.BlockContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ExprParser.commentStmt"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterCommentStmt([NotNull] ExprParser.CommentStmtContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ExprParser.commentStmt"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitCommentStmt([NotNull] ExprParser.CommentStmtContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ExprParser.ctrlStrct"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -343,6 +352,16 @@ public interface IExprParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitListOpr([NotNull] ExprParser.ListOprContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ExprParser.listOprExpr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterListOprExpr([NotNull] ExprParser.ListOprExprContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ExprParser.listOprExpr"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitListOprExpr([NotNull] ExprParser.ListOprExprContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ExprParser.funcCall"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -372,6 +391,16 @@ public interface IExprParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitFuncReturn([NotNull] ExprParser.FuncReturnContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ExprParser.funcReturnType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterFuncReturnType([NotNull] ExprParser.FuncReturnTypeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ExprParser.funcReturnType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitFuncReturnType([NotNull] ExprParser.FuncReturnTypeContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ExprParser.paramList"/>.
 	/// </summary>

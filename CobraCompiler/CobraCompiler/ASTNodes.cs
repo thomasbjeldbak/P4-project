@@ -1,20 +1,21 @@
 ﻿using CobraCompiler;
 using System;
-using System.Linq.Expressions;
-using static CobraCompiler.Symbol;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ASTNodes
 {
     public enum TypeEnum //All possible types
     {
+        nothing,
         number,
         text,
         boolean,
+        _decimal,
         list_object,
         list_number,
         list_text,
         list_boolean,
+        list_decimal,
     }
 
     //All abstract nodes cannot directly be a node in the generated AST tree
@@ -96,6 +97,15 @@ public class ASTNodes
         public new int Value { get; set; }
     }
 
+    internal class DecimalNode : TypeNode
+    {
+        public DecimalNode()
+        {
+            Type = TypeEnum._decimal;
+        }
+        public new float Value { get; set; }
+    }
+
     internal class TextNode : TypeNode
     {
         public TextNode()
@@ -123,9 +133,22 @@ public class ASTNodes
             else if (listType is TypeEnum.text)
                 Type = TypeEnum.list_text;
             else if (listType is TypeEnum.boolean)
-                Type = TypeEnum.list_boolean; 
+                Type = TypeEnum.list_boolean;
+            else if (listType is TypeEnum._decimal)
+                Type = TypeEnum.list_decimal;
+
+            Value = new List<TypeNode>();
         }
-        public new TypeNode[] Value { get; set; }
+        public ushort Size { get; set; }
+        public new List<TypeNode> Value { get; set; }
+    }
+
+    internal class NothingNode : TypeNode
+    {
+        public NothingNode()
+        {
+            Type = TypeEnum.nothing;
+        }
     }
 
     #endregion
@@ -171,6 +194,11 @@ public class ASTNodes
     internal class LessEqualNode : InfixExpressionNode { }
 
     #endregion
+
+    internal class CommentNode : StatementNode 
+    {
+        public string Comment { get; set; }
+    }
 
     //Abstract class for all constrol structure (they all contain blocks)
     internal abstract class ControlStructureNode : StatementNode
@@ -225,12 +253,43 @@ public class ASTNodes
 
     #endregion
 
+    //Return node is a node representing a return statement
+    internal class ReturnNode : StatementNode
+    {
+        public ExpressionNode Expression { get; set; }
+    }
+
     //"Function call" has arguments and a reference to function declaration
     //Call Name
-    internal class FunctionCallNode : StatementNode
+    internal class FunctionCallExprNode : ExpressionNode
     {
-        public FunctionDeclarationNode Function { get; set; }
-        public IdentifierNode[] Arguments { get; set; }
+        public string Name { get; set; }
+        public ArgumentsNode Arguments { get; set; }
+    }
+
+    internal class FunctionCallStmtNode : StatementNode
+    {
+        public string Name { get; set; }
+        public ArgumentsNode Arguments { get; set; }
+    }
+
+
+    internal class InputExprNode : FunctionCallExprNode
+    {
+        public TypeNode Type { get; set; }
+    }
+
+    internal class OutputExprNode : FunctionCallExprNode
+    {
+    }
+
+    internal class InputStmtNode : FunctionCallStmtNode
+    {
+        public TypeNode Type { get; set; }
+    }
+
+    internal class OutputStmtNode : FunctionCallStmtNode
+    {
     }
 
     //"Function declaration" has a type to return, parameters and a block
@@ -239,9 +298,14 @@ public class ASTNodes
     {
         public string Name { get; set; }
         public TypeNode ReturnType { get; set; }
-        public IdentifierNode[] Parameters { get; set; }
-        public BlockNode Block { get; set; }
+        public FunctionBlockNode Block { get; set; }
+    }
 
+    internal class FunctionBlockNode : BlockNode
+    {
+        public ArgumentsNode Arguments { get; set; }
+        public ParametersNode Parameters { get; set; }
+        public ExpressionNode ReturnExpression { get; set; }
     }
 
     //"block" contains commands
@@ -253,20 +317,44 @@ public class ASTNodes
 
     //Abstract class for all listOperations
     //e.g. Identifier:[ADD](Expression);
-    internal abstract class ListOperationNode : StatementNode
+    internal abstract class ListOprStatementNode : StatementNode
     {
         public IdentifierNode Identifier { get; set; }
-        public ExpressionNode Expression { get; set; }
+        public ArgumentsNode Arguments { get; set; }
+    }
+
+    internal abstract class ListOprExpressionNode : ExpressionNode
+    {
+        public IdentifierNode Identifier { get; set; }
+        public ArgumentsNode Arguments { get; set; }
+    }
+
+    internal class ArgumentsNode : ExpressionNode
+    {
+        public List<ExpressionNode> Expressions { get; set; }
+    }
+
+    internal class ParametersNode : ExpressionNode
+    {
+        public List<DeclarationNode> Declarations { get; set; }
     }
 
     #region List Operations
-    internal class ListAddNode : ListOperationNode { }
+    internal class ListAddNode : ListOprStatementNode 
+    { 
+    }
 
-    internal class ListDeleteNode : ListOperationNode { }
+    internal class ListReplaceNode : ListOprStatementNode 
+    {
+    }
 
-    internal class ListValueOfNode : ListOperationNode { }
+    internal class ListValueOfNode : ListOprExpressionNode 
+    {
+    }
 
-    internal class ListIndexOfNode : ListOperationNode { }
+    internal class ListIndexOfNode : ListOprExpressionNode
+    { 
+    }
 
     #endregion
 }

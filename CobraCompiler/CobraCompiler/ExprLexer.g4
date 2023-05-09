@@ -29,6 +29,8 @@ DIV: '/';
 BOOL: 'boolean'; 
 TEXT: 'text'; 
 NUM: 'number';
+DECIMAL: 'decimal';
+NOTHING: 'nothing';
 LIST: 'list';
 QUOTE: '"'; 
 IF: 'if'; 
@@ -41,14 +43,18 @@ IN: 'in';
 FUNCTION: 'function';
 RETURN: 'return';
 CALL: 'call';
+PRINT: 'output';
+SCAN: 'input';
+COMMENT: 'comment:';
 
 LISTADD: 'Add';
 LISTIDXOF: 'IndexOf';
-LISTDEL: 'Delete';
+LISTREPLACE: 'Replace';
 LISTVALOF: 'ValueOf';
 
-
-STR: '"'[a-zA-Z_0-9]*'"'; 
+COMM: 'comment:'~(';')*;
+STR: '"' ~('"') '"';
+DEC: [0-9]+'.'[0-9]+; 
 INT: [0-9]+ ; 
 ID: [a-zA-Z_][a-zA-Z_0-9]* ; 
 WS: [ \t\n\r\f]+ -> skip ; 
