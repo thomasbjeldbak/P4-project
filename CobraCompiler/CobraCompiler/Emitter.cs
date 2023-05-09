@@ -30,6 +30,16 @@ namespace CobraCompiler {
             stringBuilder.AppendLine(" int value;");
             stringBuilder.AppendLine(" struct node *next;");
             stringBuilder.AppendLine("};");
+            //get length of list function:
+            //stringBuilder.AppendLine("int GetListLength(struct node *list) {");
+            //stringBuilder.AppendLine("int length = 0;");
+            //stringBuilder.AppendLine("struct node *current = list;");
+            //stringBuilder.AppendLine("while (current != NULL) {");
+            //stringBuilder.AppendLine("length++;");
+            //stringBuilder.AppendLine("current = current->next;");
+            //stringBuilder.AppendLine("}");
+            //stringBuilder.AppendLine("return length;");
+            //stringBuilder.AppendLine("}");
             //list:Add() function:
             stringBuilder.AppendLine("void AddToList (struct node **list, int n){");
             stringBuilder.AppendLine(" struct node *new_node = malloc(sizeof(struct node));");
@@ -196,6 +206,21 @@ namespace CobraCompiler {
                 case ListOprStatementNode listOperationNode:
                     stringBuilder.Append(Visit(listOperationNode));
                     break;
+                case CommentNode commentNode:
+                    stringBuilder.Append(Visit(commentNode));
+                    break;
+                case FunctionDeclarationNode functionDeclarationNode:
+                    stringBuilder.Append(Visit(functionDeclarationNode));
+                    break;
+                case InputStmtNode inputStmtNode:
+                    stringBuilder.Append(Visit(inputStmtNode));
+                    break;
+                case OutputStmtNode outputStmtNode:
+                    stringBuilder.Append(Visit(outputStmtNode));
+                    break;
+                case FunctionCallStmtNode functionCallStmtNode:
+                    stringBuilder.Append(Visit(functionCallStmtNode));
+                    break;
                 default:
                     throw new Exception();
             }
@@ -241,6 +266,9 @@ namespace CobraCompiler {
                     break;
                 case ListNode listNode:
                     throw new NotImplementedException();
+                case ListOprExpressionNode listOprExpressionNode:
+                    stringBuilder.Append(Visit(listOprExpressionNode));
+                    break;
                 default:
                     throw new Exception($"ExpressionNode type not valid");
             }
@@ -484,7 +512,7 @@ namespace CobraCompiler {
             {
                 var expr = node.Arguments.Expressions[i];
                 if (i == node.Arguments.Expressions.Count - 1)
-                    stringBuilder.AppendLine($"{Visit(expr)});");
+                    stringBuilder.Append($"{Visit(expr)})");
                 else
                     stringBuilder.Append($"{Visit(expr)}, ");
             }
@@ -502,7 +530,7 @@ namespace CobraCompiler {
             {
                 var expr = node.Arguments.Expressions[i];
                 if (i == node.Arguments.Expressions.Count - 1)
-                    stringBuilder.AppendLine($"{Visit(expr)});");
+                    stringBuilder.Append($"{Visit(expr)})");
                 else
                     stringBuilder.Append($"{Visit(expr)}, ");
             }
@@ -613,47 +641,138 @@ namespace CobraCompiler {
 
         public override StringBuilder Visit(CommentNode node)
         {
-            throw new NotImplementedException();
+            return new StringBuilder();
         }
 
         public override StringBuilder Visit(FunctionCallExprNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append($"{node.Name}(");
+            for (int i = 0; i < node.Arguments.Expressions.Count; i++)
+            {
+                var expr = node.Arguments.Expressions[i];
+                if (i == node.Arguments.Expressions.Count - 1)
+                    stringBuilder.Append($"{Visit(expr)})");
+                else
+                    stringBuilder.Append($"{Visit(expr)}, ");
+            }
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(FunctionCallStmtNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append($"{node.Name}(");
+            for (int i = 0; i < node.Arguments.Expressions.Count; i++)
+            {
+                var expr = node.Arguments.Expressions[i];
+                if (i == node.Arguments.Expressions.Count - 1)
+                    stringBuilder.Append($"{Visit(expr)});");
+                else
+                    stringBuilder.Append($"{Visit(expr)}, ");
+            }
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(FunctionDeclarationNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            switch (node.ReturnType)
+            {
+                case NumberNode:
+                case BooleanNode:
+                    stringBuilder.Append($"int {node.Name}");
+                    break;
+                case DecimalNode:
+                    stringBuilder.Append($"float {node.Name}");
+                    break;
+                case TextNode:
+                    stringBuilder.Append($"char *{node.Name}");
+                    break;
+                case ListNode:
+                    stringBuilder.Append($"struct node *{node.Name}");
+                    break;
+                case NothingNode:
+                    stringBuilder.Append($"void {node.Name}");
+                    break;
+
+            }
+            stringBuilder.Append(Visit(node.Block));
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(InputExprNode node)
         {
-            throw new NotImplementedException();
+            return new StringBuilder($"{node.Value}");
         }
 
         public override StringBuilder Visit(OutputExprNode node)
         {
-            throw new NotImplementedException();
+            return new StringBuilder();
         }
 
         public override StringBuilder Visit(InputStmtNode node)
         {
-            throw new NotImplementedException();
+            return new StringBuilder();
         }
 
         public override StringBuilder Visit(OutputStmtNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+
+            var argument = node.Arguments.Expressions[0];
+            var expr = Visit(argument);
+            TypeEnum type = TypeEnum.nothing;
+
+            switch (argument)
+            {
+                case TypeNode typeNode:
+                    type = typeNode.Type;
+                    switch (typeNode.Type)
+                    {
+                        case TypeEnum.boolean:
+                        case TypeEnum.text:
+                            expr = new StringBuilder($"\"{expr}\"");
+                            break;
+                        default:
+                            expr = new StringBuilder($"{expr}");
+                            break;
+                    }
+                    break;
+                case FunctionCallExprNode functionCallExprNode:
+                    type = _symbolTable.Lookup(functionCallExprNode.Name, _currentBlock).Type;
+                    break;
+                case ListIndexOfNode listIndexOfNode:
+                    type = TypeEnum.number;
+                    break;
+                case ListValueOfNode listValueOfNode:
+                    type = getListType(_symbolTable.Lookup(listValueOfNode.Identifier.Name, _currentBlock).Type);
+                    break;
+                case IdentifierNode identifierNode:
+                    type = _symbolTable.Lookup(identifierNode.Name, _currentBlock).Type;
+                    break;
+            }
+
+            switch (type)
+            {
+                case TypeEnum.number:
+                    stringBuilder.AppendLine($"printf(\"%d\", {expr});");
+                    break;
+                case TypeEnum._decimal:
+                    stringBuilder.AppendLine($"printf(\"%f\", {expr});");
+                    break;
+                default:
+                    stringBuilder.AppendLine($"printf({expr});");
+                    break;
+            }
+            return stringBuilder;
         }
 
         public override StringBuilder Visit(ReturnNode node)
         {
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"return {Visit(node.Expression)};");
+            return stringBuilder;
         }
 
 
@@ -694,7 +813,7 @@ namespace CobraCompiler {
                     return false;
             }
         }
-        #endregion
 
+        #endregion
     }
 }
