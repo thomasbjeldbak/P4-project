@@ -1530,7 +1530,8 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
             var funcBlockNode = new FunctionBlockNode() { Line = blockNode.Line };
             funcBlockNode.Parameters = parametersNode;
-            funcBlockNode.ReturnExpression = blockNode.Commands.OfType<ReturnNode>().First().Expression;
+            if (blockNode.Commands.OfType<ReturnNode>().Any())
+                funcBlockNode.ReturnExpression = blockNode.Commands.OfType<ReturnNode>().First().Expression;
             
             functionDec.Block = funcBlockNode;
             functionDec.Name = ID.ToString();

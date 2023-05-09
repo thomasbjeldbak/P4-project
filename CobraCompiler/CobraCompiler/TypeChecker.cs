@@ -236,7 +236,7 @@ namespace CobraCompiler
                     type = Visit(functionCallExprNode);
                     break;
                 default:
-                    throw new Exception();
+                    return null;
             }
 
             return type;
@@ -1195,11 +1195,11 @@ namespace CobraCompiler
         {
             var block = Visit(node.Block);
 
-            if (node.ReturnType.Type == TypeEnum.nothing && block.Type != null)
+            if (node.ReturnType.Type == TypeEnum.nothing && block != null)
             {
                 TypeError(node, $" function '{node.Name}()' expects no return statement");
             }
-            else if (node.ReturnType.Type != block.Type)
+            else if (node.ReturnType.Type != TypeEnum.nothing && node.ReturnType.Type != block.Type)
             {
                 TypeError(node, $"function '{node.Name}()' expects to return type {node.ReturnType.Type} but returns type {block.Type}");
             }
@@ -1224,11 +1224,21 @@ namespace CobraCompiler
             for (int i = 0; i < parameters.Count; i++)
             {
                 Symbol? paramSymbol = _symbolTable.Lookup(parameters[i].Identifier.Name, _currentBlock);
-                var argumentType = (TypeNode)arguments[i];
+                TypeEnum argType = TypeEnum.nothing;
 
-                if (paramSymbol.Type != argumentType.Type)
+                switch (arguments[i])
                 {
-                    TypeError(node, $"{sym.Name} parameter of type {paramSymbol.Type} doesn't match argument of type {argumentType.Type}.");
+                    case TypeNode typeNode:
+                        argType = typeNode.Type;
+                        break;
+                    case IdentifierNode identifierNode:
+                        argType = _symbolTable.Lookup(identifierNode.Name, _currentBlock).Type;
+                        break;
+                }
+
+                if (paramSymbol.Type != argType)
+                {
+                    TypeError(node, $"{sym.Name} parameter of type {paramSymbol.Type} doesn't match argument of type {argType}.");
                     return null;
                 }
             }
