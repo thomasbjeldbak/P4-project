@@ -1,1 +1,6 @@
-decimal hej = 0.1;
+function print(text str) return nothing
+{
+	return "print: " + str;
+}
+
+call print("Hello World");

@@ -1175,7 +1175,7 @@ namespace CobraCompiler
         {
             List<ExpressionNode> arguments = node.Arguments.Expressions;
 
-            if (arguments.Count == 1)
+            if (arguments.Count != 1)
             {
                 TypeError(node, $"'Output()' takes 1 arguments");
             }
@@ -1183,9 +1183,9 @@ namespace CobraCompiler
             var expression0 = arguments[0];
             TypeNode argument0 = Visit(expression0);
 
-            if (argument0.Type != TypeEnum.text)
+            if (isList(argument0.Type))
             {
-                TypeError(node, $"'Output()' Expected type {TypeEnum.text}");
+                TypeError(node, $"'Output()' does not support type {getTypeNode(argument0.Type)}");
             }
 
             return null;
@@ -1193,7 +1193,18 @@ namespace CobraCompiler
 
         public override TypeNode? Visit(FunctionDeclarationNode node)
         {
-            return Visit(node.Block);
+            var block = Visit(node.Block);
+
+            if (node.ReturnType.Type == TypeEnum.nothing && block.Type != null)
+            {
+                TypeError(node, $" function '{node.Name}()' expects no return statement");
+            }
+            else if (node.ReturnType.Type != block.Type)
+            {
+                TypeError(node, $"function '{node.Name}()' expects to return type {node.ReturnType.Type} but returns type {block.Type}");
+            }
+
+            return block;
         }
 
         public override TypeNode? Visit(FunctionCallStmtNode node)
@@ -1281,7 +1292,7 @@ namespace CobraCompiler
         {
             List<ExpressionNode> arguments = node.Arguments.Expressions;
 
-            if (arguments.Count == 1)
+            if (arguments.Count != 1)
             {
                 TypeError(node, $"'Output()' takes 1 arguments");
             }
@@ -1289,9 +1300,9 @@ namespace CobraCompiler
             var expression0 = arguments[0];
             TypeNode argument0 = Visit(expression0);
 
-            if (argument0.Type != TypeEnum.text)
+            if (isList(argument0.Type))
             {
-                TypeError(node, $"'Output()' Expected type {TypeEnum.text}");
+                TypeError(node, $"'Output()' does not support type {getTypeNode(argument0.Type)}");
             }
 
             return null;

@@ -5,6 +5,15 @@ struct node
  int value;
  struct node *next;
 };
+int GetListLength(struct node *list) {
+int length = 0;
+struct node *current = list;
+while (current != NULL) {
+length++;
+current = current->next;
+}
+return length;
+}
 void AddToList (struct node **list, int n){
  struct node *new_node = malloc(sizeof(struct node));
  new_node->value = n;
@@ -48,5 +57,6 @@ int ValueOfList(struct node *list, int index)
  return curr_node->value;
 }
 void main(){
-float hej = 0.1;
+int x = 10;
+printf("%d", x);
 }
