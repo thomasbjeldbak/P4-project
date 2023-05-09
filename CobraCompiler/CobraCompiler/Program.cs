@@ -71,8 +71,11 @@ namespace CobraCompiler
 
             StringBuilder sb = new Emitter(st).Visit((ProgramNode)ast);
 
-            string path = Directory.GetCurrentDirectory();
-            path += "\\..\\..\\..\\GeneratedProgram.c";
+            string tempPath = Directory.GetCurrentDirectory();
+            string path = Path.GetFullPath(Path.Combine(tempPath, @"..\..\..\GeneratedProgram"));
+            //string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "\\..\\..\\..\\GeneratedProgram.c"));
+            //path += "\\GeneratedProgram.c";
+            //path += "\\..\\..\\..\\GeneratedProgram.c";
 
             File.WriteAllText(path, sb.ToString());
             CompileMethods.CompileExecutable(path);

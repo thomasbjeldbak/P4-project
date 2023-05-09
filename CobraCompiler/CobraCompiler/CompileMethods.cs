@@ -23,6 +23,7 @@ public static class CompileMethods
         //Check operating system
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
+            throw new NotImplementedException();
             //Set the command to run
             command = $"xcrun --sdk macosx --find mcs";
 
@@ -31,17 +32,17 @@ public static class CompileMethods
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            string fileName = "\"\\..\\..\\..\\GeneratedProgram.c\"";
-            string arguments = "-o \"\\..\\..\\..\\GeneratedProgram.exe\"";
+            path = "C:\\MinGW\\bin\\gcc.exe";
+            command = $"{path} \"{filePath}.c\" -o {filePath}.exe";
+            //string arguments = "-o \"\\..\\..\\..\\GeneratedProgram.exe\"";
 
-            startInfo.FileName = "gcc";
-            startInfo.Arguments = $"{fileName} {arguments}";
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = $"/C {command}";
+            //Process process = new Process();
+            //process.StartInfo = startInfo;
+            //process.Start();
 
-            Process process = new Process();
-            process.StartInfo = startInfo;
-            process.Start();
-
-            process.WaitForExit();
+            //process.WaitForExit();
         }
         else
         {
@@ -53,6 +54,7 @@ public static class CompileMethods
         using (Process process = new Process())
         { 
             process.StartInfo = startInfo;
+            process.StartInfo.RedirectStandardOutput = true;
             process.Start();
 
             // Read the output
