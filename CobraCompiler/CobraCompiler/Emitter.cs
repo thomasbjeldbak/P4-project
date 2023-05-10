@@ -8,8 +8,10 @@ using Antlr4.Runtime.Atn;
 using static System.Net.Mime.MediaTypeNames;
 using static ASTNodes;
 
-namespace CobraCompiler {
-    internal class Emitter : ASTVisitor<StringBuilder> {
+namespace CobraCompiler
+{
+    internal class Emitter : ASTVisitor<StringBuilder>
+    {
 
         private readonly SymbolTable _symbolTable;
         private BlockNode _currentBlock;
@@ -125,9 +127,9 @@ namespace CobraCompiler {
                 return stringBuilder;
             }
 
-            foreach(var command in node.Commands)
+            foreach (var command in node.Commands)
             {
-                switch(command)
+                switch (command)
                 {
                     case DeclarationNode declarationNode:
                         stringBuilder.Append(Visit(declarationNode));
@@ -160,7 +162,7 @@ namespace CobraCompiler {
                     stringBuilder.Append($"int {symbol.Name}");
                     break;
                 case TypeEnum.text:
-                    stringBuilder.Append($"char {symbol.Name}[{symbol.Name.Length+1}]");
+                    stringBuilder.Append($"char {symbol.Name}[{symbol.Name.Length + 1}]");
                     break;
                 case TypeEnum.boolean:
                     stringBuilder.Append($"bool {symbol.Name}");
@@ -176,7 +178,7 @@ namespace CobraCompiler {
                     break;
             }
 
-            if(!isList(symbol.Type) && node.Expression != null)
+            if (!isList(symbol.Type) && node.Expression != null)
             {
                 stringBuilder.Append(" = ");
                 stringBuilder.Append(Visit(node.Expression));
@@ -236,7 +238,7 @@ namespace CobraCompiler {
             stringBuilder.Append(" = ");
             stringBuilder.Append(Visit(node.Expression));
             stringBuilder.AppendLine(";");
-            
+
             return stringBuilder;
         }
 
@@ -390,7 +392,7 @@ namespace CobraCompiler {
         public override StringBuilder Visit(RepeatNode node)
         {
             var stringBuilder = new StringBuilder();
-            
+
             //Generate code for the Repeat node
             stringBuilder.Append("for (int number = 0; number < ");
             //Generate code for the expression in the repeat
@@ -405,15 +407,15 @@ namespace CobraCompiler {
         public override StringBuilder Visit(WhileNode node)
         {
             var stringBuilder = new StringBuilder();
-    
+
             //Generate code for the repeat while loop
             stringBuilder.Append("while(");
-            
+
             //Generates the condition for the while part
             stringBuilder.Append(Visit(node.Condition));
             stringBuilder.AppendLine(")");
             stringBuilder.Append(Visit(node.Block));
-            
+
             return stringBuilder;
         }
 
@@ -495,15 +497,15 @@ namespace CobraCompiler {
 
             stringBuilder.Append($"AddToList(&{list.Name}, ");
 
-            for(int i = 0; i < node.Arguments.Expressions.Count; i++)
+            for (int i = 0; i < node.Arguments.Expressions.Count; i++)
             {
                 var expr = node.Arguments.Expressions[i];
-                if (i == node.Arguments.Expressions.Count-1)
+                if (i == node.Arguments.Expressions.Count - 1)
                     stringBuilder.AppendLine($"{Visit(expr)});");
                 else
                     stringBuilder.Append($"{Visit(expr)}, ");
             }
-            
+
             return stringBuilder;
         }
 
@@ -663,7 +665,6 @@ namespace CobraCompiler {
 
             stringBuilder.Append("(");
 
-
             for (int i = 0; i < node.Parameters.Declarations.Count; i++)
             {
                 var expr = node.Parameters.Declarations[i];
@@ -673,21 +674,25 @@ namespace CobraCompiler {
                     stringBuilder.Append($"{Visit(expr)}, ");
             }
             stringBuilder.AppendLine("{");
-            foreach (var command in node.Commands)
+
+            if (node.Commands != null)
             {
-                switch (command)
+                foreach (var command in node.Commands)
                 {
-                    case DeclarationNode declarationNode:
-                        stringBuilder.Append(Visit(declarationNode));
-                        break;
-                    case AssignNode assignNode:
-                        stringBuilder.Append(Visit(assignNode));
-                        break;
-                    case StatementNode statementNode:
-                        stringBuilder.Append(Visit(statementNode));
-                        break;
-                    default:
-                        throw new Exception($"Command was not valid");
+                    switch (command)
+                    {
+                        case DeclarationNode declarationNode:
+                            stringBuilder.Append(Visit(declarationNode));
+                            break;
+                        case AssignNode assignNode:
+                            stringBuilder.Append(Visit(assignNode));
+                            break;
+                        case StatementNode statementNode:
+                            stringBuilder.Append(Visit(statementNode));
+                            break;
+                        default:
+                            throw new Exception($"Command was not valid");
+                    }
                 }
             }
             if (node.ReturnExpression != null)

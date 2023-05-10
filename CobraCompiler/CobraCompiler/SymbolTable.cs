@@ -104,7 +104,10 @@ namespace CobraCompiler
                 {
                     if (symbol.Name == name)
                     {
-                        return symbol;
+                        if (blockNode is FunctionBlockNode)
+                            ((FunctionBlockNode)blockNode).UsedVariables.Add(name);
+                        else
+                            return symbol;
                     }
                 }
                 

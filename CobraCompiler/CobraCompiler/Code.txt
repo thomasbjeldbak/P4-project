@@ -1,6 +1,16 @@
-function print(text str) return nothing
+list(text) hej;
+
+hej:Add("1");
+hej:Add("2");
+hej:Add("3");
+hej:Add("4");
+
+function printList() return nothing
 {
-	return "print: " + str;
+	repeat for each(text h in hej)
+	{
+		call output(h);
+	}
 }
 
-call print("Hello World");
+call printList();

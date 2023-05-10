@@ -303,6 +303,7 @@ public class ASTNodes
 
     internal class FunctionBlockNode : BlockNode
     {
+        public List<string> UsedVariables { get; set; }
         public ArgumentsNode Arguments { get; set; }
         public ParametersNode Parameters { get; set; }
         public ExpressionNode ReturnExpression { get; set; }
