@@ -5,6 +5,7 @@ hej:Add("2");
 hej:Add("3");
 hej:Add("4");
 
+
 function printList() return nothing
 {
 	repeat for each(text h in hej)

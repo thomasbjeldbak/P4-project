@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using System.Text;
@@ -28,9 +29,10 @@ namespace CobraCompiler
             //Libraries
             stringBuilder.AppendLine("#include <stdio.h>");
             stringBuilder.AppendLine("#include <stdlib.h>");
+            stringBuilder.AppendLine("#include <string.h>");
             //Struct List:
             stringBuilder.AppendLine("struct node\n{");
-            stringBuilder.AppendLine(" int value;");
+            stringBuilder.AppendLine(" void *value;");
             stringBuilder.AppendLine(" struct node *next;");
             stringBuilder.AppendLine("};");
             //get length of list function:
@@ -44,9 +46,10 @@ namespace CobraCompiler
             //stringBuilder.AppendLine("return length;");
             //stringBuilder.AppendLine("}");
             //list:Add() function:
-            stringBuilder.AppendLine("void AddToList (struct node **list, int n){");
+            stringBuilder.AppendLine("void AddToList (struct node **list, void *value, size_t value_size){");
             stringBuilder.AppendLine(" struct node *new_node = malloc(sizeof(struct node));");
-            stringBuilder.AppendLine(" new_node->value = n;");
+            stringBuilder.AppendLine(" new_node->value = malloc(value_size);");
+            stringBuilder.AppendLine(" memcpy(new_node->value, value, value_size);");
             stringBuilder.AppendLine(" new_node->next = NULL;");
             stringBuilder.AppendLine(" if (*list == NULL) {");
             stringBuilder.AppendLine(" *list = new_node;");
@@ -59,7 +62,7 @@ namespace CobraCompiler
             stringBuilder.AppendLine(" }");
             stringBuilder.AppendLine("};");
             //list:Replace() function:
-            stringBuilder.AppendLine("void ReplaceInList(struct node *list, int index, int value)");
+            stringBuilder.AppendLine("void ReplaceInList(struct node *list, int index, void *value)");
             stringBuilder.AppendLine("{");
             stringBuilder.AppendLine(" struct node *curr_node = list;");
             stringBuilder.AppendLine(" int i;");
@@ -68,7 +71,7 @@ namespace CobraCompiler
             stringBuilder.AppendLine(" curr_node->value = value;");
             stringBuilder.AppendLine("}");
             //list:IndexOfList() function:
-            stringBuilder.AppendLine("int IndexOfList(struct node *list, int value)");
+            stringBuilder.AppendLine("int IndexOfList(struct node *list, void *value)");
             stringBuilder.AppendLine("{");
             stringBuilder.AppendLine(" struct node *curr_node = list;");
             stringBuilder.AppendLine(" int index = 0;");
@@ -81,7 +84,7 @@ namespace CobraCompiler
             stringBuilder.AppendLine(" return -1;");
             stringBuilder.AppendLine("}");
             //List:ValueOf() function:
-            stringBuilder.AppendLine("int ValueOfList(struct node *list, int index)");
+            stringBuilder.AppendLine("void *ValueOfList(struct node *list, int index)");
             stringBuilder.AppendLine("{");
             stringBuilder.AppendLine(" struct node *curr_node = list;");
             stringBuilder.AppendLine(" int i;");
@@ -90,10 +93,13 @@ namespace CobraCompiler
             stringBuilder.AppendLine(" return curr_node->value;");
             stringBuilder.AppendLine("}");
 
+            foreach (var funcDecCommand in node.Commands.OfType<FunctionDeclarationNode>())
+                stringBuilder.Append(Visit(funcDecCommand));
+
             stringBuilder.Append("void main()");
             stringBuilder.AppendLine("{");
 
-            foreach (var command in node.Commands)
+            foreach (var command in node.Commands.Where(x => x is not FunctionDeclarationNode))
             {
                 switch (command)
                 {
@@ -110,6 +116,7 @@ namespace CobraCompiler
                         throw new Exception($"Command was not valid");
                 }
             }
+
             stringBuilder.AppendLine("}");
             _currentBlock = node;
 
@@ -162,7 +169,7 @@ namespace CobraCompiler
                     stringBuilder.Append($"int {symbol.Name}");
                     break;
                 case TypeEnum.text:
-                    stringBuilder.Append($"char {symbol.Name}[{symbol.Name.Length + 1}]");
+                    stringBuilder.Append($"char *{symbol.Name}");
                     break;
                 case TypeEnum.boolean:
                     stringBuilder.Append($"bool {symbol.Name}");
@@ -212,9 +219,9 @@ namespace CobraCompiler
                 case CommentNode commentNode:
                     stringBuilder.Append(Visit(commentNode));
                     break;
-                case FunctionDeclarationNode functionDeclarationNode:
-                    stringBuilder.Append(Visit(functionDeclarationNode));
-                    break;
+                //case FunctionDeclarationNode functionDeclarationNode:
+                //    stringBuilder.Append(Visit(functionDeclarationNode));
+                //    break;
                 case InputStmtNode inputStmtNode:
                     stringBuilder.Append(Visit(inputStmtNode));
                     break;
@@ -255,7 +262,7 @@ namespace CobraCompiler
                     stringBuilder.Append(decimalNode.Value.ToString().Replace(',', '.'));
                     break;
                 case TextNode textNode:
-                    stringBuilder.Append(textNode.Value);
+                    stringBuilder.Append($"\"{textNode.Value}\"");
                     break;
                 case BooleanNode booleanNode:
                     stringBuilder.Append(booleanNode.Value.ToString().ToLower());
@@ -425,32 +432,9 @@ namespace CobraCompiler
 
             //Open new scope
             stringBuilder.AppendLine("{");
-            //Initialize local variables for use later. The number variable is used for keeping the while loop running until the end of the list is reached
-            //The LocalVariable is used as the variable on which operations will be carried out on in the foreach loop
-            stringBuilder.Append(Visit(node.LocalVariable).ToString().TrimEnd());
-            stringBuilder.AppendLine("int number = 1;");
-
-            stringBuilder.AppendLine("while (number)");
-            stringBuilder.AppendLine("{");
-
-            //Assign the current value in the list to the LocalVariable
-            stringBuilder.AppendLine($"{node.LocalVariable.Identifier.Name} = {Visit(node.List)}->value;");
-            //Enter the code block inside the foreach loop
             stringBuilder.Append(Visit(node.Block));
-            //Check if next element is NULL. If this is true, set number to 0 in order to stop iterating
-            stringBuilder.AppendLine($"if ({Visit(node.List)}->next == NULL)");
-            stringBuilder.AppendLine("{");
-            stringBuilder.AppendLine("number = 0;");
-            stringBuilder.AppendLine("} else");
-            stringBuilder.AppendLine("{");
-            //Set the current element to the be the next element in the list
-            stringBuilder.AppendLine($"{Visit(node.List)} = {Visit(node.List)}->next;");
+            //Close the scope
             stringBuilder.AppendLine("}");
-
-            stringBuilder.AppendLine("}");
-            stringBuilder.AppendLine("}");
-
-
 
             return stringBuilder;
         }
@@ -497,15 +481,59 @@ namespace CobraCompiler
 
             stringBuilder.Append($"AddToList(&{list.Name}, ");
 
+            List<string> arguments = new List<string>();
             for (int i = 0; i < node.Arguments.Expressions.Count; i++)
             {
                 var expr = node.Arguments.Expressions[i];
-                if (i == node.Arguments.Expressions.Count - 1)
-                    stringBuilder.AppendLine($"{Visit(expr)});");
-                else
-                    stringBuilder.Append($"{Visit(expr)}, ");
+                TypeEnum type = TypeEnum.nothing;
+
+                if (expr is TypeNode)
+                {
+                    type = ((TypeNode)expr).Type;
+                    switch (type)
+                    {
+                        case TypeEnum.number:
+                            arguments.Add($"&(int){{{Visit(expr)}}}");
+                            break;
+                        case TypeEnum.text:
+                            arguments.Add($"&(char *){{{Visit(expr)}}}");
+                            break;
+                        case TypeEnum.boolean:
+                            arguments.Add($"&(bool){{{Visit(expr)}}}");
+                            break;
+                        case TypeEnum._decimal:
+                            arguments.Add($"&(float){{{Visit(expr)}}}");
+                            break;
+                    }
+                }
+                else if (expr is IdentifierNode)
+                    arguments.Add($"{Visit(expr)}");
+
+                switch (type)
+                {
+                    case TypeEnum.number:
+                        arguments.Add("sizeof(int)");
+                        break;
+                    case TypeEnum.text:
+                        arguments.Add("sizeof(char *)");
+                        break;
+                    case TypeEnum.boolean:
+                        arguments.Add("sizeof(bool)");
+                        break;
+                    case TypeEnum._decimal:
+                        arguments.Add("sizeof(float)");
+                        break;
+                    case TypeEnum.list_number:
+                    case TypeEnum.list_decimal:
+                    case TypeEnum.list_text:
+                    case TypeEnum.list_boolean:
+                        arguments.Add($"{Visit(expr)}");
+                        arguments.Add("sizeof(struct *node)");
+                        break;
+                }
             }
 
+            stringBuilder.Append($"{string.Join(", ", arguments)});");
             return stringBuilder;
         }
 
@@ -662,6 +690,7 @@ namespace CobraCompiler
         public override StringBuilder Visit(FunctionBlockNode node)
         {
             var stringBuilder = new StringBuilder();
+            _currentBlock = node;
 
             stringBuilder.Append("(");
 
@@ -669,10 +698,43 @@ namespace CobraCompiler
             {
                 var expr = node.Parameters.Declarations[i];
                 if (i == node.Parameters.Declarations.Count - 1)
-                    stringBuilder.AppendLine($"{Visit(expr)})");
+                    stringBuilder.AppendLine($"{Visit(expr)}");
                 else
                     stringBuilder.Append($"{Visit(expr)}, ");
             }
+
+            for (int i = 0; i < node.UsedVariables.Count; i++)
+            {
+                var variableSym = _symbolTable.Lookup(node.UsedVariables[i], _currentBlock);
+
+                switch (variableSym.Type)
+                {
+                    case TypeEnum.number:
+                        stringBuilder.Append($"int {variableSym.Name}");
+                        break;
+                    case TypeEnum.text:
+                        stringBuilder.Append($"char {variableSym.Name}");
+                        break;
+                    case TypeEnum.boolean:
+                        stringBuilder.Append($"bool {variableSym.Name}");
+                        break;
+                    case TypeEnum._decimal:
+                        stringBuilder.Append($"float {variableSym.Name}");
+                        break;
+                    case TypeEnum.list_number:
+                    case TypeEnum.list_text:
+                    case TypeEnum.list_boolean:
+                    case TypeEnum.list_decimal:
+                        stringBuilder.Append($"struct node *{variableSym.Name}");
+                        break;
+                }
+
+                if (i < node.UsedVariables.Count - 1)
+                    stringBuilder.Append(", ");
+            }
+
+            stringBuilder.Append(")");
+
             stringBuilder.AppendLine("{");
 
             if (node.Commands != null)
@@ -701,6 +763,7 @@ namespace CobraCompiler
             }
             stringBuilder.AppendLine("}");
 
+            _currentBlock = node;
             return stringBuilder;
         }
 
@@ -712,35 +775,59 @@ namespace CobraCompiler
         public override StringBuilder Visit(FunctionCallExprNode node)
         {
             var stringBuilder = new StringBuilder();
+            var symbol = _symbolTable.Lookup(node.Name, _currentBlock);
+            var declaration = (FunctionDeclarationNode)symbol.Reference;
+
+            declaration.Block.UsedVariables.Remove(node.Name);
+
             stringBuilder.Append($"{node.Name}(");
+            List<string> arguments = new List<string>();
             for (int i = 0; i < node.Arguments.Expressions.Count; i++)
             {
                 var expr = node.Arguments.Expressions[i];
-                if (i == node.Arguments.Expressions.Count - 1)
-                    stringBuilder.Append($"{Visit(expr)})");
-                else
-                    stringBuilder.Append($"{Visit(expr)}, ");
+                arguments.Add($"{Visit(expr)}");
             }
+
+            for (int i = 0; i < declaration.Block.UsedVariables.Count; i++)
+            {
+                string name = declaration.Block.UsedVariables[i];
+                arguments.Add($"{name}");
+            }
+
+            stringBuilder.AppendLine($"{string.Join(", ", arguments)})");
             return stringBuilder;
         }
 
         public override StringBuilder Visit(FunctionCallStmtNode node)
         {
             var stringBuilder = new StringBuilder();
+            var symbol = _symbolTable.Lookup(node.Name, _currentBlock);
+            var declaration = (FunctionDeclarationNode)symbol.Reference;
+            
+            declaration.Block.UsedVariables.Remove(node.Name);
+
             stringBuilder.Append($"{node.Name}(");
+            List<string> arguments = new List<string>();
             for (int i = 0; i < node.Arguments.Expressions.Count; i++)
             {
                 var expr = node.Arguments.Expressions[i];
-                if (i == node.Arguments.Expressions.Count - 1)
-                    stringBuilder.Append($"{Visit(expr)});");
-                else
-                    stringBuilder.Append($"{Visit(expr)}, ");
+                arguments.Add($"{Visit(expr)}");
             }
+
+            for (int i = 0; i < declaration.Block.UsedVariables.Count; i++)
+            {
+                string name = declaration.Block.UsedVariables[i];
+                arguments.Add($"{name}");
+            }
+
+            stringBuilder.AppendLine($"{string.Join(", ", arguments)});");
             return stringBuilder;
         }
 
         public override StringBuilder Visit(FunctionDeclarationNode node)
         {
+            var symbol = _symbolTable.Lookup(node.Name, _currentBlock);
+
             var stringBuilder = new StringBuilder();
             switch (node.ReturnType)
             {
@@ -762,6 +849,7 @@ namespace CobraCompiler
                     break;
 
             }
+            node.Block.UsedVariables.Remove(node.Name);
             stringBuilder.Append(Visit(node.Block));
             return stringBuilder;
         }
@@ -821,13 +909,13 @@ namespace CobraCompiler
             switch (type)
             {
                 case TypeEnum.number:
-                    stringBuilder.AppendLine($"printf(\"%d\", {expr});");
+                    stringBuilder.AppendLine($"printf(\"%d\\n\", {expr});");
                     break;
                 case TypeEnum._decimal:
-                    stringBuilder.AppendLine($"printf(\"%f\", {expr});");
+                    stringBuilder.AppendLine($"printf(\"%f\\n\", {expr});");
                     break;
                 default:
-                    stringBuilder.AppendLine($"printf({expr});");
+                    stringBuilder.AppendLine($"printf(\"%s\\n\", {expr});");
                     break;
             }
             return stringBuilder;
@@ -837,6 +925,72 @@ namespace CobraCompiler
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"return {Visit(node.Expression)};");
+            return stringBuilder;
+        }
+
+        public override StringBuilder Visit(ForeachBlockNode node)
+        {
+            var stringBuilder = new StringBuilder();
+            _currentBlock = node;
+            var list = _symbolTable.Lookup(node.ListName, _currentBlock);
+            var localVariable = _symbolTable.Lookup(node.LocalVariable.Identifier.Name, _currentBlock);
+
+            //Initialize local variables for use later. The number variable is used for keeping the while loop running until the end of the list is reached
+            //The LocalVariable is used as the variable on which operations will be carried out on in the foreach loop
+            stringBuilder.Append(Visit(node.LocalVariable).ToString().TrimEnd());
+            stringBuilder.AppendLine("int number = 1;");
+
+            stringBuilder.AppendLine("while (number)");
+            stringBuilder.AppendLine("{");
+
+            //Assign the current value in the list to the LocalVariable
+            switch (localVariable.Type)
+            {
+                case TypeEnum.number:
+                case TypeEnum.boolean:
+                    stringBuilder.AppendLine($"{localVariable.Name} = *(int *){list.Name}->value;");
+                    break;
+                case TypeEnum._decimal:
+                    stringBuilder.AppendLine($"{localVariable.Name} = *(float *){list.Name}->value;");
+                    break;
+                case TypeEnum.text:
+                    stringBuilder.AppendLine($"{localVariable.Name} = *(char **){list.Name}->value;");
+                    break;
+                default:
+                    stringBuilder.AppendLine($"{localVariable.Name} = {list.Name}->value;");
+                    break;
+            }
+
+            //Go through the commands in the block
+            foreach (var command in node.Commands)
+            {
+                switch (command)
+                {
+                    case DeclarationNode declarationNode:
+                        stringBuilder.Append(Visit(declarationNode));
+                        break;
+                    case AssignNode assignNode:
+                        stringBuilder.Append(Visit(assignNode));
+                        break;
+                    case StatementNode statementNode:
+                        stringBuilder.Append(Visit(statementNode));
+                        break;
+                    default:
+                        throw new Exception($"Command was not valid");
+                }
+            }
+            //Check if next element is NULL. If this is true, set number to 0 in order to stop iterating
+            stringBuilder.AppendLine($"if ({list.Name}->next == NULL)");
+            stringBuilder.AppendLine("{");
+            stringBuilder.AppendLine("number = 0;");
+            stringBuilder.AppendLine("} else");
+            stringBuilder.AppendLine("{");
+            //Set the current element to the be the next element in the list
+            stringBuilder.AppendLine($"{list.Name} = {list.Name}->next;");
+            stringBuilder.AppendLine("}");
+
+            stringBuilder.AppendLine("}"); //Close While Loop
+            _currentBlock = node;
             return stringBuilder;
         }
 

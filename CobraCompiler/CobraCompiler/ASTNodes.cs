@@ -248,7 +248,7 @@ public class ASTNodes
     internal class ForeachNode : ControlStructureNode
     {
         public IdentifierNode List { get; set; }
-        public DeclarationNode LocalVariable { get; set; }
+        public new ForeachBlockNode Block { get; set; }
     }
 
     #endregion
@@ -307,6 +307,12 @@ public class ASTNodes
         public ArgumentsNode Arguments { get; set; }
         public ParametersNode Parameters { get; set; }
         public ExpressionNode ReturnExpression { get; set; }
+    }
+
+    internal class ForeachBlockNode : BlockNode
+    {
+        public DeclarationNode LocalVariable { get; set; }
+        public string ListName { get; set; }
     }
 
     //"block" contains commands

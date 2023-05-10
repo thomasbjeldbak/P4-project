@@ -69,6 +69,10 @@ namespace CobraCompiler
 
             #region CodeGeneration
 
+            //Order the commands so that functionDelcarations always come first
+            ((ProgramNode)ast).Commands = 
+                ((ProgramNode)ast).Commands.OrderBy(x => x is not FunctionDeclarationNode).ToList();
+
             StringBuilder sb = new Emitter(st).Visit((ProgramNode)ast);
 
             string path = Directory.GetCurrentDirectory();
