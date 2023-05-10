@@ -25,10 +25,13 @@ public static class CompileMethods
         {
             throw new NotImplementedException();
             //Set the command to run
-            command = $"xcrun --sdk macosx --find mcs";
+            command = $"clang -o output {filePath}";
 
-            startInfo.FileName = "bash";
+            startInfo.FileName = "\bin\bash";
             startInfo.Arguments = $"-c \"{command}\"";
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
