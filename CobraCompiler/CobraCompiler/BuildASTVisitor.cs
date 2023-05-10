@@ -1203,8 +1203,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             identifierNode.Name = ID2.ToString();
 
             outputNode.List = identifierNode;
-            outputNode.LocalVariable = localVar;
-            outputNode.Block = (BlockNode)Visit(block);
+            var blockNode = (BlockNode)Visit(block);
+            outputNode.Block = new ForeachBlockNode();
+            outputNode.Block.ListName = identifierNode.Name;
+            outputNode.Block.LocalVariable = localVar;
+            outputNode.Block.Commands = blockNode.Commands;
         }
         else
             throw new Exception();

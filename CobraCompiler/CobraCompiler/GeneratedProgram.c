@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 struct node
 {
- int value;
+ void *value;
  struct node *next;
 };
-void AddToList (struct node **list, int n){
+void AddToList (struct node **list, void *value, size_t value_size){
  struct node *new_node = malloc(sizeof(struct node));
- new_node->value = n;
+ new_node->value = malloc(value_size);
+ memcpy(new_node->value, value, value_size);
  new_node->next = NULL;
  if (*list == NULL) {
  *list = new_node;
@@ -19,7 +21,7 @@ void AddToList (struct node **list, int n){
  last_node->next = new_node;
  }
 };
-void ReplaceInList(struct node *list, int index, int value)
+void ReplaceInList(struct node *list, int index, void *value)
 {
  struct node *curr_node = list;
  int i;
@@ -27,7 +29,7 @@ void ReplaceInList(struct node *list, int index, int value)
  { curr_node = curr_node->next; }
  curr_node->value = value;
 }
-int IndexOfList(struct node *list, int value)
+int IndexOfList(struct node *list, void *value)
 {
  struct node *curr_node = list;
  int index = 0;
@@ -39,7 +41,7 @@ int IndexOfList(struct node *list, int value)
  }
  return -1;
 }
-int ValueOfList(struct node *list, int index)
+void *ValueOfList(struct node *list, int index)
 {
  struct node *curr_node = list;
  int i;
@@ -47,14 +49,24 @@ int ValueOfList(struct node *list, int index)
  { curr_node = curr_node->next; }
  return curr_node->value;
 }
+void printList(struct node *hej){
+{
+char *h;int number = 1;
+while (number)
+{
+h = *(char **)hej->value;
+printf("%p\n", h);
+if (hej->next == NULL)
+{
+number = 0;
+} else
+{
+hej = hej->next;
+}
+}
+}
+}
 void main(){
 struct node *hej = NULL;
-AddToList(&hej, 1);
-AddToList(&hej, 2);
-AddToList(&hej, 3);
-AddToList(&hej, 4);
-void printList(struct node *hej)
-{
-}
-printList(hej); 
+AddToList(&hej, &(char *){"1"}, sizeof(char *));AddToList(&hej, &(char *){"2"}, sizeof(char *));AddToList(&hej, &(char *){"3"}, sizeof(char *));AddToList(&hej, &(char *){"4"}, sizeof(char *));printList(hej);
 }

@@ -833,7 +833,7 @@ namespace CobraCompiler
             //Check if list inner type matches Local Variable type
 
             Symbol? list = _symbolTable.Lookup(node.List.Name, _currentBlock);
-            TypeNode? localVarType = Visit(node.LocalVariable);
+            TypeNode? localVarType = node.Block.LocalVariable.Identifier.TypeNode;
 
             Visit(node.Block);
 
@@ -1365,6 +1365,39 @@ namespace CobraCompiler
             _currentBlock = node;
 
             return Visit(node.ReturnExpression);
+        }
+        public override TypeNode? Visit(ForeachBlockNode node)
+        {
+            //Visits all of it's commands
+            _currentBlock = node;
+
+            if (node.Commands == null)
+            {
+                _currentBlock = node;
+                return null;
+            }
+
+            foreach (var cmd in node.Commands)
+            {
+                switch (cmd)
+                {
+                    case DeclarationNode declarationNode:
+                        Visit(declarationNode);
+                        break;
+                    case AssignNode assignNode:
+                        Visit(assignNode);
+                        break;
+                    case ReturnNode returnNode:
+                        return Visit(returnNode);
+                    case StatementNode statementNode:
+                        Visit(statementNode);
+                        break;
+                    default:
+                        throw new Exception($"Command was not valid");
+                }
+            }
+            _currentBlock = node;
+            return null;
         }
 
         #region List helper functions
