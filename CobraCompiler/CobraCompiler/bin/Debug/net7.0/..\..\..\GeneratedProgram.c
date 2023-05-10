@@ -48,5 +48,5 @@ int ValueOfList(struct node *list, int index)
  return curr_node->value;
 }
 void main(){
-int hell = 10;
+int hello = 10;
 }

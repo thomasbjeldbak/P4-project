@@ -1,1 +1,1 @@
-number hello = 10;
+number hell2 = 10;

@@ -72,12 +72,30 @@ namespace CobraCompiler
             StringBuilder sb = new Emitter(st).Visit((ProgramNode)ast);
 
             string tempPath = Directory.GetCurrentDirectory();
-            string path = Path.GetFullPath(Path.Combine(tempPath, @"..\..\..\GeneratedProgram"));
+            
+            //We check to see what Operating system is used due to pathing.
+            //For Mac we need to use "/"
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+            {
+                string path = Path.GetFullPath(Path.Combine(tempPath, @"../../../GeneratedProgram"));
+                
+            }
+            //Check to see if operating system is Windows because pathing needs to be used with "\"
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            {
+                string path = Path.GetFullPath(Path.Combine(tempPath, @"..\..\..\GeneratedProgram"));
+                
+            } 
+            //If any other operating system is used an exception is thrown.
+            else{
+                throw new NotSupportedException("Operating system not supported");
+            }
+            
             //string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "\\..\\..\\..\\GeneratedProgram.c"));
             //path += "\\GeneratedProgram.c";
             //path += "\\..\\..\\..\\GeneratedProgram.c";
 
-            File.WriteAllText(path, sb.ToString());
+            File.WriteAllText($"{path}.c", sb.ToString());
             CompileMethods.CompileExecutable(path);
 
             #endregion

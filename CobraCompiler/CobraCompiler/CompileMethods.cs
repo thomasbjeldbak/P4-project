@@ -24,13 +24,11 @@ public static class CompileMethods
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         { 
             //Set the command to run
-            command = $"clang -o output {filePath}";
+            command = $"clang -o {filePath}.out {filePath}.c";
 
-            startInfo.FileName = "\bin\bash";
+            startInfo.FileName = "/bin/bash";
             startInfo.Arguments = $"-c \"{command}\"";
-            startInfo.UseShellExecute = false;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
+
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -61,6 +59,7 @@ public static class CompileMethods
 
             // Read the output
             string output = process.StandardOutput.ReadToEnd();
+            //string error = process.StandardError.ReadToEnd();
 
             // Wait for the process to exit
             process.WaitForExit();
