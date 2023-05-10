@@ -4,6 +4,7 @@ hej:Add("1");
 hej:Add("2");
 hej:Add("3");
 hej:Add("4");
+hej:Add("5");
 
 
 function printList() return nothing
