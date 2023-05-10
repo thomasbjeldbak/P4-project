@@ -1,1 +1,1 @@
-number h = 10;
+number hello = 10;

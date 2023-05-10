@@ -22,8 +22,7 @@ public static class CompileMethods
 
         //Check operating system
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            throw new NotImplementedException();
+        { 
             //Set the command to run
             command = $"clang -o output {filePath}";
 
