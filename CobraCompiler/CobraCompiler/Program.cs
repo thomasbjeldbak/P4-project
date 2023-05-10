@@ -83,7 +83,7 @@ namespace CobraCompiler
             //Check to see if operating system is Windows because pathing needs to be used with "\"
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             {
-                string path = Path.GetFullPath(Path.Combine(tempPath, @"../../../GeneratedProgram"));
+                string path = Path.GetFullPath(Path.Combine(tempPath, @"..\..\..\GeneratedProgram"));
                 
             } 
             //If any other operating system is used an exception is thrown.
