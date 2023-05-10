@@ -1203,8 +1203,11 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             identifierNode.Name = ID2.ToString();
 
             outputNode.List = identifierNode;
-            outputNode.LocalVariable = localVar;
-            outputNode.Block = (BlockNode)Visit(block);
+            var blockNode = (BlockNode)Visit(block);
+            outputNode.Block = new ForeachBlockNode();
+            outputNode.Block.ListName = identifierNode.Name;
+            outputNode.Block.LocalVariable = localVar;
+            outputNode.Block.Commands = blockNode.Commands;
         }
         else
             throw new Exception();
@@ -1530,7 +1533,10 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
             var funcBlockNode = new FunctionBlockNode() { Line = blockNode.Line };
             funcBlockNode.Parameters = parametersNode;
-            funcBlockNode.ReturnExpression = blockNode.Commands.OfType<ReturnNode>().First().Expression;
+            funcBlockNode.Commands = blockNode.Commands;
+            funcBlockNode.UsedVariables = new List<string>();
+            if (blockNode.Commands.OfType<ReturnNode>().Any())
+                funcBlockNode.ReturnExpression = blockNode.Commands.OfType<ReturnNode>().First().Expression;
             
             functionDec.Block = funcBlockNode;
             functionDec.Name = ID.ToString();

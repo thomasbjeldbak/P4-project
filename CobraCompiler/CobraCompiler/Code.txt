@@ -1,1 +1,17 @@
-number shalom = 10;
+list(text) hej;
+
+hej:Add("1");
+hej:Add("2");
+hej:Add("3");
+hej:Add("4");
+
+
+function printList() return nothing
+{
+	repeat for each(text h in hej)
+	{
+		call output(h);
+	}
+}
+
+call printList();

@@ -236,7 +236,7 @@ namespace CobraCompiler
                     type = Visit(functionCallExprNode);
                     break;
                 default:
-                    throw new Exception();
+                    return null;
             }
 
             return type;
@@ -833,7 +833,7 @@ namespace CobraCompiler
             //Check if list inner type matches Local Variable type
 
             Symbol? list = _symbolTable.Lookup(node.List.Name, _currentBlock);
-            TypeNode? localVarType = Visit(node.LocalVariable);
+            TypeNode? localVarType = node.Block.LocalVariable.Identifier.TypeNode;
 
             Visit(node.Block);
 
@@ -1195,11 +1195,11 @@ namespace CobraCompiler
         {
             var block = Visit(node.Block);
 
-            if (node.ReturnType.Type == TypeEnum.nothing && block.Type != null)
+            if (node.ReturnType.Type == TypeEnum.nothing && block != null)
             {
                 TypeError(node, $" function '{node.Name}()' expects no return statement");
             }
-            else if (node.ReturnType.Type != block.Type)
+            else if (node.ReturnType.Type != TypeEnum.nothing && node.ReturnType.Type != block.Type)
             {
                 TypeError(node, $"function '{node.Name}()' expects to return type {node.ReturnType.Type} but returns type {block.Type}");
             }
@@ -1224,11 +1224,21 @@ namespace CobraCompiler
             for (int i = 0; i < parameters.Count; i++)
             {
                 Symbol? paramSymbol = _symbolTable.Lookup(parameters[i].Identifier.Name, _currentBlock);
-                var argumentType = (TypeNode)arguments[i];
+                TypeEnum argType = TypeEnum.nothing;
 
-                if (paramSymbol.Type != argumentType.Type)
+                switch (arguments[i])
                 {
-                    TypeError(node, $"{sym.Name} parameter of type {paramSymbol.Type} doesn't match argument of type {argumentType.Type}.");
+                    case TypeNode typeNode:
+                        argType = typeNode.Type;
+                        break;
+                    case IdentifierNode identifierNode:
+                        argType = _symbolTable.Lookup(identifierNode.Name, _currentBlock).Type;
+                        break;
+                }
+
+                if (paramSymbol.Type != argType)
+                {
+                    TypeError(node, $"{sym.Name} parameter of type {paramSymbol.Type} doesn't match argument of type {argType}.");
                     return null;
                 }
             }
@@ -1319,7 +1329,6 @@ namespace CobraCompiler
 
             var declarations = node.Parameters.Declarations;
 
-
             if (node.Arguments != null)
             {
                 for (int i = 0; i < declarations.Count; i++)
@@ -1332,8 +1341,9 @@ namespace CobraCompiler
 
             if (node.Commands == null)
             {
+                var returnExpr = Visit(node.ReturnExpression);
                 _currentBlock = node;
-                return Visit(node.ReturnExpression);
+                return returnExpr;
             }
 
             foreach (var cmd in node.Commands)
@@ -1355,6 +1365,39 @@ namespace CobraCompiler
             _currentBlock = node;
 
             return Visit(node.ReturnExpression);
+        }
+        public override TypeNode? Visit(ForeachBlockNode node)
+        {
+            //Visits all of it's commands
+            _currentBlock = node;
+
+            if (node.Commands == null)
+            {
+                _currentBlock = node;
+                return null;
+            }
+
+            foreach (var cmd in node.Commands)
+            {
+                switch (cmd)
+                {
+                    case DeclarationNode declarationNode:
+                        Visit(declarationNode);
+                        break;
+                    case AssignNode assignNode:
+                        Visit(assignNode);
+                        break;
+                    case ReturnNode returnNode:
+                        return Visit(returnNode);
+                    case StatementNode statementNode:
+                        Visit(statementNode);
+                        break;
+                    default:
+                        throw new Exception($"Command was not valid");
+                }
+            }
+            _currentBlock = node;
+            return null;
         }
 
         #region List helper functions

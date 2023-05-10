@@ -104,6 +104,8 @@ namespace CobraCompiler
                 {
                     if (symbol.Name == name)
                     {
+                        addIDToFunctionBlock(name, blockNode);
+
                         return symbol;
                     }
                 }
@@ -111,6 +113,36 @@ namespace CobraCompiler
                 scope = scope.Parent;
             }
             return null;
+        }
+
+        private void addIDToFunctionBlock(string name, BlockNode blockNode)
+        {
+            FunctionBlockNode fBlockNode = null;
+
+            var scope = _scopes[blockNode];
+
+            while (scope != null)
+            {
+                if (scope.Block is FunctionBlockNode)
+                {
+                    fBlockNode = scope.Block as FunctionBlockNode;
+                    scope = scope.Parent;
+                    continue;
+                }
+
+                if (fBlockNode != null && scope.Symbols.ContainsKey(name))
+                {
+                    if (fBlockNode.Parameters.Declarations.Any(x => x.Identifier.Name == name))
+                        return;
+
+                    if (!fBlockNode.UsedVariables.Contains(name))
+                        fBlockNode.UsedVariables.Add(name);
+
+                    break;
+                }
+
+                scope = scope.Parent;
+            }
         }
 
         public override ASTNode? Visit(ProgramNode node)
@@ -357,8 +389,7 @@ namespace CobraCompiler
 
         public override ASTNode? Visit(ForeachNode node)
         {
-            Visit(node.LocalVariable);
-            Visit(node.List);
+            Lookup(node.List.Name, _currentBlock);
             Visit(node.Block);
             return null;
         }
@@ -620,6 +651,37 @@ namespace CobraCompiler
             return null;
         }
 
+        public override ASTNode? Visit(ForeachBlockNode node)
+        {
+            NewScope(node);
+
+            Visit(node.LocalVariable);
+
+            if (node.Commands == null)
+            {
+                ExitScope();
+                return null;
+            }
+
+            foreach (var cmd in node.Commands)
+            {
+                switch (cmd)
+                {
+                    case DeclarationNode declarationNode:
+                        Visit(declarationNode);
+                        break;
+                    case AssignNode assignNode:
+                        Visit(assignNode);
+                        break;
+                    case StatementNode statementNode:
+                        Visit(statementNode);
+                        break;
+                }
+            }
+
+            ExitScope();
+            return null;
+        }
         public void Visit(IdentifierNode node)
         {
             var sym = Lookup(node.Name, _currentBlock);
