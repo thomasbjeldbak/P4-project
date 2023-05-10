@@ -49,24 +49,34 @@ void *ValueOfList(struct node *list, int index)
  { curr_node = curr_node->next; }
  return curr_node->value;
 }
-void printList(struct node *hej){
+void printList(struct node *l)
 {
-char *h;int number = 1;
+for (int number = 0; number < 10; number++){
+{
+char *s;
+int number = 1;
+struct *node decimal = l
 while (number)
 {
-h = *(char **)hej->value;
-printf("%p\n", h);
-if (hej->next == NULL)
+s = *(char **)l->value;
+printf("%s\n", s);
+if (l->next == NULL)
 {
 number = 0;
 } else
 {
-hej = hej->next;
+l = l->next;
 }
+}
+l = decimal
 }
 }
 }
 void main(){
 struct node *hej = NULL;
-AddToList(&hej, &(char *){"1"}, sizeof(char *));AddToList(&hej, &(char *){"2"}, sizeof(char *));AddToList(&hej, &(char *){"3"}, sizeof(char *));AddToList(&hej, &(char *){"4"}, sizeof(char *));printList(hej);
+AddToList(&hej, &(char *){"HEJSA"}, sizeof(char *));
+AddToList(&hej, &(char *){"MED"}, sizeof(char *));
+AddToList(&hej, &(char *){"DIG"}, sizeof(char *));
+AddToList(&hej, &(char *){"SMUKKE!! :DDDDD"}, sizeof(char *));
+printList(hej);
 }

@@ -1,17 +1,19 @@
 list(text) hej;
 
-hej:Add("1");
-hej:Add("2");
-hej:Add("3");
-hej:Add("4");
+hej:Add("HEJSA");
+hej:Add("MED");
+hej:Add("DIG");
+hej:Add("SMUKKE!! :DDDDD");
 
-
-function printList() return nothing
+function printList(list(text) l) return nothing
 {
-	repeat for each(text h in hej)
+	repeat(10) times
 	{
-		call output(h);
+		repeat for each(text s in l)
+		{
+			call output(s);
+		}
 	}
 }
 
-call printList();
+call printList(hej);
