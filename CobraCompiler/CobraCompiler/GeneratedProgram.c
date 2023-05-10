@@ -55,7 +55,7 @@ char *h;int number = 1;
 while (number)
 {
 h = *(char **)hej->value;
-printf("%p\n", h);
+printf("%s\n", h);
 if (hej->next == NULL)
 {
 number = 0;
@@ -68,5 +68,5 @@ hej = hej->next;
 }
 void main(){
 struct node *hej = NULL;
-AddToList(&hej, &(char *){"1"}, sizeof(char *));AddToList(&hej, &(char *){"2"}, sizeof(char *));AddToList(&hej, &(char *){"3"}, sizeof(char *));AddToList(&hej, &(char *){"4"}, sizeof(char *));printList(hej);
+AddToList(&hej, &(char *){"1"}, sizeof(char *));AddToList(&hej, &(char *){"2"}, sizeof(char *));AddToList(&hej, &(char *){"3"}, sizeof(char *));AddToList(&hej, &(char *){"4"}, sizeof(char *));AddToList(&hej, &(char *){"5"}, sizeof(char *));printList(hej);
 }
