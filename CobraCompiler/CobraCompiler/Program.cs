@@ -6,6 +6,7 @@ using Antlr4.Runtime.Tree.Xpath;
 using static ASTNodes;
 using Microsoft.CSharp;
 using System.CodeDom.Compiler;
+using System.Runtime.InteropServices;
 
 namespace CobraCompiler
 {
@@ -72,18 +73,18 @@ namespace CobraCompiler
             StringBuilder sb = new Emitter(st).Visit((ProgramNode)ast);
 
             string tempPath = Directory.GetCurrentDirectory();
-            
+            string path;
             //We check to see what Operating system is used due to pathing.
             //For Mac we need to use "/"
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                string path = Path.GetFullPath(Path.Combine(tempPath, @"../../../GeneratedProgram"));
+                path = Path.GetFullPath(Path.Combine(tempPath, @"../../../GeneratedProgram"));
                 
             }
             //Check to see if operating system is Windows because pathing needs to be used with "\"
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                string path = Path.GetFullPath(Path.Combine(tempPath, @"..\..\..\GeneratedProgram"));
+                path = Path.GetFullPath(Path.Combine(tempPath, @"..\..\..\GeneratedProgram"));
                 
             } 
             //If any other operating system is used an exception is thrown.

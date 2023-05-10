@@ -1,1 +1,1 @@
-number hell2 = 10;
+number shalom = 10;

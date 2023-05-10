@@ -1,26 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj": {}
+    "D:\\Git Projects\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj": {}
   },
   "projects": {
-    "/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj": {
+    "D:\\Git Projects\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
+        "projectUniqueName": "D:\\Git Projects\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj",
         "projectName": "CobraCompiler",
-        "projectPath": "/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
-        "packagesPath": "/Users/nichlashjorth/.nuget/packages/",
-        "outputPath": "/Users/nichlashjorth/Documents/GitHub/P4-project/CobraCompiler/CobraCompiler/obj/",
+        "projectPath": "D:\\Git Projects\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj",
+        "packagesPath": "C:\\Users\\thoma\\.nuget\\packages\\",
+        "outputPath": "D:\\Git Projects\\P4-project\\CobraCompiler\\CobraCompiler\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/nichlashjorth/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\thoma\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -78,7 +79,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.102/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     }
