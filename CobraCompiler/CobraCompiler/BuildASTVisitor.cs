@@ -933,6 +933,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var elseIfStmt = context.elseIfStmt();
 
         var outputNode = new IfNode() { Line = IF.Symbol.Line };
+        outputNode.ElseIfs = new List<ElseNode>();
 
         if ((IF != null) &&
             (LPAREN != null) &&

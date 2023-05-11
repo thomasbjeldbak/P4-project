@@ -309,17 +309,21 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
             
-            if (leftType.Type != rightType.Type)
-            {
-                TypeError(node, $"Addition of '{leftType}' and '{rightType}' does not match.");
-            }
-            else if (leftType.Type == TypeEnum.boolean) 
+            if (leftType.Type == TypeEnum.boolean || rightType.Type == TypeEnum.boolean) 
             {
                 TypeError(node, $"Addition of type 'boolean' is not allowed.");
+                return null;
             }
-            else if (isList(leftType.Type))
+            else if (isList(leftType.Type) || isList(rightType.Type))
             {
                 TypeError(node, $"Addition of type 'list' is not allowed.");
+                return null;
+            }
+            else if ((leftType.Type == TypeEnum.text && rightType.Type != TypeEnum.text) ||
+                     (leftType.Type != TypeEnum.text && rightType.Type == TypeEnum.text))
+            {
+                TypeError(node, $"type 'text' can only be added with another value of type 'text.");
+                return null;
             }
 
             switch (leftType)
@@ -348,17 +352,20 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType.Type != rightType.Type)            
-            {
-                TypeError(node, $"Subtraction of '{leftType}' and '{rightType}' does not match.");
-            }
-            else if (leftType.Type == TypeEnum.boolean)
+            if (leftType.Type == TypeEnum.boolean || rightType.Type == TypeEnum.boolean)
             {
                 TypeError(node, $"Subtraction of type 'boolean' is not allowed.");
+                return null;
             }
-            else if (isList(leftType.Type))
+            else if (isList(leftType.Type) || isList(rightType.Type))
             {
                 TypeError(node, $"Subtraction of type 'list' is not allowed.");
+                return null;
+            }
+            else if (leftType.Type == TypeEnum.text || rightType.Type == TypeEnum.text)
+            {
+                TypeError(node, $"Subtraction of type 'text' is not allowed.");
+                return null;
             }
             switch (leftType)
             {
@@ -384,17 +391,20 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType.Type != rightType.Type)
-            {
-                TypeError(node, $"Multiplication of '{leftType}' and '{rightType}' does not match.");
-            }
-            else if (leftType.Type == TypeEnum.boolean)
+            if (leftType.Type == TypeEnum.boolean || rightType.Type == TypeEnum.boolean)
             {
                 TypeError(node, $"Multiplication of type 'boolean' is not allowed.");
+                return null;
             }
-            else if (isList(leftType.Type))
+            else if (isList(leftType.Type) || isList(rightType.Type))
             {
                 TypeError(node, $"Multiplication of type 'list' is not allowed.");
+                return null;
+            }
+            else if (leftType.Type == TypeEnum.text || rightType.Type == TypeEnum.text)
+            {
+                TypeError(node, $"Multiplication of type 'text' is not allowed.");
+                return null;
             }
             switch (leftType)
             {
@@ -420,17 +430,13 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
             TypeNode type;
-            if (leftType.Type != rightType.Type)
-            {
-                TypeError(node, $"Division of '{leftType}' and '{rightType}' does not match.");
-                return null;
-            }
-            else if (leftType.Type == TypeEnum.boolean)
+
+            if (leftType.Type == TypeEnum.boolean || rightType.Type == TypeEnum.boolean)
             {
                 TypeError(node, $"Division of type 'boolean' is not allowed.");
                 return null;
             }
-            else if (isList(leftType.Type))
+            else if (isList(leftType.Type) || isList(rightType.Type))
             {
                 TypeError(node, $"Division of type 'list' is not allowed.");
                 return null;
@@ -467,10 +473,12 @@ namespace CobraCompiler
             if (leftType.Type != TypeEnum.boolean)
             {
                 TypeError(node, $"Type '{leftType}' does not match type 'boolean' on the left hand side of the logic 'and' expression.");
+                return null;
             }
             if (rightType.Type != TypeEnum.boolean)
             {
                 TypeError(node, $"Type '{rightType}' does not match type 'boolean' on the right hand side of the logic 'and' expression.");
+                return null;
             }
             switch (leftType)
             {
@@ -493,10 +501,12 @@ namespace CobraCompiler
             if (leftType.Type != TypeEnum.boolean)
             {
                 TypeError(node, $"Type '{leftType}' does not match type 'boolean' on the left hand side of the logic 'or' expression.");
+                return null;
             }
             if (rightType.Type != TypeEnum.boolean)
             {
                 TypeError(node, $"Type '{leftType}' does not match type 'boolean' on the right hand side of the logic 'or' expression.");
+                return null;
             }
             switch (leftType)
             {
@@ -516,13 +526,22 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType.Type != rightType.Type)
+            if (isList(leftType.Type) || isList(rightType.Type))
             {
-                TypeError(node, $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic 'equal' expression.");
+                TypeError(node, $"Type 'list' is not allowed in boolean expressions.");
+                return null;
             }
-            else if (isList(leftType.Type))
+            else if ((leftType.Type == TypeEnum.boolean && rightType.Type != TypeEnum.boolean) ||
+                     (leftType.Type != TypeEnum.boolean && rightType.Type == TypeEnum.boolean))
             {
-                TypeError(node, $"Error: Type '{leftType}' is not allowed in boolean expressions.");
+                TypeError(node, $"Type 'boolean' can only use 'equal' with another value of type 'boolean'.");
+                return null;
+            }
+            else if ((leftType.Type == TypeEnum.text && rightType.Type != TypeEnum.text) ||
+                    (leftType.Type != TypeEnum.text && rightType.Type == TypeEnum.text))
+            {
+                TypeError(node, $"Type 'text' can only use 'equal' with another value of type 'text'.");
+                return null;
             }
             switch (leftType)
             {
@@ -550,13 +569,22 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType.Type != rightType.Type)
+            if (isList(leftType.Type) || isList(rightType.Type))
             {
-                TypeError(node, $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic 'not equal' expression.");
+                TypeError(node, $"Type 'list' is not allowed in boolean expressions.");
+                return null;
             }
-            else if (isList(leftType.Type))
+            else if ((leftType.Type == TypeEnum.boolean && rightType.Type != TypeEnum.boolean) ||
+                     (leftType.Type != TypeEnum.boolean && rightType.Type == TypeEnum.boolean))
             {
-                TypeError(node, $"Error: Type '{leftType}' is not allowed in boolean expressions.");
+                TypeError(node, $"Type 'boolean' can only use 'not equal' with another value of type 'boolean'.");
+                return null;
+            }
+            else if ((leftType.Type == TypeEnum.text && rightType.Type != TypeEnum.text) ||
+                    (leftType.Type != TypeEnum.text && rightType.Type == TypeEnum.text))
+            {
+                TypeError(node, $"Type 'text' can only use 'not equal' with another value of type 'text'.");
+                return null;
             }
             switch (leftType)
             {
@@ -584,20 +612,20 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType.Type != rightType.Type)
+            if (isList(leftType.Type) || isList(rightType.Type))
             {
-                if (leftType.Type != TypeEnum.number)
-                {
-                    TypeError(node, $"Error: The left hand side with type '{leftType}' does not match type 'number'.");
-                }
-                if (rightType.Type != TypeEnum.number)
-                {
-                    TypeError(node, $"Error: The right hand side with type '{rightType}' does not match type 'number'.");
-                }
+                TypeError(node, $"Type 'list' is not allowed in boolean expressions.");
+                return null;
             }
-            else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number )
+            else if (leftType.Type == TypeEnum.boolean || rightType.Type == TypeEnum.boolean)
             {
-                TypeError(node, $"Error: The '>' symbol is only allowed in number expressions.");
+                TypeError(node, $"Type 'boolean' is not allowed in a 'greater' expression.");
+                return null;
+            }
+            else if (leftType.Type == TypeEnum.text || rightType.Type == TypeEnum.text)
+            {
+                TypeError(node, $"Type 'text' is not allowed in a 'greater' expression.");
+                return null;
             }
             switch (leftType)
             {
@@ -623,20 +651,20 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType.Type != rightType.Type)
+            if (isList(leftType.Type) || isList(rightType.Type))
             {
-                if (leftType.Type != TypeEnum.number)
-                {
-                    TypeError(node, $"Error: The left hand side with type '{leftType}' does not match type 'number'.");
-                }
-                if (rightType.Type != TypeEnum.number)
-                {
-                    TypeError(node, $"Error: The right hand side with type '{rightType}' does not match type 'number'.");
-                }
+                TypeError(node, $"Type 'list' is not allowed in boolean expressions.");
+                return null;
             }
-            else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number)
+            else if (leftType.Type == TypeEnum.boolean || rightType.Type == TypeEnum.boolean)
             {
-                TypeError(node, $"Error: The '<' symbol is only allowed in number expressions.");
+                TypeError(node, $"Type 'boolean' is not allowed in a 'less' expression.");
+                return null;
+            }
+            else if (leftType.Type == TypeEnum.text || rightType.Type == TypeEnum.text)
+            {
+                TypeError(node, $"Type 'text' is not allowed in a 'less' expression.");
+                return null;
             }
             switch (leftType)
             {
@@ -662,20 +690,20 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType.Type != rightType.Type)
+            if (isList(leftType.Type) || isList(rightType.Type))
             {
-                if (leftType.Type != TypeEnum.number)
-                {
-                    TypeError(node, $"Error: The left hand side with type '{leftType}' does not match type 'number'.");
-                }
-                if (rightType.Type != TypeEnum.number)
-                {
-                    TypeError(node, $"Error: The right hand side with type '{rightType}' does not match type 'number'.");
-                }
+                TypeError(node, $"Type 'list' is not allowed in boolean expressions.");
+                return null;
             }
-            else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number)
+            else if (leftType.Type == TypeEnum.boolean || rightType.Type == TypeEnum.boolean)
             {
-                TypeError(node, $"Error: The '>=' symbol is only allowed in number expressions.");
+                TypeError(node, $"Type 'boolean' is not allowed in a 'greater or equal' expression.");
+                return null;
+            }
+            else if (leftType.Type == TypeEnum.text || rightType.Type == TypeEnum.text)
+            {
+                TypeError(node, $"Type 'text' is not allowed in a 'greater or equal' expression.");
+                return null;
             }
             switch (leftType)
             {
@@ -701,20 +729,20 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType.Type != rightType.Type)
+            if (isList(leftType.Type) || isList(rightType.Type))
             {
-                if (leftType.Type != TypeEnum.number)
-                {
-                    TypeError(node, $"Error: The left hand side with type '{leftType}' does not match type 'number'.");
-                }
-                if (rightType.Type != TypeEnum.number)
-                {
-                    TypeError(node, $"Error: The right hand side with type '{rightType}' does not match type 'number'.");
-                }
+                TypeError(node, $"Type 'list' is not allowed in boolean expressions.");
+                return null;
             }
-            else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number)
+            else if (leftType.Type == TypeEnum.boolean || rightType.Type == TypeEnum.boolean)
             {
-                TypeError(node, $"Error: The '<=' symbol is only allowed in number expressions.");
+                TypeError(node, $"Type 'boolean' is not allowed in a 'less or equal' expression.");
+                return null;
+            }
+            else if (leftType.Type == TypeEnum.text || rightType.Type == TypeEnum.text)
+            {
+                TypeError(node, $"Type 'text' is not allowed in a 'less or equal' expression.");
+                return null;
             }
             switch (leftType)
             {
@@ -1110,7 +1138,7 @@ namespace CobraCompiler
             for (int i = 0; i < parameters.Count; i++)
             {
                 Symbol? paramSymbol = _symbolTable.Lookup(parameters[i].Identifier.Name, _currentBlock);
-                var argumentType = (TypeNode)arguments[i];
+                var argumentType = Visit(arguments[i]);
 
                 if (paramSymbol.Type != argumentType.Type)
                 {
@@ -1186,6 +1214,9 @@ namespace CobraCompiler
             var expression0 = arguments[0];
             TypeNode argument0 = Visit(expression0);
 
+            if (argument0 == null)
+                return null;
+
             if (isList(argument0.Type))
             {
                 TypeError(node, $"'output()' does not support type {getTypeNode(argument0.Type)}");
@@ -1197,6 +1228,9 @@ namespace CobraCompiler
         public override TypeNode? Visit(FunctionDeclarationNode node)
         {
             var block = Visit(node.Block);
+
+            if (block == null)
+                return null;
 
             List<string> reservedFunctionNames = new List<string>()
             {
@@ -1320,14 +1354,19 @@ namespace CobraCompiler
             if (arguments.Count != 1)
             {
                 TypeError(node, $"'output()' takes 1 arguments");
+                return null;
             }
 
             var expression0 = arguments[0];
             TypeNode argument0 = Visit(expression0);
 
+            if (argument0 == null)
+                return null;
+
             if (isList(argument0.Type))
             {
                 TypeError(node, $"'output()' does not support type {getTypeNode(argument0.Type)}");
+                return null;
             }
 
             return null;

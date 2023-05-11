@@ -57,11 +57,13 @@ void *ValueOfList(struct node *list, int index)
  { curr_node = curr_node->next; }
  return curr_node->value;
 }
+float triArea(float width, float height)
+{
+return ((width * height) / 2);
+}
 void main(){
-struct node *dec = NULL;
-AddToList(&dec, &(float){0.1}, sizeof(float));
-AddToList(&dec, &(float){0.2}, sizeof(float));
-AddToList(&dec, &(float){0.3}, sizeof(float));
-AddToList(&dec, &(float){4}, sizeof(float));
-AddToList(&dec, &(float){5}, sizeof(float));
+printf("%g\n", triArea(2, 3));
+printf("%g\n", triArea(7, 4));
+printf("%g\n", triArea(10, 10));
+printf("%g\n", triArea(3, 3));
 }

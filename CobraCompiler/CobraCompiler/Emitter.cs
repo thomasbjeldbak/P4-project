@@ -896,9 +896,6 @@ namespace CobraCompiler
                         case TypeEnum.boolean:
                             expr = new StringBuilder($"({expr} ? \"true\" : \"false\")");
                             break;
-                        case TypeEnum.text:
-                            expr = new StringBuilder($"\"{expr}\"");
-                            break;
                         default:
                             expr = new StringBuilder($"{expr}");
                             break;

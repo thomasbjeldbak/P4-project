@@ -1,2 +1,9 @@
-list(decimal) dec;
-dec:Add(0.1, 0.2, 0.3, 4.0, 5.0);
+function triArea(decimal width, decimal height) return decimal
+{
+    return (width * height) / 2;
+}
+
+call output(call triArea(2.0,3.0));
+call output(call triArea(7.0,4.0));
+call output(call triArea(10.0,10.0));
+call output(call triArea(3.0,3.0));
