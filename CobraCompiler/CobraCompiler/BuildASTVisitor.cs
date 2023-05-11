@@ -857,6 +857,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var RCURLY = context.RCURLY();
 
         var outputNode = new BlockNode() { Line = LCURLY.Symbol.Line };
+        outputNode.Commands = new List<CommandNode>();
 
         if ((LCURLY != null) &&
             (cmds != null) &&

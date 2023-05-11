@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static ASTNodes;
 
@@ -107,6 +110,11 @@ namespace CobraCompiler
                     TypeError(node, $"Initialization of {symbol.Type} '{symbol.Name}' does not match expression of type {exprNode}");
                 }
 
+                if (exprNode != null && isList(symbol.Type))
+                {
+                    TypeError(node, $"Initialization of type 'list' must occur on a seperate line from assignment");
+                }
+
                 ((DeclarationNode)symbol.Reference).Expression = exprNode;
                 return exprNode;
             }
@@ -151,8 +159,6 @@ namespace CobraCompiler
                 case FunctionCallStmtNode functionCallStmtNode:
                     Visit(functionCallStmtNode);
                     break;
-                default:
-                    throw new Exception();
             }
             return null;
         }
@@ -305,33 +311,32 @@ namespace CobraCompiler
             
             if (leftType.Type != rightType.Type)
             {
-                var error = $"Error: Addition of '{leftType}' and '{rightType}' does not match at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Addition of '{leftType}' and '{rightType}' does not match.");
             }
             else if (leftType.Type == TypeEnum.boolean) 
             {
-                var error = $"Error: Addition of type boolean is not allowed at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Addition of type 'boolean' is not allowed.");
             }
             else if (isList(leftType.Type))
             {
-                var error = $"Error: Addition of type list is not allowed at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Addition of type 'list' is not allowed.");
             }
 
             switch (leftType)
             {
                 case NumberNode left when rightType is NumberNode right:
-                    left.Value += right.Value;
-                    break;
+                    return new NumberNode() { Value = left.Value + right.Value };
                 case TextNode left when rightType is TextNode right:
-                    left.Value += right.Value;
-                    break;
+                    return new TextNode() { Value = left.Value + right.Value };
                 case DecimalNode left when rightType is DecimalNode right:
-                    left.Value += right.Value;
-                    break;
+                    return new DecimalNode() { Value = left.Value + right.Value };
+                case DecimalNode left when rightType is NumberNode right:
+                    return new DecimalNode() { Value = left.Value + right.Value };
+                case NumberNode left when rightType is DecimalNode right:
+                    return new DecimalNode() { Value = left.Value + right.Value };
+                default:
+                    throw new Exception();
             }
-            return leftType;
         }
 
         //SubtractionNode -> Left, Right
@@ -345,29 +350,29 @@ namespace CobraCompiler
 
             if (leftType.Type != rightType.Type)            
             {
-                var error = $"Error: Subtraction of '{leftType}' and '{rightType}' does not match at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Subtraction of '{leftType}' and '{rightType}' does not match.");
             }
             else if (leftType.Type == TypeEnum.boolean)
             {
-                var error = $"Error: Subtraction of type boolean is not allowed at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Subtraction of type 'boolean' is not allowed.");
             }
             else if (isList(leftType.Type))
             {
-                var error = $"Error: Subtraction of type list is not allowed at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Subtraction of type 'list' is not allowed.");
             }
             switch (leftType)
             {
                 case NumberNode left when rightType is NumberNode right:
-                    left.Value -= right.Value;
-                    break;
+                    return new NumberNode() { Value = left.Value - right.Value };
                 case DecimalNode left when rightType is DecimalNode right:
-                    left.Value -= right.Value;
-                    break;
+                    return new DecimalNode() { Value = left.Value - right.Value };
+                case DecimalNode left when rightType is NumberNode right:
+                    return new DecimalNode() { Value = left.Value - right.Value };
+                case NumberNode left when rightType is DecimalNode right:
+                    return new DecimalNode() { Value = left.Value - right.Value };
+                default:
+                    throw new Exception();
             }
-            return leftType;
         }
 
         //MultiplicationNode -> Left, Right
@@ -381,29 +386,29 @@ namespace CobraCompiler
 
             if (leftType.Type != rightType.Type)
             {
-                var error = $"Error: Multiplication of '{leftType}' and '{rightType}' does not match at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Multiplication of '{leftType}' and '{rightType}' does not match.");
             }
             else if (leftType.Type == TypeEnum.boolean)
             {
-                var error = $"Error: Multiplication of type boolean is not allowed at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Multiplication of type 'boolean' is not allowed.");
             }
             else if (isList(leftType.Type))
             {
-                var error = $"Error: Multiplication of type list is not allowed at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Multiplication of type 'list' is not allowed.");
             }
             switch (leftType)
             {
                 case NumberNode left when rightType is NumberNode right:
-                    left.Value *= right.Value;
-                    break;
+                    return new NumberNode() { Value = left.Value * right.Value };
                 case DecimalNode left when rightType is DecimalNode right:
-                    left.Value *= right.Value;
-                    break;
+                    return new DecimalNode() { Value = left.Value * right.Value };
+                case DecimalNode left when rightType is NumberNode right:
+                    return new DecimalNode() { Value = left.Value * right.Value };
+                case NumberNode left when rightType is DecimalNode right:
+                    return new DecimalNode() { Value = left.Value * right.Value };
+                default:
+                    throw new Exception();
             }
-            return leftType;
         }
 
         //DivisionNode -> Left, Right
@@ -417,29 +422,37 @@ namespace CobraCompiler
             TypeNode type;
             if (leftType.Type != rightType.Type)
             {
-                var error = $"Error: Division of '{leftType}' and '{rightType}' does not match at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Division of '{leftType}' and '{rightType}' does not match.");
+                return null;
             }
             else if (leftType.Type == TypeEnum.boolean)
             {
-                var error = $"Error: Division of type 'boolean' is not allowed at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Division of type 'boolean' is not allowed.");
+                return null;
             }
             else if (isList(leftType.Type))
             {
-                var error = $"Error: Division of type 'list' is not allowed at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Division of type 'list' is not allowed.");
+                return null;
+            }
+            else if (rightType.Value == 0)
+            {
+                TypeError(node, $"Dividing by 0 is not allowed.");
+                return null;
             }
             switch (leftType)
             {
                 case NumberNode left when rightType is NumberNode right:
-                    left.Value /= right.Value;
-                    break;
+                    return new DecimalNode() { Value = left.Value / right.Value };
                 case DecimalNode left when rightType is DecimalNode right:
-                    left.Value /= right.Value;
-                    break;
+                    return new DecimalNode() { Value = left.Value / right.Value };
+                case DecimalNode left when rightType is NumberNode right:
+                    return new DecimalNode() { Value = left.Value / right.Value };
+                case NumberNode left when rightType is DecimalNode right:
+                    return new DecimalNode() { Value = left.Value / right.Value };
+                default:
+                    throw new Exception();
             }
-            return leftType;
         }
 
         //AndNode -> Left, Right
@@ -453,21 +466,19 @@ namespace CobraCompiler
 
             if (leftType.Type != TypeEnum.boolean)
             {
-                var error = $"Error: Type '{leftType}' does not match type 'boolean' on the left hand side of the logic 'and' expression at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Type '{leftType}' does not match type 'boolean' on the left hand side of the logic 'and' expression.");
             }
-            if (rightType.Type != TypeEnum.boolean) 
+            if (rightType.Type != TypeEnum.boolean)
             {
-                var error = $"Error: Type '{rightType}' does not match type 'boolean' on the right hand side of the logic 'and' expression at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Type '{rightType}' does not match type 'boolean' on the right hand side of the logic 'and' expression.");
             }
             switch (leftType)
             {
                 case BooleanNode left when rightType is BooleanNode right:
-                    left.Value = left.Value && right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value && right.Value };
+                default:
+                    throw new Exception();
             }
-            return leftType;
         }
 
         //OrNode -> Left, Right
@@ -481,21 +492,19 @@ namespace CobraCompiler
 
             if (leftType.Type != TypeEnum.boolean)
             {
-                var error = $"Error: Type '{leftType}' does not match type 'boolean' on the left hand side of the logic 'or' expression at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Type '{leftType}' does not match type 'boolean' on the left hand side of the logic 'or' expression.");
             }
-            if(rightType.Type != TypeEnum.boolean) 
+            if (rightType.Type != TypeEnum.boolean)
             {
-                var error = $"Error: Type '{rightType}' does not match type 'boolean' on the right hand side of the logic 'or' expression at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Type '{leftType}' does not match type 'boolean' on the right hand side of the logic 'or' expression.");
             }
             switch (leftType)
             {
                 case BooleanNode left when rightType is BooleanNode right:
-                    left.Value = left.Value || right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value || right.Value };
+                default:
+                    throw new Exception();
             }
-            return leftType;
         }
 
         //EqualNode -> Left, Right
@@ -509,30 +518,27 @@ namespace CobraCompiler
 
             if (leftType.Type != rightType.Type)
             {
-                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic equal expression at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic 'equal' expression.");
             }
-            else if (isList(leftType.Type)){
-                var error = $"Error: Type '{leftType}' is not allowed in boolean expressions at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+            else if (isList(leftType.Type))
+            {
+                TypeError(node, $"Error: Type '{leftType}' is not allowed in boolean expressions.");
             }
-            var boolNode = new BooleanNode();
             switch (leftType)
             {
                 case NumberNode left when rightType is NumberNode right:
-                    boolNode.Value = left.Value == right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value == right.Value };
                 case TextNode left when rightType is TextNode right:
-                    boolNode.Value = left.Value == right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value == right.Value };
                 case DecimalNode left when rightType is DecimalNode right:
-                    boolNode.Value = left.Value == right.Value;
-                    break;
-                case BooleanNode left when rightType is BooleanNode right:
-                    boolNode.Value = left.Value == right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value == right.Value };
+                case DecimalNode left when rightType is NumberNode right:
+                    return new BooleanNode() { Value = left.Value == right.Value };
+                case NumberNode left when rightType is DecimalNode right:
+                    return new BooleanNode() { Value = left.Value == right.Value };
+                default:
+                    throw new Exception();
             }
-            return boolNode;
         }
 
         //NotEqualNode -> Left, Right
@@ -546,30 +552,27 @@ namespace CobraCompiler
 
             if (leftType.Type != rightType.Type)
             {
-                var error = $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic not equal expression at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Error: The type of '{leftType}' does not match type '{rightType}' in the logic 'not equal' expression.");
             }
-            else if (isList(leftType.Type)){
-                var error = $"Error: Type '{leftType}' is not allowed in boolean expressions at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+            else if (isList(leftType.Type))
+            {
+                TypeError(node, $"Error: Type '{leftType}' is not allowed in boolean expressions.");
             }
-            var boolNode = new BooleanNode();
             switch (leftType)
             {
                 case NumberNode left when rightType is NumberNode right:
-                    boolNode.Value = left.Value != right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value != right.Value };
                 case TextNode left when rightType is TextNode right:
-                    boolNode.Value = left.Value != right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value != right.Value };
                 case DecimalNode left when rightType is DecimalNode right:
-                    boolNode.Value = left.Value != right.Value;
-                    break;
-                case BooleanNode left when rightType is BooleanNode right:
-                    boolNode.Value = left.Value != right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value != right.Value };
+                case DecimalNode left when rightType is NumberNode right:
+                    return new BooleanNode() { Value = left.Value != right.Value };
+                case NumberNode left when rightType is DecimalNode right:
+                    return new BooleanNode() { Value = left.Value != right.Value };
+                default:
+                    throw new Exception();
             }
-            return boolNode;
         }
 
         //GreaterNode -> Left, Right
@@ -585,31 +588,30 @@ namespace CobraCompiler
             {
                 if (leftType.Type != TypeEnum.number)
                 {
-                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number' at line {node.Line}.";
-                    typeErrorhandler.TypeErrorMessages.Add(error);
+                    TypeError(node, $"Error: The left hand side with type '{leftType}' does not match type 'number'.");
                 }
                 if (rightType.Type != TypeEnum.number)
                 {
-                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number' at line {node.Line}.";
-                    typeErrorhandler.TypeErrorMessages.Add(error);
+                    TypeError(node, $"Error: The right hand side with type '{rightType}' does not match type 'number'.");
                 }
             }
             else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number )
             {
-                var error = $"Error: The '>' symbol is only allowed in number expressions at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Error: The '>' symbol is only allowed in number expressions.");
             }
-            var boolNode = new BooleanNode();
             switch (leftType)
             {
                 case NumberNode left when rightType is NumberNode right:
-                    boolNode.Value = left.Value > right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value > right.Value };
                 case DecimalNode left when rightType is DecimalNode right:
-                    boolNode.Value = left.Value > right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value > right.Value };
+                case DecimalNode left when rightType is NumberNode right:
+                    return new BooleanNode() { Value = left.Value > right.Value };
+                case NumberNode left when rightType is DecimalNode right:
+                    return new BooleanNode() { Value = left.Value > right.Value };
+                default:
+                    throw new Exception();
             }
-            return boolNode;
         }
 
         //LessNode -> Left, Right
@@ -621,35 +623,34 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType != rightType)
+            if (leftType.Type != rightType.Type)
             {
                 if (leftType.Type != TypeEnum.number)
                 {
-                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number' at line {node.Line}.";
-                    typeErrorhandler.TypeErrorMessages.Add(error);
+                    TypeError(node, $"Error: The left hand side with type '{leftType}' does not match type 'number'.");
                 }
                 if (rightType.Type != TypeEnum.number)
                 {
-                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number' at line {node.Line}.";
-                    typeErrorhandler.TypeErrorMessages.Add(error);
+                    TypeError(node, $"Error: The right hand side with type '{rightType}' does not match type 'number'.");
                 }
             }
-            else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number )
+            else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number)
             {
-                var error = $"Error: The '<' symbol is only allowed in number expressions at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Error: The '<' symbol is only allowed in number expressions.");
             }
-            var boolNode = new BooleanNode();
             switch (leftType)
             {
                 case NumberNode left when rightType is NumberNode right:
-                    boolNode.Value = left.Value < right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value < right.Value };
                 case DecimalNode left when rightType is DecimalNode right:
-                    boolNode.Value = left.Value < right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value < right.Value };
+                case DecimalNode left when rightType is NumberNode right:
+                    return new BooleanNode() { Value = left.Value < right.Value };
+                case NumberNode left when rightType is DecimalNode right:
+                    return new BooleanNode() { Value = left.Value < right.Value };
+                default:
+                    throw new Exception();
             }
-            return boolNode;
         }
 
         //GreaterEqualNode -> Left, Right
@@ -661,35 +662,34 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType != rightType)
+            if (leftType.Type != rightType.Type)
             {
                 if (leftType.Type != TypeEnum.number)
                 {
-                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number' at line {node.Line}.";
-                    typeErrorhandler.TypeErrorMessages.Add(error);
+                    TypeError(node, $"Error: The left hand side with type '{leftType}' does not match type 'number'.");
                 }
                 if (rightType.Type != TypeEnum.number)
                 {
-                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number' at line {node.Line}.";
-                    typeErrorhandler.TypeErrorMessages.Add(error);
+                    TypeError(node, $"Error: The right hand side with type '{rightType}' does not match type 'number'.");
                 }
             }
-            else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number )
+            else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number)
             {
-                var error = $"Error: The '>=' symbol is only allowed in number expressions at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Error: The '>=' symbol is only allowed in number expressions.");
             }
-            var boolNode = new BooleanNode();
             switch (leftType)
             {
                 case NumberNode left when rightType is NumberNode right:
-                    boolNode.Value = left.Value >= right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value >= right.Value };
                 case DecimalNode left when rightType is DecimalNode right:
-                    boolNode.Value = left.Value >= right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value >= right.Value };
+                case DecimalNode left when rightType is NumberNode right:
+                    return new BooleanNode() { Value = left.Value >= right.Value };
+                case NumberNode left when rightType is DecimalNode right:
+                    return new BooleanNode() { Value = left.Value >= right.Value };
+                default:
+                    throw new Exception();
             }
-            return boolNode;
         }
 
         //LessEqualNode -> Left, Right
@@ -701,35 +701,34 @@ namespace CobraCompiler
             TypeNode? leftType = Visit(node.Left);
             TypeNode? rightType = Visit(node.Right);
 
-            if (leftType != rightType)
+            if (leftType.Type != rightType.Type)
             {
                 if (leftType.Type != TypeEnum.number)
                 {
-                    var error = $"Error: The left hand side with type '{leftType}' does not match type 'number' at line {node.Line}.";
-                    typeErrorhandler.TypeErrorMessages.Add(error);
+                    TypeError(node, $"Error: The left hand side with type '{leftType}' does not match type 'number'.");
                 }
                 if (rightType.Type != TypeEnum.number)
                 {
-                    var error = $"Error: The right hand side with type '{rightType}' does not match type 'number' at line {node.Line}.";
-                    typeErrorhandler.TypeErrorMessages.Add(error);
+                    TypeError(node, $"Error: The right hand side with type '{rightType}' does not match type 'number'.");
                 }
             }
-            else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number )
+            else if (leftType.Type != TypeEnum.number || rightType.Type != TypeEnum.number)
             {
-                var error = $"Error: The '<=' symbol is only allowed in number expressions at line {node.Line}.";
-                typeErrorhandler.TypeErrorMessages.Add(error);
+                TypeError(node, $"Error: The '<=' symbol is only allowed in number expressions.");
             }
-            var boolNode = new BooleanNode();
             switch (leftType)
             {
                 case NumberNode left when rightType is NumberNode right:
-                    boolNode.Value = left.Value <= right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value <= right.Value };
                 case DecimalNode left when rightType is DecimalNode right:
-                    boolNode.Value = left.Value <= right.Value;
-                    break;
+                    return new BooleanNode() { Value = left.Value <= right.Value };
+                case DecimalNode left when rightType is NumberNode right:
+                    return new BooleanNode() { Value = left.Value <= right.Value };
+                case NumberNode left when rightType is DecimalNode right:
+                    return new BooleanNode() { Value = left.Value <= right.Value };
+                default:
+                    throw new Exception();
             }
-            return boolNode;
         }
 
         #endregion
@@ -890,7 +889,6 @@ namespace CobraCompiler
             //Check if list inner type matches Expression
 
             Symbol? sym = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
-            TypeNode argument0 = null;
 
             if (!isList(sym.Type))
             {
@@ -901,23 +899,28 @@ namespace CobraCompiler
             var declaration = (DeclarationNode)sym.Reference;
             var list = (ListNode)declaration.Identifier.TypeNode;
 
-            if (node.Arguments.Expressions.Count != 1)
+            if (node.Arguments.Expressions.Count == 0)
             {
-                TypeError(node, $"'{sym.Name}:Add()' requires one argument");
+                TypeError(node, $"'{sym.Name}:Add()' requires atleast one argument");
                 return null;
             }
 
-            var expression0 = node.Arguments.Expressions[0];
-            argument0 = Visit(expression0);
-
-            if (argument0 == null || argument0.Type != getListType(sym.Type))
+            List<TypeNode> arguments = new List<TypeNode>();
+            foreach (var arg in node.Arguments.Expressions)
             {
-                TypeError(node, $"'{sym.Name}:Add()' expects type '{getListType(sym.Type)}'");
-                return null;
+                TypeNode argument = Visit(arg);
+
+                if (argument == null || argument.Type != getListType(sym.Type))
+                {
+                    TypeError(node, $"'{sym.Name}:Add()' expects type '{getListType(sym.Type)}'");
+                    return null;
+                }
+                arguments.Add(argument);
+
             }
 
-            list.Value.Add(argument0);
-            list.Size++;
+            list.Value.AddRange(arguments);
+            list.Size += (ushort)arguments.Count;
 
             return null;
         }
@@ -1100,7 +1103,7 @@ namespace CobraCompiler
 
             if (parameters.Count != arguments.Count)
             {
-                TypeError(node, $"{sym.Name} expects {parameters} arguments");
+                TypeError(node, $"{sym.Name} expects {parameters.Count} arguments");
                 return null;
             }
 
@@ -1128,7 +1131,7 @@ namespace CobraCompiler
 
             if (arguments.Count != 0)
             {
-                TypeError(node, $"'Input()' takes 0 arguments");
+                TypeError(node, $"'input()' takes 0 arguments");
             }
 
             string input = Console.ReadLine();
@@ -1139,7 +1142,7 @@ namespace CobraCompiler
                     int number = 0;
                     if (!int.TryParse(input, out number))
                     {
-                        TypeError(node, $"'Input()' Expected of type {numberNode.Type}");
+                        TypeError(node, $"'input()' Expected of type {numberNode.Type}");
                         return null;
                     }
                     numberNode.Value = number;
@@ -1148,7 +1151,7 @@ namespace CobraCompiler
                     float _decimal = 0;
                     if (!float.TryParse(input, CultureInfo.InvariantCulture, out _decimal))
                     {
-                        TypeError(node, $"'Input()' Expected type {decimalNode.Type}");
+                        TypeError(node, $"'input()' Expected type {decimalNode.Type}");
                         return null;
                     }
                     decimalNode.Value = _decimal;
@@ -1157,7 +1160,7 @@ namespace CobraCompiler
                     bool boolean = false;
                     if (!bool.TryParse(input, out boolean))
                     {
-                        TypeError(node, $"'Input()' Expected type {boolNode.Type}");
+                        TypeError(node, $"'input()' Expected type {boolNode.Type}");
                         return null;
                     }
                     boolNode.Value = boolean;
@@ -1166,7 +1169,7 @@ namespace CobraCompiler
                     textNode.Value = input;
                     return textNode;
                 default:
-                    TypeError(node, "Invalid typing for 'Input()'");
+                    TypeError(node, "Invalid typing for 'input()'");
                     return null;
             }
         }
@@ -1177,7 +1180,7 @@ namespace CobraCompiler
 
             if (arguments.Count != 1)
             {
-                TypeError(node, $"'Output()' takes 1 arguments");
+                TypeError(node, $"'output()' takes 1 arguments");
             }
 
             var expression0 = arguments[0];
@@ -1185,7 +1188,7 @@ namespace CobraCompiler
 
             if (isList(argument0.Type))
             {
-                TypeError(node, $"'Output()' does not support type {getTypeNode(argument0.Type)}");
+                TypeError(node, $"'output()' does not support type {getTypeNode(argument0.Type)}");
             }
 
             return null;
@@ -1195,13 +1198,25 @@ namespace CobraCompiler
         {
             var block = Visit(node.Block);
 
+            List<string> reservedFunctionNames = new List<string>()
+            {
+                "concat", "AddToList", "ReplaceInList", "IndexOfList", "ValueOfList"
+            };
+
             if (node.ReturnType.Type == TypeEnum.nothing && block != null)
             {
                 TypeError(node, $" function '{node.Name}()' expects no return statement");
+                return null;
             }
             else if (node.ReturnType.Type != TypeEnum.nothing && node.ReturnType.Type != block.Type)
             {
                 TypeError(node, $"function '{node.Name}()' expects to return type {node.ReturnType.Type} but returns type {block.Type}");
+                return null;
+            }
+            else if (reservedFunctionNames.Contains(node.Name))
+            {
+                TypeError(node, $"function '{node.Name}()' is a reserved name");
+                return null;
             }
 
             return block;
@@ -1217,7 +1232,7 @@ namespace CobraCompiler
 
             if (parameters.Count != arguments.Count)
             {
-                TypeError(node, $"{sym.Name} expects {parameters} arguments");
+                TypeError(node, $"{sym.Name} expects {parameters.Count} arguments");
                 return null;
             }
 
@@ -1255,7 +1270,7 @@ namespace CobraCompiler
 
             if (arguments.Count != 0)
             {
-                TypeError(node, $"'Input()' takes 0 arguments");
+                TypeError(node, $"'input()' takes 0 arguments");
             }
 
             string input = Console.ReadLine();
@@ -1266,7 +1281,7 @@ namespace CobraCompiler
                     int number = 0;
                     if (!int.TryParse(input, out number))
                     {
-                        TypeError(node, $"'Input()' Expected type {numberNode.Type}");
+                        TypeError(node, $"'input()' Expected type {numberNode.Type}");
                         return null;
                     }
                     numberNode.Value = number;
@@ -1275,7 +1290,7 @@ namespace CobraCompiler
                     float _decimal = 0;
                     if (!float.TryParse(input, CultureInfo.InvariantCulture, out _decimal))
                     {
-                        TypeError(node, $"'Input()' Expected type {decimalNode.Type}");
+                        TypeError(node, $"'input()' Expected type {decimalNode.Type}");
                         return null;
                     }
                     decimalNode.Value = _decimal;
@@ -1284,7 +1299,7 @@ namespace CobraCompiler
                     bool boolean = false;
                     if (!bool.TryParse(input, out boolean))
                     {
-                        TypeError(node, $"'Input()' Expected type {boolNode.Type}");
+                        TypeError(node, $"'input()' Expected type {boolNode.Type}");
                         return null;
                     }
                     boolNode.Value = boolean;
@@ -1293,7 +1308,7 @@ namespace CobraCompiler
                     textNode.Value = input;
                     return textNode;
                 default:
-                    TypeError(node, "Invalid typing for 'Input()'");
+                    TypeError(node, "Invalid typing for 'input()'");
                     return null;
             }
         }
@@ -1304,7 +1319,7 @@ namespace CobraCompiler
 
             if (arguments.Count != 1)
             {
-                TypeError(node, $"'Output()' takes 1 arguments");
+                TypeError(node, $"'output()' takes 1 arguments");
             }
 
             var expression0 = arguments[0];
@@ -1312,7 +1327,7 @@ namespace CobraCompiler
 
             if (isList(argument0.Type))
             {
-                TypeError(node, $"'Output()' does not support type {getTypeNode(argument0.Type)}");
+                TypeError(node, $"'output()' does not support type {getTypeNode(argument0.Type)}");
             }
 
             return null;

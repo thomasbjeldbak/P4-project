@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+char* concat(const char *str1, const char *str2) {
+ size_t len1 = strlen(str1);
+ size_t len2 = strlen(str2);
+ char *result = malloc(strlen(str1) + strlen(str2) + 1);
+ strcpy(result, str1);
+ strcat(result, str2);
+ return result;
+}
 struct node
 {
  void *value;
@@ -49,34 +57,11 @@ void *ValueOfList(struct node *list, int index)
  { curr_node = curr_node->next; }
  return curr_node->value;
 }
-void printList(struct node *l)
-{
-for (int number = 0; number < 10; number++){
-{
-char *s;
-int number = 1;
-struct *node decimal = l
-while (number)
-{
-s = *(char **)l->value;
-printf("%s\n", s);
-if (l->next == NULL)
-{
-number = 0;
-} else
-{
-l = l->next;
-}
-}
-l = decimal
-}
-}
-}
 void main(){
-struct node *hej = NULL;
-AddToList(&hej, &(char *){"HEJSA"}, sizeof(char *));
-AddToList(&hej, &(char *){"MED"}, sizeof(char *));
-AddToList(&hej, &(char *){"DIG"}, sizeof(char *));
-AddToList(&hej, &(char *){"SMUKKE!! :DDDDD"}, sizeof(char *));
-printList(hej);
+struct node *dec = NULL;
+AddToList(&dec, &(float){0.1}, sizeof(float));
+AddToList(&dec, &(float){0.2}, sizeof(float));
+AddToList(&dec, &(float){0.3}, sizeof(float));
+AddToList(&dec, &(float){4}, sizeof(float));
+AddToList(&dec, &(float){5}, sizeof(float));
 }

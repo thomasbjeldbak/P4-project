@@ -1,19 +1,2 @@
-list(text) hej;
-
-hej:Add("HEJSA");
-hej:Add("MED");
-hej:Add("DIG");
-hej:Add("SMUKKE!! :DDDDD");
-
-function printList(list(text) l) return nothing
-{
-	repeat(10) times
-	{
-		repeat for each(text s in l)
-		{
-			call output(s);
-		}
-	}
-}
-
-call printList(hej);
+list(decimal) dec;
+dec:Add(0.1, 0.2, 0.3, 4.0, 5.0);
