@@ -1479,7 +1479,7 @@ namespace CobraCompiler
             }
         }
 
-        public void TypeError(ASTNode node, string error)
+        private void TypeError(ASTNode node, string error)
         {
             typeErrorhandler.TypeErrorMessages.Add($"Error line {node.Line}: {error}");
         }

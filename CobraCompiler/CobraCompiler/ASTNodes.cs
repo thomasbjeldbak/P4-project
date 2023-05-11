@@ -25,7 +25,7 @@ public class ASTNodes
     }
 
     //ProgramNode (the start node)
-    internal class ProgramNode : BlockNode
+    public class ProgramNode : BlockNode
     {
     }
 
@@ -36,20 +36,20 @@ public class ASTNodes
 
     //Declaration declares a variable using an expression
     //Type Identifier = Expression;
-    internal class DeclarationNode : CommandNode
+    public class DeclarationNode : CommandNode
     {
         public IdentifierNode Identifier { get; set; }
         public ExpressionNode Expression { get; set; }
     }
 
     //Statement can be many things: functions, control structures etc,
-    internal abstract class StatementNode : CommandNode { }
+    public abstract class StatementNode : CommandNode { }
 
     //Assignment contains reference to declaration and an expression
     //Identifier = Expression;
     //(A clear distinction between this and declarationNode
     //needs to be made for the symbol table)
-    internal class AssignNode : StatementNode
+    public class AssignNode : StatementNode
     {
         public IdentifierNode Identifier { get; set; }
         public ExpressionNode Expression { get; set; }
@@ -58,7 +58,7 @@ public class ASTNodes
     //Identifier has a type and a name
     //Type Name;
     //An Identifer can be used as an expression e.g. 'if ( IdentifierNode ) { }'
-    internal class IdentifierNode : ExpressionNode
+    public class IdentifierNode : ExpressionNode
     {
         public TypeNode TypeNode { get; set; }
         public string Name { get; set; }
@@ -66,7 +66,7 @@ public class ASTNodes
 
     //Any expression can have a value (except infixExpressions shouldn't have)
     //e.g. if (true) {}
-    internal abstract class ExpressionNode : ASTNode
+    public abstract class ExpressionNode : ASTNode
     {
         public TypeEnum Type { get; set; }
         public dynamic Value { get; set; }
@@ -74,21 +74,21 @@ public class ASTNodes
 
     //InfixExpression has a left and right side
     //e.g. Left + Right
-    internal abstract class InfixExpressionNode : ExpressionNode
+    public abstract class InfixExpressionNode : ExpressionNode
     {
         public ExpressionNode Left { get; set; }
         public ExpressionNode Right { get; set; }
     }
 
     //Types (with values)
-    internal abstract class TypeNode : ExpressionNode
+    public abstract class TypeNode : ExpressionNode
     {
     }
 
     //Each TypeNode overrides the 'Value' from expression
     //They also intialize if a TypeEnum of their correct type
     #region Types
-    internal class NumberNode : TypeNode
+    public class NumberNode : TypeNode
     {
         public NumberNode() 
         {
@@ -97,7 +97,7 @@ public class ASTNodes
         public new int Value { get; set; }
     }
 
-    internal class DecimalNode : TypeNode
+    public class DecimalNode : TypeNode
     {
         public DecimalNode()
         {
@@ -106,7 +106,7 @@ public class ASTNodes
         public new float Value { get; set; }
     }
 
-    internal class TextNode : TypeNode
+    public class TextNode : TypeNode
     {
         public TextNode()
         {
@@ -115,7 +115,7 @@ public class ASTNodes
         public new string Value { get; set; }
     }
      
-    internal class BooleanNode : TypeNode
+    public class BooleanNode : TypeNode
     {
         public BooleanNode()
         {
@@ -124,7 +124,7 @@ public class ASTNodes
         public new bool Value { get; set; }
     }
 
-    internal class ListNode : TypeNode
+    public class ListNode : TypeNode
     {
         public ListNode(TypeEnum listType)
         {
@@ -143,7 +143,7 @@ public class ASTNodes
         public new List<TypeNode> Value { get; set; }
     }
 
-    internal class NothingNode : TypeNode
+    public class NothingNode : TypeNode
     {
         public NothingNode()
         {
@@ -158,50 +158,50 @@ public class ASTNodes
     #region InfixExpressions
 
     //RightExpression + LeftExpression
-    internal class AdditionNode : InfixExpressionNode { }
+    public class AdditionNode : InfixExpressionNode { }
 
     //RightExpression - LeftExpression
-    internal class SubtractionNode : InfixExpressionNode { }
+    public class SubtractionNode : InfixExpressionNode { }
 
     //RightExpression / LeftExpression
-    internal class DivisionNode : InfixExpressionNode { }
+    public class DivisionNode : InfixExpressionNode { }
 
     //RightExpression * LeftExpression
-    internal class MultiplicationNode : InfixExpressionNode { }
+    public class MultiplicationNode : InfixExpressionNode { }
 
     //RightExpression and LeftExpression
-    internal class AndNode : InfixExpressionNode { }
+    public class AndNode : InfixExpressionNode { }
 
     //RightExpression or LeftExpression
-    internal class OrNode : InfixExpressionNode { }
+    public class OrNode : InfixExpressionNode { }
 
     //RightExpression is LeftExpression
-    internal class EqualNode : InfixExpressionNode { }
+    public class EqualNode : InfixExpressionNode { }
 
     //RightExpression is not LeftExpression
-    internal class NotEqualNode : InfixExpressionNode { }
+    public class NotEqualNode : InfixExpressionNode { }
 
     //RightExpression > LeftExpression
-    internal class GreaterNode : InfixExpressionNode { }
+    public class GreaterNode : InfixExpressionNode { }
 
     //RightExpression < LeftExpression
-    internal class LessNode : InfixExpressionNode { }
+    public class LessNode : InfixExpressionNode { }
 
     //RightExpression >= LeftExpression
-    internal class GreaterEqualNode : InfixExpressionNode { }
+    public class GreaterEqualNode : InfixExpressionNode { }
 
     //RightExpression <= LeftExpression
-    internal class LessEqualNode : InfixExpressionNode { }
+    public class LessEqualNode : InfixExpressionNode { }
 
     #endregion
 
-    internal class CommentNode : StatementNode 
+    public class CommentNode : StatementNode 
     {
         public string Comment { get; set; }
     }
 
     //Abstract class for all constrol structure (they all contain blocks)
-    internal abstract class ControlStructureNode : StatementNode
+    public abstract class ControlStructureNode : StatementNode
     {
         public BlockNode Block { get; set; }
     }
@@ -210,7 +210,7 @@ public class ASTNodes
 
     //"If" containing a condition, block and a list of all elseNodes
     //If (Condition) {Block} Else-if (Condition) {Block}... Else {Block}
-    internal class IfNode : ControlStructureNode
+    public class IfNode : ControlStructureNode
     {
         public ExpressionNode Condition { get; set; }
         public List<ElseNode> ElseIfs { get; set; }
@@ -218,34 +218,34 @@ public class ASTNodes
 
     //Else doesn't need a Condition
     //Else {Block}
-    internal class ElseNode : ControlStructureNode 
+    public class ElseNode : ControlStructureNode 
     {
     }
 
     //ElseIf has a condition and is an ElseNode
     //Else If (Condition) {Block}
-    internal class ElseIfNode : ElseNode
+    public class ElseIfNode : ElseNode
     {
         public ExpressionNode Condition { get; set; }
     }
     
     //"For loop" containing the number to count up to and a block
     //Repeat (Expression) {Block}
-    internal class RepeatNode : ControlStructureNode
+    public class RepeatNode : ControlStructureNode
     {
         public ExpressionNode Expression { get; set; }
     }
     
     //"While loop" containing a Condition and a block
     //Repeat While (Condtion) {Block}
-    internal class WhileNode : ControlStructureNode
+    public class WhileNode : ControlStructureNode
     {
         public ExpressionNode Condition { get; set; }
     }
 
     //"Foreach loop" containing
     //Repeat For each (DeclarationNode in List) {Block}
-    internal class ForeachNode : ControlStructureNode
+    public class ForeachNode : ControlStructureNode
     {
         public IdentifierNode List { get; set; }
         public new ForeachBlockNode Block { get; set; }
@@ -254,54 +254,54 @@ public class ASTNodes
     #endregion
 
     //Return node is a node representing a return statement
-    internal class ReturnNode : StatementNode
+    public class ReturnNode : StatementNode
     {
         public ExpressionNode Expression { get; set; }
     }
 
     //"Function call" has arguments and a reference to function declaration
     //Call Name
-    internal class FunctionCallExprNode : ExpressionNode
+    public class FunctionCallExprNode : ExpressionNode
     {
         public string Name { get; set; }
         public ArgumentsNode Arguments { get; set; }
     }
 
-    internal class FunctionCallStmtNode : StatementNode
+    public class FunctionCallStmtNode : StatementNode
     {
         public string Name { get; set; }
         public ArgumentsNode Arguments { get; set; }
     }
 
 
-    internal class InputExprNode : FunctionCallExprNode
+    public class InputExprNode : FunctionCallExprNode
     {
         public TypeNode Type { get; set; }
     }
 
-    internal class OutputExprNode : FunctionCallExprNode
+    public class OutputExprNode : FunctionCallExprNode
     {
     }
 
-    internal class InputStmtNode : FunctionCallStmtNode
+    public class InputStmtNode : FunctionCallStmtNode
     {
         public TypeNode Type { get; set; }
     }
 
-    internal class OutputStmtNode : FunctionCallStmtNode
+    public class OutputStmtNode : FunctionCallStmtNode
     {
     }
 
     //"Function declaration" has a type to return, parameters and a block
     //Function Name (Parameters) ReturnType {Block}
-    internal class FunctionDeclarationNode : StatementNode
+    public class FunctionDeclarationNode : StatementNode
     {
         public string Name { get; set; }
         public TypeNode ReturnType { get; set; }
         public FunctionBlockNode Block { get; set; }
     }
 
-    internal class FunctionBlockNode : BlockNode
+    public class FunctionBlockNode : BlockNode
     {
         public List<string> UsedVariables { get; set; }
         public ArgumentsNode Arguments { get; set; }
@@ -309,7 +309,7 @@ public class ASTNodes
         public ExpressionNode ReturnExpression { get; set; }
     }
 
-    internal class ForeachBlockNode : BlockNode
+    public class ForeachBlockNode : BlockNode
     {
         public DeclarationNode LocalVariable { get; set; }
         public string ListName { get; set; }
@@ -324,42 +324,42 @@ public class ASTNodes
 
     //Abstract class for all listOperations
     //e.g. Identifier:[ADD](Expression);
-    internal abstract class ListOprStatementNode : StatementNode
+    public abstract class ListOprStatementNode : StatementNode
     {
         public IdentifierNode Identifier { get; set; }
         public ArgumentsNode Arguments { get; set; }
     }
 
-    internal abstract class ListOprExpressionNode : ExpressionNode
+    public abstract class ListOprExpressionNode : ExpressionNode
     {
         public IdentifierNode Identifier { get; set; }
         public ArgumentsNode Arguments { get; set; }
     }
 
-    internal class ArgumentsNode : ExpressionNode
+    public class ArgumentsNode : ExpressionNode
     {
         public List<ExpressionNode> Expressions { get; set; }
     }
 
-    internal class ParametersNode : ExpressionNode
+    public class ParametersNode : ExpressionNode
     {
         public List<DeclarationNode> Declarations { get; set; }
     }
 
     #region List Operations
-    internal class ListAddNode : ListOprStatementNode 
+    public class ListAddNode : ListOprStatementNode 
     { 
     }
 
-    internal class ListReplaceNode : ListOprStatementNode 
+    public class ListReplaceNode : ListOprStatementNode 
     {
     }
 
-    internal class ListValueOfNode : ListOprExpressionNode 
+    public class ListValueOfNode : ListOprExpressionNode 
     {
     }
 
-    internal class ListIndexOfNode : ListOprExpressionNode
+    public class ListIndexOfNode : ListOprExpressionNode
     { 
     }
 

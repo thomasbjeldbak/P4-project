@@ -36,27 +36,27 @@ namespace CobraCompiler
         public BlockNode Block { get; set; }
     }
 
-    internal class SymbolTable : ASTVisitor<ASTNode?>
+    public class SymbolTable : ASTVisitor<ASTNode?>
     {
-        private Dictionary<BlockNode, Scope> _scopes; //Key = BlockNode belonging to the Scope, Value = Scope
-        private Stack<Scope> _stackScopes; //Stack of scopes for building _scopes
+        public Dictionary<BlockNode, Scope> _scopes; //Key = BlockNode belonging to the Scope, Value = Scope
+        public Stack<Scope> _stackScopes; //Stack of scopes for building _scopes
         private ErrorHandler symbolErrorhandler;
-        private BlockNode _currentBlock;
+        public BlockNode _currentBlock;
         public SymbolTable(ErrorHandler errorHandler)
         {
             symbolErrorhandler = errorHandler;
+            _scopes = new Dictionary<BlockNode, Scope>();
+            _stackScopes = new Stack<Scope>();
         }
         public SymbolTable BuildSymbolTable(ASTNode astRoot)
         {
-            _scopes = new Dictionary<BlockNode, Scope>();
-            _stackScopes = new Stack<Scope>();
             Visit((ProgramNode)astRoot);
             return this;
         }
 
         //Add a new scope on the stack and add the scope to _scopes
         //Also update the currentBlock
-        private void NewScope(BlockNode blockNode)
+        public void NewScope(BlockNode blockNode)
         {
             var scope = new Scope();
             scope.Block = blockNode;
@@ -70,7 +70,7 @@ namespace CobraCompiler
         }
 
         //Pop the stack of scopes
-        private void ExitScope()
+        public void ExitScope()
         {
             _stackScopes.Pop();
             if (_currentBlock is not ProgramNode)
@@ -79,7 +79,7 @@ namespace CobraCompiler
 
         //Insert ID (name) and Type for a variable into the
         //scope at the top of the stack
-        private void Insert(string name, TypeEnum type, ASTNode node)
+        public void Insert(string name, TypeEnum type, ASTNode node)
         {
             if (_stackScopes.Peek().Symbols.ContainsKey(name))
             {
@@ -729,7 +729,7 @@ namespace CobraCompiler
             }
         }
 
-        public void SymbolError(ASTNode node, string error)
+        private void SymbolError(ASTNode node, string error)
         {
             symbolErrorhandler.SymbolErrorMessages.Add($"Error line {node.Line}: {error}");
         }
