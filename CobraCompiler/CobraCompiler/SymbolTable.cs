@@ -13,6 +13,7 @@ using static ASTNodes;
 using static ASTNodes.ASTNode;
 using static CobraCompiler.Symbol;
 using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 
 namespace CobraCompiler
 {
@@ -104,8 +105,6 @@ namespace CobraCompiler
                 {
                     if (symbol.Name == name)
                     {
-                        addIDToFunctionBlock(name, blockNode);
-
                         return symbol;
                     }
                 }
@@ -389,7 +388,11 @@ namespace CobraCompiler
 
         public override ASTNode? Visit(ForeachNode node)
         {
-            Lookup(node.List.Name, _currentBlock);
+            var sym = Lookup(node.List.Name, _currentBlock);
+
+            if (sym != null)
+                addIDToFunctionBlock(sym.Name, _currentBlock);
+
             Visit(node.Block);
             return null;
         }
@@ -544,13 +547,28 @@ namespace CobraCompiler
         public override ASTNode Visit(FunctionCallExprNode node)
         {
             var sym = Lookup(node.Name, _currentBlock);
+
+            if (sym != null)
+                addIDToFunctionBlock(sym.Name, _currentBlock);
+
+            var declaration = (FunctionDeclarationNode)sym.Reference;
+
             if (sym == null)
             {
                 SymbolError(node, $"{node.Name} is not found. Declare your function before calling.");
             }
 
             foreach (var expr in node.Arguments.Expressions)
+            {
+                if (expr is IdentifierNode)
+                {
+                    var identifier = (IdentifierNode)expr;
+                    if (declaration.Block.UsedVariables.Contains(identifier.Name))
+                        declaration.Block.UsedVariables.Remove(identifier.Name);
+                }
+
                 Visit(expr);
+            }
 
             return null;
         }
@@ -588,12 +606,28 @@ namespace CobraCompiler
         public override ASTNode? Visit(FunctionCallStmtNode node)
         {
             var sym = Lookup(node.Name, _currentBlock);
+
+            if (sym != null)
+                addIDToFunctionBlock(sym.Name, _currentBlock);
+
+            var declaration = (FunctionDeclarationNode)sym.Reference;
+
             if (sym == null)
             {
                 SymbolError(node, $"{node.Name} is not found. Declare your variable before use.");
             }
+
             foreach (var expr in node.Arguments.Expressions)
+            {
+                if (expr is IdentifierNode)
+                {
+                    var identifier = (IdentifierNode)expr;
+                    if (declaration.Block.UsedVariables.Contains(identifier.Name))
+                        declaration.Block.UsedVariables.Remove(identifier.Name);
+                }
+
                 Visit(expr);
+            }
             return null;
         }
         
@@ -685,6 +719,10 @@ namespace CobraCompiler
         public void Visit(IdentifierNode node)
         {
             var sym = Lookup(node.Name, _currentBlock);
+
+            if (sym != null)
+                addIDToFunctionBlock(sym.Name, _currentBlock);
+
             if (sym == null)
             {
                 SymbolError(node, $"{node.Name} is not found. Declare your variable before use.");

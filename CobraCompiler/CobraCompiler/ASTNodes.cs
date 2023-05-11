@@ -68,6 +68,7 @@ public class ASTNodes
     //e.g. if (true) {}
     internal abstract class ExpressionNode : ASTNode
     {
+        public TypeEnum Type { get; set; }
         public dynamic Value { get; set; }
     }
 
@@ -82,7 +83,6 @@ public class ASTNodes
     //Types (with values)
     internal abstract class TypeNode : ExpressionNode
     {
-        public TypeEnum Type { get; set; }
     }
 
     //Each TypeNode overrides the 'Value' from expression

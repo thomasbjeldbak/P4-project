@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+char* concat(const char *str1, const char *str2) {
+ size_t len1 = strlen(str1);
+ size_t len2 = strlen(str2);
+ char *result = malloc(strlen(str1) + strlen(str2) + 1);
+ strcpy(result, str1);
+ strcat(result, str2);
+ return result;
+}
 struct node
 {
  void *value;
@@ -49,24 +57,11 @@ void *ValueOfList(struct node *list, int index)
  { curr_node = curr_node->next; }
  return curr_node->value;
 }
-void printList(struct node *hej){
-{
-char *h;int number = 1;
-while (number)
-{
-h = *(char **)hej->value;
-printf("%s\n", h);
-if (hej->next == NULL)
-{
-number = 0;
-} else
-{
-hej = hej->next;
-}
-}
-}
-}
 void main(){
-struct node *hej = NULL;
-AddToList(&hej, &(char *){"1"}, sizeof(char *));AddToList(&hej, &(char *){"2"}, sizeof(char *));AddToList(&hej, &(char *){"3"}, sizeof(char *));AddToList(&hej, &(char *){"4"}, sizeof(char *));AddToList(&hej, &(char *){"5"}, sizeof(char *));printList(hej);
+struct node *dec = NULL;
+AddToList(&dec, &(float){0.1}, sizeof(float));
+AddToList(&dec, &(float){0.2}, sizeof(float));
+AddToList(&dec, &(float){0.3}, sizeof(float));
+AddToList(&dec, &(float){4}, sizeof(float));
+AddToList(&dec, &(float){5}, sizeof(float));
 }

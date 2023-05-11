@@ -1,18 +1,2 @@
-list(text) hej;
-
-hej:Add("1");
-hej:Add("2");
-hej:Add("3");
-hej:Add("4");
-hej:Add("5");
-
-
-function printList() return nothing
-{
-	repeat for each(text h in hej)
-	{
-		call output(h);
-	}
-}
-
-call printList();
+list(decimal) dec;
+dec:Add(0.1, 0.2, 0.3, 4.0, 5.0);
