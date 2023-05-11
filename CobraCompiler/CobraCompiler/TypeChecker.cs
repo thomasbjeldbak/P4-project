@@ -54,6 +54,7 @@ namespace CobraCompiler
                     default:
                         throw new Exception($"Command was not valid");
                 }
+                _currentBlock = node;
             }
             _currentBlock = node;
             return null;
@@ -88,6 +89,7 @@ namespace CobraCompiler
                     default:
                         throw new Exception($"Command was not valid");
                 }
+                _currentBlock = node;
             }
             _currentBlock = node;
             return null;
@@ -115,7 +117,6 @@ namespace CobraCompiler
                     TypeError(node, $"Initialization of type 'list' must occur on a seperate line from assignment");
                 }
 
-                ((DeclarationNode)symbol.Reference).Expression = exprNode;
                 return exprNode;
             }
 
@@ -172,6 +173,9 @@ namespace CobraCompiler
             Symbol symbol = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
 
             TypeNode? exprNode = Visit(node.Expression);
+
+            if (exprNode == null)
+                return null;
 
             if (symbol.Type != exprNode.Type)
             {
@@ -947,8 +951,12 @@ namespace CobraCompiler
 
             }
 
-            list.Value.AddRange(arguments);
-            list.Size += (ushort)arguments.Count;
+            var functionBlock = _symbolTable.GetFunctionBlock(_currentBlock);
+            if (functionBlock != null && functionBlock.IsFunctionCall)
+            {
+                list.Value.AddRange(arguments);
+                list.Size += (ushort)arguments.Count;
+            }
 
             return null;
         }
@@ -981,39 +989,43 @@ namespace CobraCompiler
                 return null;
             }
 
-            var expression0 = node.Arguments.Expressions[0];
-            argument0 = Visit(expression0);
-
-            if (argument0.Type != list.Value[0].Type)
-            {
-                TypeError(node, $"'{sym.Name}:Replace()' expects type '{getListType(sym.Type)}'");
-                return null;
-            }
-
             var expression1 = node.Arguments.Expressions[1];
             argument1 = Visit(expression1);
 
             if (argument1.Type != TypeEnum.number)
             {
-                TypeError(node, $"'{sym.Name}:Add()' expects type '{TypeEnum.number}'");
+                TypeError(node, $"'{sym.Name}:Replace()' expects type '{TypeEnum.number}'");
                 return null;
             }
 
-            if (!list.Value.Any(x => x.Value == argument0.Value))
+            var expression0 = node.Arguments.Expressions[0];
+            argument0 = Visit(expression0);
+
+            if (argument0.Type != getListType(list.Type))
             {
-                TypeError(node, $"'{sym.Name}' doesn't contain '{argument0.Value}'");
+                TypeError(node, $"'{sym.Name}:Replace()' expects type '{getListType(sym.Type)}'");
                 return null;
             }
 
-            int index = ((NumberNode)argument1).Value;
-
-            if (index > list.Size - 1 || index < 0)
+            var functionBlock = _symbolTable.GetFunctionBlock(_currentBlock);
+            if (functionBlock != null && functionBlock.IsFunctionCall)
             {
-                TypeError(node, $"'{sym.Name}' has no value at index '{index}'");
-                return null;
-            }
+                int index = ((NumberNode)argument1).Value;
 
-            list.Value[index] = argument0;
+                if (index > list.Size - 1 || index < 0)
+                {
+                    TypeError(node, $"'{sym.Name}' has no value at index '{index}'");
+                    return null;
+                }
+
+                if (!list.Value.Any(x => x.Value == argument0.Value))
+                {
+                    TypeError(node, $"'{sym.Name}' doesn't contain '{argument0.Value}'");
+                    return null;
+                }
+
+                list.Value[index] = argument0;
+            }
 
             return null;
         }
@@ -1053,15 +1065,21 @@ namespace CobraCompiler
                 return null;
             }
 
-            int index = ((NumberNode)argument0).Value;
-
-            if (index > list.Size - 1 || index < 0)
+            var functionBlock = _symbolTable.GetFunctionBlock(_currentBlock);
+            if (functionBlock != null && functionBlock.IsFunctionCall)
             {
-                TypeError(node, $"'{sym.Name}' has no value at index '{index}'");
-                return null;
+                int index = ((NumberNode)argument0).Value;
+
+                if (index > list.Size - 1 || index < 0)
+                {
+                    TypeError(node, $"'{sym.Name}' has no value at index '{index}'");
+                    return null;
+                }
+
+                return list.Value[index];
             }
 
-            return list.Value[index];
+            return null;
         }
 
         //ListIndexOfNode -> IdentifierNode, Expression
@@ -1099,21 +1117,28 @@ namespace CobraCompiler
                 return null;
             }
 
-            if (list.Size > 0)
+            var functionBlock = _symbolTable.GetFunctionBlock(_currentBlock);
+            if (functionBlock != null && functionBlock.IsFunctionCall)
             {
-                TypeError(node, $"'{sym.Name}' is empty");
-                return null;
+                if (list.Size > 0)
+                {
+                    TypeError(node, $"'{sym.Name}' is empty");
+                    return null;
+                }
+
+                if (!list.Value.Any(x => x.Value == argument0.Value))
+                {
+                    TypeError(node, $"'{sym.Name}' doesn't contain '{argument0.Value}'");
+                    return null;
+                }
+
+                NumberNode number = new NumberNode();
+                number.Value = list.Value.FindIndex(x => x.Value == argument0.Value);
+                return number;
+
             }
 
-            if (!list.Value.Any(x => x.Value == argument0.Value))
-            {
-                TypeError(node, $"'{sym.Name}' doesn't contain '{argument0.Value}'");
-                return null;
-            }
-
-            NumberNode number = new NumberNode();
-            number.Value = list.Value.FindIndex(x => x.Value == argument0.Value);
-            return number;
+            return null;
         }
 
         public override TypeNode? Visit(CommentNode node)
@@ -1124,7 +1149,7 @@ namespace CobraCompiler
         public override TypeNode? Visit(FunctionCallExprNode node)
         {
             Symbol? sym = _symbolTable.Lookup(node.Name, _currentBlock);
-            FunctionDeclarationNode declaration = ((FunctionDeclarationNode)sym.Reference);
+            FunctionDeclarationNode declaration = (FunctionDeclarationNode)sym.Reference;
 
             List<DeclarationNode> parameters = declaration.Block.Parameters.Declarations;
             List<ExpressionNode> arguments = node.Arguments.Expressions;
@@ -1137,12 +1162,17 @@ namespace CobraCompiler
 
             for (int i = 0; i < parameters.Count; i++)
             {
-                Symbol? paramSymbol = _symbolTable.Lookup(parameters[i].Identifier.Name, _currentBlock);
-                var argumentType = Visit(arguments[i]);
+                Symbol? paramSymbol = _symbolTable.Lookup(parameters[i].Identifier.Name, declaration.Block);
+                TypeEnum argType = TypeEnum.nothing;
 
-                if (paramSymbol.Type != argumentType.Type)
+                if (arguments[i] is IdentifierNode)
+                    argType = _symbolTable.Lookup(((IdentifierNode)arguments[i]).Name, _currentBlock).Type;
+                else
+                    argType = Visit(arguments[i]).Type;
+
+                if (paramSymbol.Type != argType)
                 {
-                    TypeError(node, $"{sym.Name} parameter of type {paramSymbol.Type} doesn't match argument of type {argumentType.Type}.");
+                    TypeError(node, $"{sym.Name} parameter of type {paramSymbol.Type} doesn't match argument of type {argType}.");
                     return null;
                 }
             }
@@ -1150,7 +1180,12 @@ namespace CobraCompiler
             declaration.Block.Arguments = new ArgumentsNode();
             declaration.Block.Arguments.Expressions = arguments;
 
-            return Visit(declaration.Block);
+            declaration.Block.IsFunctionCall = true;
+
+            var block = Visit(declaration.Block);
+
+            declaration.Block.IsFunctionCall = false;
+            return block;
         }
 
         public override TypeNode? Visit(InputExprNode node)
@@ -1229,22 +1264,24 @@ namespace CobraCompiler
         {
             var block = Visit(node.Block);
 
-            if (block == null)
-                return null;
+            TypeEnum blockType = TypeEnum.nothing;
+
+            if (block != null)
+                blockType = block.Type;
 
             List<string> reservedFunctionNames = new List<string>()
             {
                 "concat", "AddToList", "ReplaceInList", "IndexOfList", "ValueOfList"
             };
 
-            if (node.ReturnType.Type == TypeEnum.nothing && block != null)
+            if (node.ReturnType.Type == TypeEnum.nothing && blockType != TypeEnum.nothing)
             {
-                TypeError(node, $" function '{node.Name}()' expects no return statement");
+                TypeError(node, $"function '{node.Name}()' expects no return statement");
                 return null;
             }
-            else if (node.ReturnType.Type != TypeEnum.nothing && node.ReturnType.Type != block.Type)
+            else if (node.ReturnType.Type != TypeEnum.nothing && node.ReturnType.Type != blockType)
             {
-                TypeError(node, $"function '{node.Name}()' expects to return type {node.ReturnType.Type} but returns type {block.Type}");
+                TypeError(node, $"function '{node.Name}()' expects to return type {node.ReturnType.Type} but returns type {blockType}");
                 return null;
             }
             else if (reservedFunctionNames.Contains(node.Name))
@@ -1272,18 +1309,13 @@ namespace CobraCompiler
 
             for (int i = 0; i < parameters.Count; i++)
             {
-                Symbol? paramSymbol = _symbolTable.Lookup(parameters[i].Identifier.Name, _currentBlock);
+                Symbol? paramSymbol = _symbolTable.Lookup(parameters[i].Identifier.Name, declaration.Block);
                 TypeEnum argType = TypeEnum.nothing;
 
-                switch (arguments[i])
-                {
-                    case TypeNode typeNode:
-                        argType = typeNode.Type;
-                        break;
-                    case IdentifierNode identifierNode:
-                        argType = _symbolTable.Lookup(identifierNode.Name, _currentBlock).Type;
-                        break;
-                }
+                if (arguments[i] is IdentifierNode)
+                    argType = _symbolTable.Lookup(((IdentifierNode)arguments[i]).Name, _currentBlock).Type;
+                else
+                    argType = Visit(arguments[i]).Type;
 
                 if (paramSymbol.Type != argType)
                 {
@@ -1294,8 +1326,12 @@ namespace CobraCompiler
 
             declaration.Block.Arguments = new ArgumentsNode();
             declaration.Block.Arguments.Expressions = arguments;
+            declaration.Block.IsFunctionCall = true;
 
-            return Visit(declaration.Block);
+            var block = Visit(declaration.Block);
+
+            declaration.Block.IsFunctionCall = false;
+            return block;
         }
 
         public override TypeNode? Visit(InputStmtNode node)
@@ -1381,21 +1417,25 @@ namespace CobraCompiler
         {
             _currentBlock = node;
 
-            var declarations = node.Parameters.Declarations;
+            var parameters = node.Parameters.Declarations;
+            TypeNode returnExpr;
 
             if (node.Arguments != null)
             {
-                for (int i = 0; i < declarations.Count; i++)
+                for (int i = 0; i < parameters.Count; i++)
                 {
-                    var sym = _symbolTable.Lookup(declarations[i].Identifier.Name, _currentBlock);
+                    var sym = _symbolTable.Lookup(parameters[i].Identifier.Name, _currentBlock);
                     var declarationSymbol = (DeclarationNode)sym.Reference;
                     declarationSymbol.Expression = Visit(node.Arguments.Expressions[i]);
+                    parameters[i].Identifier = parameters[i].Identifier;
+
+                    _currentBlock = node;
                 }
             }
 
             if (node.Commands == null)
             {
-                var returnExpr = Visit(node.ReturnExpression);
+                returnExpr = Visit(node.ReturnExpression);
                 _currentBlock = node;
                 return returnExpr;
             }
@@ -1414,12 +1454,15 @@ namespace CobraCompiler
                         Visit(statementNode);
                         break;
                 }
+                _currentBlock = node;
             }
 
+            returnExpr = Visit(node.ReturnExpression);
             _currentBlock = node;
 
-            return Visit(node.ReturnExpression);
+            return returnExpr;
         }
+
         public override TypeNode? Visit(ForeachBlockNode node)
         {
             //Visits all of it's commands
@@ -1448,7 +1491,9 @@ namespace CobraCompiler
                         break;
                     default:
                         throw new Exception($"Command was not valid");
+
                 }
+                _currentBlock = node;
             }
             _currentBlock = node;
             return null;

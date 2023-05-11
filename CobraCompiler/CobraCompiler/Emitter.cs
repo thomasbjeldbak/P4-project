@@ -103,7 +103,10 @@ namespace CobraCompiler
             stringBuilder.AppendLine("}");
 
             foreach (var funcDecCommand in node.Commands.OfType<FunctionDeclarationNode>())
+            {
                 stringBuilder.Append(Visit(funcDecCommand));
+                _currentBlock = node;
+            }
 
             stringBuilder.Append("void main()");
             stringBuilder.AppendLine("{");
@@ -125,6 +128,7 @@ namespace CobraCompiler
                     default:
                         throw new Exception($"Command was not valid");
                 }
+                _currentBlock = node;
             }
 
             stringBuilder.AppendLine("}");
@@ -161,6 +165,7 @@ namespace CobraCompiler
                     default:
                         throw new Exception($"Command was not valid");
                 }
+                _currentBlock = node;
             }
 
             stringBuilder.AppendLine("}");
@@ -719,30 +724,33 @@ namespace CobraCompiler
             {
                 var expr = node.Parameters.Declarations[i];
                 var arg = Visit(expr).ToString();
-                arguments.Add($"{arg.Substring(0, arg.IndexOf(" = "))}");
+                _currentBlock = node;
+
+                if (arg.Contains(" = "))
+                    arguments.Add($"{arg.Substring(0, arg.IndexOf(" = "))}");
+                else
+                    arguments.Add(arg);
             }
 
-            for (int i = 0; i < node.UsedVariables.Count; i++)
+            foreach(var name in node.UsedVariables.Keys)
             {
-                var variableSym = _symbolTable.Lookup(node.UsedVariables[i], _currentBlock);
-
-                switch (variableSym.Type)
+                switch (node.UsedVariables[name])
                 {
                     case TypeEnum.number:
                     case TypeEnum.boolean:
-                        arguments.Add($"int {variableSym.Name}");
+                        arguments.Add($"int {name}");
                         break;
                     case TypeEnum.text:
-                        arguments.Add($"char {variableSym.Name}");
+                        arguments.Add($"char {name}");
                         break;
                     case TypeEnum._decimal:
-                        arguments.Add($"float {variableSym.Name}");
+                        arguments.Add($"float {name}");
                         break;
                     case TypeEnum.list_number:
                     case TypeEnum.list_text:
                     case TypeEnum.list_boolean:
                     case TypeEnum.list_decimal:
-                        arguments.Add($"struct node *{variableSym.Name}");
+                        arguments.Add($"struct node *{name}");
                         break;
                 }
             }
@@ -769,6 +777,7 @@ namespace CobraCompiler
                         default:
                             throw new Exception($"Command was not valid");
                     }
+                    _currentBlock = node;
                 }
             }
             if (node.ReturnExpression != null)
@@ -800,9 +809,8 @@ namespace CobraCompiler
                 arguments.Add($"{Visit(expr)}");
             }
 
-            for (int i = 0; i < declaration.Block.UsedVariables.Count; i++)
+            foreach(var name in declaration.Block.UsedVariables.Keys)
             {
-                string name = declaration.Block.UsedVariables[i];
                 arguments.Add($"{name}");
             }
 
@@ -824,9 +832,8 @@ namespace CobraCompiler
                 arguments.Add($"{Visit(expr)}");
             }
 
-            for (int i = 0; i < declaration.Block.UsedVariables.Count; i++)
+            foreach(var name in declaration.Block.UsedVariables.Keys)
             {
-                string name = declaration.Block.UsedVariables[i];
                 arguments.Add($"{name}");
             }
 
@@ -948,6 +955,7 @@ namespace CobraCompiler
             //Initialize local variables for use later. The number variable is used for keeping the while loop running until the end of the list is reached
             //The LocalVariable is used as the variable on which operations will be carried out on in the foreach loop
             stringBuilder.Append($"{Visit(node.LocalVariable).Replace(" = NULL", "")}");
+            _currentBlock = node;
             stringBuilder.AppendLine(";");
 
             stringBuilder.AppendLine("int number = 1;");
@@ -991,6 +999,7 @@ namespace CobraCompiler
                     default:
                         throw new Exception($"Command was not valid");
                 }
+                _currentBlock = node;
             }
             //Check if next element is NULL. If this is true, set number to 0 in order to stop iterating
             stringBuilder.AppendLine($"if ({list.Name}->next == NULL)");

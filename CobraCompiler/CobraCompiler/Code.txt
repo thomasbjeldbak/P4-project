@@ -1,9 +1,8 @@
-function triArea(decimal width, decimal height) return decimal
+function SortNumberList(list(number) listToSort) return nothing
 {
-    return (width * height) / 2;
+    number lowestVal = listToSort:ValueOf(0);
 }
 
-call output(call triArea(2.0,3.0));
-call output(call triArea(7.0,4.0));
-call output(call triArea(10.0,10.0));
-call output(call triArea(3.0,3.0));
+list(number) list1;
+list1:Add(7);
+call SortNumberList(list1);

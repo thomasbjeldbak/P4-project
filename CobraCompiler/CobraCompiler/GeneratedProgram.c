@@ -57,13 +57,61 @@ void *ValueOfList(struct node *list, int index)
  { curr_node = curr_node->next; }
  return curr_node->value;
 }
-float triArea(float width, float height)
+struct node *SortNumberList(struct node *listToSort, struct node *sortedList, int bestIndex, int lowestVal, int i)
 {
-return ((width * height) / 2);
+struct node *sortedList = NULL;
+int bestIndex = 0;
+int lowestVal = ValueOfList(listToSort, 0);
+;
+{
+int i;
+int number = 1;
+struct node *decimal = listToSort;
+while (number)
+{
+i = *(int *)listToSort->value;
+{
+int i;
+int number = 1;
+struct node *decimal = listToSort;
+while (number)
+{
+i = *(int *)listToSort->value;
+if((i < lowestVal))
+{
+lowestVal = i;
+bestIndex = IndexOfList(listToSort, i);
+;
+}
+if (listToSort->next == NULL)
+{
+number = 0;
+} else
+{
+listToSort = listToSort->next;
+}
+}
+listToSort = decimal;
+}
+AddToList(&sortedList, lowestVal);
+lowestVal = ValueOfList(listToSort, 0);
+;
+ReplaceInList(listToSort, 99999, bestIndex);
+bestIndex = 0;
+if (listToSort->next == NULL)
+{
+number = 0;
+} else
+{
+listToSort = listToSort->next;
+}
+}
+listToSort = decimal;
+}
+return sortedList;
 }
 void main(){
-printf("%g\n", triArea(2, 3));
-printf("%g\n", triArea(7, 4));
-printf("%g\n", triArea(10, 10));
-printf("%g\n", triArea(3, 3));
+struct node *list1 = NULL;
+struct node *list2 = NULL;
+AddToList(&list1, &(int){7}, sizeof(int));
 }
