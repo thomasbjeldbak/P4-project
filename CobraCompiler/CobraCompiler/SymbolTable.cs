@@ -114,34 +114,37 @@ namespace CobraCompiler
             return null;
         }
 
-        private void addIDToFunctionBlock(string name, BlockNode blockNode)
+        private void AddIDToFunctionBlock(Symbol symbol, BlockNode blockNode)
         {
-            FunctionBlockNode fBlockNode = null;
+            FunctionBlockNode fBlockNode = GetFunctionBlock(blockNode);
 
+            var scope = _scopes[blockNode];
+
+            if (fBlockNode != null && scope.Symbols.ContainsKey(symbol.Name))
+            {
+                if (fBlockNode.Parameters.Declarations.Any(x => x.Identifier.Name == symbol.Name))
+                    return;
+
+                if (!fBlockNode.UsedVariables.Keys.Contains(symbol.Name))
+                    fBlockNode.UsedVariables.Add(symbol.Name, symbol.Type);
+            }
+        }
+
+        public FunctionBlockNode? GetFunctionBlock(BlockNode blockNode)
+        {
             var scope = _scopes[blockNode];
 
             while (scope != null)
             {
                 if (scope.Block is FunctionBlockNode)
                 {
-                    fBlockNode = scope.Block as FunctionBlockNode;
-                    scope = scope.Parent;
-                    continue;
-                }
-
-                if (fBlockNode != null && scope.Symbols.ContainsKey(name))
-                {
-                    if (fBlockNode.Parameters.Declarations.Any(x => x.Identifier.Name == name))
-                        return;
-
-                    if (!fBlockNode.UsedVariables.Contains(name))
-                        fBlockNode.UsedVariables.Add(name);
-
-                    break;
+                    return scope.Block as FunctionBlockNode;
                 }
 
                 scope = scope.Parent;
             }
+
+            return null;
         }
 
         public override ASTNode? Visit(ProgramNode node)
@@ -391,7 +394,7 @@ namespace CobraCompiler
             var sym = Lookup(node.List.Name, _currentBlock);
 
             if (sym != null)
-                addIDToFunctionBlock(sym.Name, _currentBlock);
+                AddIDToFunctionBlock(sym, _currentBlock);
 
             Visit(node.Block);
             return null;
@@ -549,7 +552,7 @@ namespace CobraCompiler
             var sym = Lookup(node.Name, _currentBlock);
 
             if (sym != null)
-                addIDToFunctionBlock(sym.Name, _currentBlock);
+                AddIDToFunctionBlock(sym, _currentBlock);
 
             var declaration = (FunctionDeclarationNode)sym.Reference;
 
@@ -563,7 +566,7 @@ namespace CobraCompiler
                 if (expr is IdentifierNode)
                 {
                     var identifier = (IdentifierNode)expr;
-                    if (declaration.Block.UsedVariables.Contains(identifier.Name))
+                    if (declaration.Block.UsedVariables.Keys.Contains(identifier.Name))
                         declaration.Block.UsedVariables.Remove(identifier.Name);
                 }
 
@@ -608,7 +611,7 @@ namespace CobraCompiler
             var sym = Lookup(node.Name, _currentBlock);
 
             if (sym != null)
-                addIDToFunctionBlock(sym.Name, _currentBlock);
+                AddIDToFunctionBlock(sym, _currentBlock);
 
             var declaration = (FunctionDeclarationNode)sym.Reference;
 
@@ -622,7 +625,7 @@ namespace CobraCompiler
                 if (expr is IdentifierNode)
                 {
                     var identifier = (IdentifierNode)expr;
-                    if (declaration.Block.UsedVariables.Contains(identifier.Name))
+                    if (declaration.Block.UsedVariables.Keys.Contains(identifier.Name))
                         declaration.Block.UsedVariables.Remove(identifier.Name);
                 }
 
@@ -721,7 +724,7 @@ namespace CobraCompiler
             var sym = Lookup(node.Name, _currentBlock);
 
             if (sym != null)
-                addIDToFunctionBlock(sym.Name, _currentBlock);
+                AddIDToFunctionBlock(sym, _currentBlock);
 
             if (sym == null)
             {

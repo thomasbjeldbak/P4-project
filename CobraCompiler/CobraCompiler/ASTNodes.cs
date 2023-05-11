@@ -303,10 +303,11 @@ public class ASTNodes
 
     internal class FunctionBlockNode : BlockNode
     {
-        public List<string> UsedVariables { get; set; }
+        public Dictionary<string, TypeEnum> UsedVariables { get; set; }
         public ArgumentsNode Arguments { get; set; }
         public ParametersNode Parameters { get; set; }
         public ExpressionNode ReturnExpression { get; set; }
+        public bool IsFunctionCall { get; set; }
     }
 
     internal class ForeachBlockNode : BlockNode

@@ -1295,7 +1295,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         }
         else if (listOprExpr != null)
         {
-            return (ListOprExpressionNode)Visit(listOpr);
+            return (ListOprExpressionNode)Visit(listOprExpr);
         }
         else
             throw new Exception();
@@ -1536,10 +1536,10 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
             var funcBlockNode = new FunctionBlockNode() { Line = blockNode.Line };
             funcBlockNode.Parameters = parametersNode;
             funcBlockNode.Commands = blockNode.Commands;
-            funcBlockNode.UsedVariables = new List<string>();
+            funcBlockNode.UsedVariables = new Dictionary<string, TypeEnum>();
             if (blockNode.Commands.OfType<ReturnNode>().Any())
                 funcBlockNode.ReturnExpression = blockNode.Commands.OfType<ReturnNode>().First().Expression;
-            
+
             functionDec.Block = funcBlockNode;
             functionDec.Name = ID.ToString();
             functionDec.ReturnType = returnTypeNode;
