@@ -1,8 +1,54 @@
-function SortNumberList(list(number) listToSort) return nothing
+function GetLength(list(text) l) return number
 {
-    number lowestVal = listToSort:ValueOf(0);
+	number size;
+	repeat for each(text t in l)
+	{
+		size = size + 1;
+	}
+	return size;
 }
 
-list(number) list1;
-list1:Add(7);
-call SortNumberList(list1);
+function Is_palindrom_rec(list(text) l) return boolean
+{
+	number length = call GetLength(l);
+
+	if (call Is_palindrome_rec_help(l, 0, length))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+	return false;
+}
+
+function Is_palindrome_rec_help(list(text) l, number index, number length) return boolean
+{
+	if (index is not length)
+	{
+		if (l:ValueOf(index) is l:ValueOf(length - index))
+		{
+			index = index + 1;
+			call Is_palindrome_rec_help(l, index, length);
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return true;
+	}
+
+	return false;
+}
+
+list(text) str1;
+str1:Add("r", "e", "g", "n", "i", "n", "g", "e", "r");
+
+
+call ouput("Using recursion, is this a palindrome?:");
+call output(call Is_palindrome_rec(str1));

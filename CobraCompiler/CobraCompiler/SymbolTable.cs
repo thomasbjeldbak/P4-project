@@ -42,6 +42,22 @@ namespace CobraCompiler
         private Stack<Scope> _stackScopes; //Stack of scopes for building _scopes
         private ErrorHandler symbolErrorhandler;
         private BlockNode _currentBlock;
+
+        List<string> _reservedFunctionNames = new List<string>()
+            {
+                "concat", "AddToList", "ReplaceInList", "IndexOfList", "ValueOfList", "input",
+                "print", "printf", "scanf", "strcmp", "strlen", "malloc", "calloc", "realloc",
+                "free", "abs", "abort", "exit", "system", "memchr", "memcmp", "memcpy", "memmove",
+                "memset", "strcat", "strncat", "strcmp", "strcpy", "strlen", "strcoll", "strerror"
+            };
+
+        List<string> _reservedKeywords = new List<string>()
+            {
+                "auto", "break", "case", "char", "const", "continue", "default", "do", "double",
+                "else", "enum", "extern", "float", "for", "goto", "if", "int", "long", "register",
+                "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef",
+                "union", "unsigned", "void", "volatile", "while",
+            };
         public SymbolTable(ErrorHandler errorHandler)
         {
             symbolErrorhandler = errorHandler;
@@ -114,37 +130,42 @@ namespace CobraCompiler
             return null;
         }
 
+        //Function for adding used variables to a functionBlock (used for the emitter)
         private void AddIDToFunctionBlock(Symbol symbol, BlockNode blockNode)
         {
-            FunctionBlockNode fBlockNode = GetFunctionBlock(blockNode);
+            //Only add the ID if the ID is contained in a functionBlock
+            //and has not already been declared within this functionBlock
 
-            var scope = _scopes[blockNode];
+            FunctionBlockNode? fBlockNode = null;
 
-            if (fBlockNode != null && scope.Symbols.ContainsKey(symbol.Name))
-            {
-                if (fBlockNode.Parameters.Declarations.Any(x => x.Identifier.Name == symbol.Name))
-                    return;
-
-                if (!fBlockNode.UsedVariables.Keys.Contains(symbol.Name))
-                    fBlockNode.UsedVariables.Add(symbol.Name, symbol.Type);
-            }
-        }
-
-        public FunctionBlockNode? GetFunctionBlock(BlockNode blockNode)
-        {
             var scope = _scopes[blockNode];
 
             while (scope != null)
             {
+                //Has functionBlock:
                 if (scope.Block is FunctionBlockNode)
                 {
-                    return scope.Block as FunctionBlockNode;
+                    fBlockNode = scope.Block as FunctionBlockNode;
+                }
+
+                //If the name is declared within the current scope, we don't add it
+                if (scope.Symbols.ContainsKey(symbol.Name))
+                    break;
+
+                //If has functionBlock and has not been declared yet in any scopes,
+                //The ID must've been an identifier from outside the function
+                if (fBlockNode != null)
+                {
+
+                    if (!fBlockNode.UsedVariables.Keys.Contains(symbol.Name))
+                        fBlockNode.UsedVariables.Add(symbol.Name, symbol.Type);
+
+                    //Exit because we've now met a functionBlockNode
+                    break;
                 }
 
                 scope = scope.Parent;
             }
-
-            return null;
         }
 
         public override ASTNode? Visit(ProgramNode node)
@@ -210,8 +231,10 @@ namespace CobraCompiler
 
         public override ASTNode? Visit(DeclarationNode node)
         {
+            if (_reservedKeywords.Contains(node.Identifier.Name))
+                node.Identifier.Name = $"{node.Identifier.Name}_";
+
             Insert(node.Identifier.Name, node.Identifier.TypeNode.Type, node);
-            Visit(node.Identifier);
             Visit(node.Expression);
             return null;
         }
@@ -549,6 +572,9 @@ namespace CobraCompiler
 
         public override ASTNode Visit(FunctionCallExprNode node)
         {
+            if (_reservedFunctionNames.Contains(node.Name))
+                node.Name = $"{node.Name}_";
+
             var sym = Lookup(node.Name, _currentBlock);
 
             if (sym != null)
@@ -578,12 +604,15 @@ namespace CobraCompiler
 
         public override ASTNode Visit(FunctionDeclarationNode node)
         {
+            if (_reservedFunctionNames.Contains(node.Name))
+                node.Name = $"{node.Name}_";
+
             if (_currentBlock is not ProgramNode)
             {
                 SymbolError(node, $"The function '{node.Name}' is declared within a scope");
             }
 
-            Insert(node.Name, node.ReturnType.Type, node);
+            Insert(node.Name, node.ReturnType, node);
 
             Visit(node.Block);
 
@@ -608,6 +637,9 @@ namespace CobraCompiler
 
         public override ASTNode? Visit(FunctionCallStmtNode node)
         {
+            if (_reservedFunctionNames.Contains(node.Name))
+                node.Name = $"{node.Name}_";
+
             var sym = Lookup(node.Name, _currentBlock);
 
             if (sym != null)
@@ -721,6 +753,9 @@ namespace CobraCompiler
         }
         public void Visit(IdentifierNode node)
         {
+            if (_reservedKeywords.Contains(node.Name))
+                node.Name = $"{node.Name}_";
+
             var sym = Lookup(node.Name, _currentBlock);
 
             if (sym != null)

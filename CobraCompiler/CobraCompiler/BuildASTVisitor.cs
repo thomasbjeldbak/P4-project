@@ -86,14 +86,19 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         var cmd = context.cmd();
         var cmds = context.cmds();
 
-        var outputNode = new BlockNode() { Line = cmd.start.Line };
+        var outputNode = new BlockNode();
         outputNode.Commands = new List<CommandNode>();
 
-        var command = (CommandNode)Visit(cmd);
-        outputNode.Commands.Add(command);
+        if (cmd != null)
+        {
+            var command = (CommandNode)Visit(cmd);
+            outputNode.Commands.Add(command);
+        }
 
         if (cmds != null && cmds.ChildCount > 0)
         {
+            outputNode.Line = cmd.start.Line;
+
             var cmdsNode = (BlockNode)Visit(cmds);
             outputNode.Commands.AddRange(cmdsNode.Commands);
         }
@@ -222,7 +227,16 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
         }
         else if (listStmt != null && listStmt.ChildCount > 0)
         {
-            return (ListOprStatementNode)Visit(listStmt);
+            var listOprNode = Visit(listStmt);
+            switch (listOprNode)
+            {
+                case ListOprStatementNode listOprStatementNode:
+                    return listOprStatementNode;
+                case ListOprExpressionNode listOprExpressionNode:
+                    return null;
+                default: 
+                    throw new Exception();
+            }
         }
         else if (funcDef != null && funcDef.ChildCount > 0)
         {
@@ -1494,7 +1508,8 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
             var outputNode = new InputExprNode();
             outputNode.Line = CALL.Symbol.Line;
-            outputNode.Type = (TypeNode)Visit(type);
+            var typeNode = (TypeNode)Visit(type);
+            outputNode.Type = typeNode.Type;
             incrIndent(); //MÅSKE SKAL FJERNES HER
             var arguments = (ArgumentsNode)Visit(argList);
 
@@ -1542,7 +1557,7 @@ internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 
             functionDec.Block = funcBlockNode;
             functionDec.Name = ID.ToString();
-            functionDec.ReturnType = returnTypeNode;
+            functionDec.ReturnType = returnTypeNode.Type;
 
             return functionDec;
         }
