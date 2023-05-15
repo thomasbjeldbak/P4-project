@@ -8,6 +8,7 @@
     &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.TypeCheckerIntegrationTest.Visit_BlockNode_CallsVisitMethodsForCommands&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.TypeCheckerIntegrationTest.Visit_DeclarationNode_UpdatesSymbolAndChecksExpression&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.SymbolTableUnitTest.NewScope_SetsCurrentBlockToBlockOfNewScope&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.SymbolTableIntegrationTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=90a255fa_002D5c84_002D4e84_002D92e2_002Dbc8b7070fbf3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TypeCheckerIntegrationTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;

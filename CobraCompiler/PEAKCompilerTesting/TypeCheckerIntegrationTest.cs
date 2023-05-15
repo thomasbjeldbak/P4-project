@@ -22,6 +22,8 @@ public class TypeCheckerIntegrationTest
 
         // Act
         symbolTable.Visit(programNode);
+        
+        // Assert
         That(VisitMethodCalled(programNode.Commands[0], symbolTable), Is.True);
         That(VisitMethodCalled(programNode.Commands[1], symbolTable), Is.True);
         That(VisitMethodCalled(programNode.Commands[2], symbolTable), Is.True);
@@ -45,6 +47,8 @@ public class TypeCheckerIntegrationTest
 
         // Act
         symbolTable.Visit(blockNode);
+        
+        // Assert
         That(VisitMethodCalled(blockNode.Commands[0], symbolTable), Is.True);
         That(VisitMethodCalled(blockNode.Commands[1], symbolTable), Is.True);
         That(VisitMethodCalled(blockNode.Commands[2], symbolTable), Is.True);

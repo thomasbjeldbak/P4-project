@@ -13,6 +13,8 @@ public class SymbolTableUnitTest
 
         // Act
         symbolTable.NewScope(blockNode);
+        
+        // Assert
         That(symbolTable._scopes.ContainsKey(blockNode), Is.True);
         That(symbolTable._scopes.Count, Is.EqualTo(1));
         That(symbolTable._scopes[blockNode], Is.Not.Null);
