@@ -86,19 +86,26 @@ public class SymbolTableUnitTest
         // Arrange
         var symbolTable = new SymbolTable(new ErrorHandler());
         var blockNode = new ASTNodes.BlockNode();
-        var functionBlockNode = new ASTNodes.FunctionBlockNode();
+        var functionBlockNode = new ASTNodes.FunctionBlockNode()
+        {
+            UsedVariables = new Dictionary<string, ASTNodes.TypeEnum>()
+        };
         var scope1 = new Scope { Block = blockNode };
         var scope2 = new Scope { Block = functionBlockNode };
         scope1.Parent = scope2;
         symbolTable._scopes[blockNode] = scope1;
         symbolTable._scopes[functionBlockNode] = scope2;
 
-        const string name = "variable";
+        Symbol testSymbol = new Symbol()
+        {
+            Name = "variable",
+            Type = ASTNodes.TypeEnum.text
+        };
 
         // Act
-        symbolTable.AddIDToFunctionBlock(name, blockNode);
+        symbolTable.AddIDToFunctionBlock(testSymbol, blockNode);
         
         // Assert
-        That(functionBlockNode.UsedVariables, Does.Contain(name));
+        That(functionBlockNode.UsedVariables.Keys, Does.Contain(testSymbol.Name));
     }
 }

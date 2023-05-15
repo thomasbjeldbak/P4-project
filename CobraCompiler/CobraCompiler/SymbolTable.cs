@@ -61,11 +61,11 @@ namespace CobraCompiler
         public SymbolTable(ErrorHandler errorHandler)
         {
             symbolErrorhandler = errorHandler;
+            _scopes = new Dictionary<BlockNode, Scope>();
+            _stackScopes = new Stack<Scope>();
         }
         public SymbolTable BuildSymbolTable(ASTNode astRoot)
         {
-            _scopes = new Dictionary<BlockNode, Scope>();
-            _stackScopes = new Stack<Scope>();
             Visit((ProgramNode)astRoot);
             return this;
         }
@@ -86,7 +86,7 @@ namespace CobraCompiler
         }
 
         //Pop the stack of scopes
-        private void ExitScope()
+        public void ExitScope()
         {
             _stackScopes.Pop();
             if (_currentBlock is not ProgramNode)
@@ -95,7 +95,7 @@ namespace CobraCompiler
 
         //Insert ID (name) and Type for a variable into the
         //scope at the top of the stack
-        private void Insert(string name, TypeEnum type, ASTNode node)
+        public void Insert(string name, TypeEnum type, ASTNode node)
         {
             if (_stackScopes.Peek().Symbols.ContainsKey(name))
             {

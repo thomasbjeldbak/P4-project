@@ -66,6 +66,7 @@ public class TypeCheckerIntegrationTest
             Identifier = new ASTNodes.IdentifierNode { Name = "variable", TypeNode = new ASTNodes.NumberNode()},
             Expression = new ASTNodes.NumberNode() { Value = 10 }
         };
+        RunCodeFromFileTestHelper("var variable = 10;");
         var programNode = new ASTNodes.ProgramNode()
         {
             Commands = new List<ASTNodes.CommandNode>
