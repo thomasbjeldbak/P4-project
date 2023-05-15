@@ -276,7 +276,8 @@ public class ASTNodes
 
     public class InputExprNode : FunctionCallExprNode
     {
-        public TypeNode Type { get; set; }
+        public string VariableName { get; set; }
+        public TypeEnum Type { get; set; }
     }
 
     public class OutputExprNode : FunctionCallExprNode
@@ -285,7 +286,8 @@ public class ASTNodes
 
     public class InputStmtNode : FunctionCallStmtNode
     {
-        public TypeNode Type { get; set; }
+        public string VariableName { get; set; }
+        public TypeEnum Type { get; set; }
     }
 
     public class OutputStmtNode : FunctionCallStmtNode
@@ -297,14 +299,13 @@ public class ASTNodes
     public class FunctionDeclarationNode : StatementNode
     {
         public string Name { get; set; }
-        public TypeNode ReturnType { get; set; }
+        public TypeEnum ReturnType { get; set; }
         public FunctionBlockNode Block { get; set; }
     }
 
     public class FunctionBlockNode : BlockNode
     {
-        public List<string> UsedVariables { get; set; }
-        public ArgumentsNode Arguments { get; set; }
+        public Dictionary<string, TypeEnum> UsedVariables { get; set; }
         public ParametersNode Parameters { get; set; }
         public ExpressionNode ReturnExpression { get; set; }
     }
