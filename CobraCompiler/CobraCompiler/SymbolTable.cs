@@ -36,27 +36,43 @@ namespace CobraCompiler
         public BlockNode Block { get; set; }
     }
 
-    public class SymbolTable : ASTVisitor<ASTNode?>
+    internal class SymbolTable : ASTVisitor<ASTNode?>
     {
-        public Dictionary<BlockNode, Scope> _scopes; //Key = BlockNode belonging to the Scope, Value = Scope
-        public Stack<Scope> _stackScopes; //Stack of scopes for building _scopes
+        private Dictionary<BlockNode, Scope> _scopes; //Key = BlockNode belonging to the Scope, Value = Scope
+        private Stack<Scope> _stackScopes; //Stack of scopes for building _scopes
         private ErrorHandler symbolErrorhandler;
-        public BlockNode _currentBlock;
+        private BlockNode _currentBlock;
+
+        List<string> _reservedFunctionNames = new List<string>()
+            {
+                "concat", "AddToList", "ReplaceInList", "IndexOfList", "ValueOfList", "input",
+                "print", "printf", "scanf", "strcmp", "strlen", "malloc", "calloc", "realloc",
+                "free", "abs", "abort", "exit", "system", "memchr", "memcmp", "memcpy", "memmove",
+                "memset", "strcat", "strncat", "strcmp", "strcpy", "strlen", "strcoll", "strerror"
+            };
+
+        List<string> _reservedKeywords = new List<string>()
+            {
+                "auto", "break", "case", "char", "const", "continue", "default", "do", "double",
+                "else", "enum", "extern", "float", "for", "goto", "if", "int", "long", "register",
+                "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef",
+                "union", "unsigned", "void", "volatile", "while",
+            };
         public SymbolTable(ErrorHandler errorHandler)
         {
             symbolErrorhandler = errorHandler;
-            _scopes = new Dictionary<BlockNode, Scope>();
-            _stackScopes = new Stack<Scope>();
         }
         public SymbolTable BuildSymbolTable(ASTNode astRoot)
         {
+            _scopes = new Dictionary<BlockNode, Scope>();
+            _stackScopes = new Stack<Scope>();
             Visit((ProgramNode)astRoot);
             return this;
         }
 
         //Add a new scope on the stack and add the scope to _scopes
         //Also update the currentBlock
-        public void NewScope(BlockNode blockNode)
+        private void NewScope(BlockNode blockNode)
         {
             var scope = new Scope();
             scope.Block = blockNode;
@@ -70,7 +86,7 @@ namespace CobraCompiler
         }
 
         //Pop the stack of scopes
-        public void ExitScope()
+        private void ExitScope()
         {
             _stackScopes.Pop();
             if (_currentBlock is not ProgramNode)
@@ -79,7 +95,7 @@ namespace CobraCompiler
 
         //Insert ID (name) and Type for a variable into the
         //scope at the top of the stack
-        public void Insert(string name, TypeEnum type, ASTNode node)
+        private void Insert(string name, TypeEnum type, ASTNode node)
         {
             if (_stackScopes.Peek().Symbols.ContainsKey(name))
             {
@@ -114,29 +130,37 @@ namespace CobraCompiler
             return null;
         }
 
-        public void addIDToFunctionBlock(string name, BlockNode blockNode)
+        //Function for adding used variables to a functionBlock (used for the emitter)
+        private void AddIDToFunctionBlock(Symbol symbol, BlockNode blockNode)
         {
-            FunctionBlockNode fBlockNode = null;
+            //Only add the ID if the ID is contained in a functionBlock
+            //and has not already been declared within this functionBlock
+
+            FunctionBlockNode? fBlockNode = null;
 
             var scope = _scopes[blockNode];
 
             while (scope != null)
             {
+                //Has functionBlock:
                 if (scope.Block is FunctionBlockNode)
                 {
                     fBlockNode = scope.Block as FunctionBlockNode;
-                    scope = scope.Parent;
-                    continue;
                 }
 
-                if (fBlockNode != null && scope.Symbols.ContainsKey(name))
+                //If the name is declared within the current scope, we don't add it
+                if (scope.Symbols.ContainsKey(symbol.Name))
+                    break;
+
+                //If has functionBlock and has not been declared yet in any scopes,
+                //The ID must've been an identifier from outside the function
+                if (fBlockNode != null)
                 {
-                    if (fBlockNode.Parameters.Declarations.Any(x => x.Identifier.Name == name))
-                        return;
 
-                    if (!fBlockNode.UsedVariables.Contains(name))
-                        fBlockNode.UsedVariables.Add(name);
+                    if (!fBlockNode.UsedVariables.Keys.Contains(symbol.Name))
+                        fBlockNode.UsedVariables.Add(symbol.Name, symbol.Type);
 
+                    //Exit because we've now met a functionBlockNode
                     break;
                 }
 
@@ -207,8 +231,10 @@ namespace CobraCompiler
 
         public override ASTNode? Visit(DeclarationNode node)
         {
+            if (_reservedKeywords.Contains(node.Identifier.Name))
+                node.Identifier.Name = $"{node.Identifier.Name}_";
+
             Insert(node.Identifier.Name, node.Identifier.TypeNode.Type, node);
-            Visit(node.Identifier);
             Visit(node.Expression);
             return null;
         }
@@ -391,7 +417,7 @@ namespace CobraCompiler
             var sym = Lookup(node.List.Name, _currentBlock);
 
             if (sym != null)
-                addIDToFunctionBlock(sym.Name, _currentBlock);
+                AddIDToFunctionBlock(sym, _currentBlock);
 
             Visit(node.Block);
             return null;
@@ -546,24 +572,28 @@ namespace CobraCompiler
 
         public override ASTNode Visit(FunctionCallExprNode node)
         {
+            if (_reservedFunctionNames.Contains(node.Name))
+                node.Name = $"{node.Name}_";
+
             var sym = Lookup(node.Name, _currentBlock);
 
             if (sym != null)
-                addIDToFunctionBlock(sym.Name, _currentBlock);
-
-            var declaration = (FunctionDeclarationNode)sym.Reference;
+                AddIDToFunctionBlock(sym, _currentBlock);
 
             if (sym == null)
             {
-                SymbolError(node, $"{node.Name} is not found. Declare your function before calling.");
+                SymbolError(node, $"{node.Name} is not found. Declare your function before calling. Recursive functions are not supported");
+                return null;
             }
+
+            var declaration = (FunctionDeclarationNode)sym.Reference;
 
             foreach (var expr in node.Arguments.Expressions)
             {
                 if (expr is IdentifierNode)
                 {
                     var identifier = (IdentifierNode)expr;
-                    if (declaration.Block.UsedVariables.Contains(identifier.Name))
+                    if (declaration.Block.UsedVariables.Keys.Contains(identifier.Name))
                         declaration.Block.UsedVariables.Remove(identifier.Name);
                 }
 
@@ -575,12 +605,15 @@ namespace CobraCompiler
 
         public override ASTNode Visit(FunctionDeclarationNode node)
         {
+            if (_reservedFunctionNames.Contains(node.Name))
+                node.Name = $"{node.Name}_";
+
             if (_currentBlock is not ProgramNode)
             {
                 SymbolError(node, $"The function '{node.Name}' is declared within a scope");
             }
 
-            Insert(node.Name, node.ReturnType.Type, node);
+            Insert(node.Name, node.ReturnType, node);
 
             Visit(node.Block);
 
@@ -605,24 +638,28 @@ namespace CobraCompiler
 
         public override ASTNode? Visit(FunctionCallStmtNode node)
         {
+            if (_reservedFunctionNames.Contains(node.Name))
+                node.Name = $"{node.Name}_";
+
             var sym = Lookup(node.Name, _currentBlock);
 
             if (sym != null)
-                addIDToFunctionBlock(sym.Name, _currentBlock);
-
-            var declaration = (FunctionDeclarationNode)sym.Reference;
+                AddIDToFunctionBlock(sym, _currentBlock);
 
             if (sym == null)
             {
-                SymbolError(node, $"{node.Name} is not found. Declare your variable before use.");
+                SymbolError(node, $"{node.Name} is not found. Declare your function before calling. Recursive functions are not supported");
+                return null;
             }
+
+            var declaration = (FunctionDeclarationNode)sym.Reference;
 
             foreach (var expr in node.Arguments.Expressions)
             {
                 if (expr is IdentifierNode)
                 {
                     var identifier = (IdentifierNode)expr;
-                    if (declaration.Block.UsedVariables.Contains(identifier.Name))
+                    if (declaration.Block.UsedVariables.Keys.Contains(identifier.Name))
                         declaration.Block.UsedVariables.Remove(identifier.Name);
                 }
 
@@ -718,10 +755,13 @@ namespace CobraCompiler
         }
         public void Visit(IdentifierNode node)
         {
+            if (_reservedKeywords.Contains(node.Name))
+                node.Name = $"{node.Name}_";
+
             var sym = Lookup(node.Name, _currentBlock);
 
             if (sym != null)
-                addIDToFunctionBlock(sym.Name, _currentBlock);
+                AddIDToFunctionBlock(sym, _currentBlock);
 
             if (sym == null)
             {
@@ -729,7 +769,7 @@ namespace CobraCompiler
             }
         }
 
-        private void SymbolError(ASTNode node, string error)
+        public void SymbolError(ASTNode node, string error)
         {
             symbolErrorhandler.SymbolErrorMessages.Add($"Error line {node.Line}: {error}");
         }

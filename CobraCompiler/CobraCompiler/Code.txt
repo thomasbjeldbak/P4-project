@@ -1,2 +1,54 @@
-list(decimal) dec;
-dec:Add(0.1, 0.2, 0.3, 4.0, 5.0);
+function GetLength(list(text) l) return number
+{
+	number size;
+	repeat for each(text t in l)
+	{
+		size = size + 1;
+	}
+	return size;
+}
+
+function Is_palindrom_rec(list(text) l) return boolean
+{
+	number length = call GetLength(l);
+
+	if (call Is_palindrome_rec_help(l, 0, length))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+	return false;
+}
+
+function Is_palindrome_rec_help(list(text) l, number index, number length) return boolean
+{
+	if (index is not length)
+	{
+		if (l:ValueOf(index) is l:ValueOf(length - index))
+		{
+			index = index + 1;
+			call Is_palindrome_rec_help(l, index, length);
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return true;
+	}
+
+	return false;
+}
+
+list(text) str1;
+str1:Add("r", "e", "g", "n", "i", "n", "g", "e", "r");
+
+
+call output("Using recursion, is this a palindrome?:");
+call output(call Is_palindrome_rec(str1));
