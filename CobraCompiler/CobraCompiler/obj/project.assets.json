@@ -4483,19 +4483,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/eshes/.nuget/packages/": {}
+    "/home/bartho1omay/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
+      "projectUniqueName": "/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
       "projectName": "CobraCompiler",
-      "projectPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
-      "packagesPath": "/Users/eshes/.nuget/packages/",
-      "outputPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/obj/",
+      "projectPath": "/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
+      "packagesPath": "/home/bartho1omay/.nuget/packages/",
+      "outputPath": "/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/eshes/.nuget/NuGet/NuGet.Config"
+        "/home/bartho1omay/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
@@ -4558,7 +4558,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
       }
     }
   }
