@@ -14,7 +14,7 @@ using static Antlr4.Runtime.Atn.SemanticContext;
 using static ASTNodes;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-internal class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
+public class BuildASTVisitor : ExprParserBaseVisitor<ASTNode>
 {
     //Contains indents for the pretty printer
     private string _indent;
