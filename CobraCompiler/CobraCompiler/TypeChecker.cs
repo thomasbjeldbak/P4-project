@@ -14,7 +14,7 @@ using static ASTNodes;
 
 namespace CobraCompiler
 {
-    internal class TypeChecker : ASTVisitor<TypeEnum?>
+    public class TypeChecker : ASTVisitor<TypeEnum?>
     {
         //The TypeChecker Needs the symbolTable to lookUp the types of the variables
         private readonly SymbolTable _symbolTable;

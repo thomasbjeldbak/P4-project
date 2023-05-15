@@ -96,7 +96,7 @@ public class SymbolTableUnitTest
         const string name = "variable";
 
         // Act
-        symbolTable.addIDToFunctionBlock(name, blockNode);
+        symbolTable.AddIDToFunctionBlock(name, blockNode);
         
         // Assert
         That(functionBlockNode.UsedVariables, Does.Contain(name));

@@ -36,12 +36,12 @@ namespace CobraCompiler
         public BlockNode Block { get; set; }
     }
 
-    internal class SymbolTable : ASTVisitor<ASTNode?>
+    public class SymbolTable : ASTVisitor<ASTNode?>
     {
-        private Dictionary<BlockNode, Scope> _scopes; //Key = BlockNode belonging to the Scope, Value = Scope
-        private Stack<Scope> _stackScopes; //Stack of scopes for building _scopes
+        public Dictionary<BlockNode, Scope> _scopes; //Key = BlockNode belonging to the Scope, Value = Scope
+        public Stack<Scope> _stackScopes; //Stack of scopes for building _scopes
         private ErrorHandler symbolErrorhandler;
-        private BlockNode _currentBlock;
+        public BlockNode _currentBlock;
 
         List<string> _reservedFunctionNames = new List<string>()
             {
@@ -72,7 +72,7 @@ namespace CobraCompiler
 
         //Add a new scope on the stack and add the scope to _scopes
         //Also update the currentBlock
-        private void NewScope(BlockNode blockNode)
+        public void NewScope(BlockNode blockNode)
         {
             var scope = new Scope();
             scope.Block = blockNode;
@@ -131,7 +131,7 @@ namespace CobraCompiler
         }
 
         //Function for adding used variables to a functionBlock (used for the emitter)
-        private void AddIDToFunctionBlock(Symbol symbol, BlockNode blockNode)
+        public void AddIDToFunctionBlock(Symbol symbol, BlockNode blockNode)
         {
             //Only add the ID if the ID is contained in a functionBlock
             //and has not already been declared within this functionBlock
