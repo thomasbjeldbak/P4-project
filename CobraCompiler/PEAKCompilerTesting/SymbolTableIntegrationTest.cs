@@ -77,4 +77,32 @@ public class SymbolTableIntegrationTest
         That(result2.Name, Is.EqualTo("y"));
         That(result3, Is.Null);
     }
+    [Test]
+    public void Visit_DeclarationNode_UpdatesSymbolAndChecksExpression()
+    {
+        // Arrange
+        var symbolTable = new SymbolTable(new ErrorHandler());
+        
+        var programNode = new ASTNodes.ProgramNode()
+        {
+            Commands = new List<ASTNodes.CommandNode>
+            {
+                new ASTNodes.DeclarationNode
+                {
+                    Identifier = new ASTNodes.IdentifierNode { Name = "variable", TypeNode = new ASTNodes.NumberNode()},
+                    Expression = new ASTNodes.NumberNode() { Value = 10 }
+                },
+            }
+        };
+        var scope = new Scope() { Block = programNode };
+        symbolTable._stackScopes.Push(scope);
+        Console.WriteLine(programNode);
+        // Act
+        symbolTable.Visit(programNode);
+        
+
+        // Assert
+        Assert.That((symbolTable.Lookup("variable", programNode).Type), 
+            Is.EqualTo(((ASTNodes.DeclarationNode)programNode.Commands[0]).Identifier.TypeNode.Type));
+    }
 }
