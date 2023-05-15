@@ -62,6 +62,6 @@ public class BuildAstVisitorTest
         Console.WriteLine(ast.GetType());
 
         // Assert
-        Assert.That(expected, Is.TypeOf(ast.GetType())); 
+        That(expected, Is.TypeOf(ast.GetType())); 
     }
 }
