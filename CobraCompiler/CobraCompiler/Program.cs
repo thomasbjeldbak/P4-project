@@ -16,14 +16,14 @@ namespace CobraCompiler
         {
             var exprText = File.ReadAllText("../../../Code.txt");
 
-            if (string.IsNullOrWhiteSpace(exprText))
-            {
-                Console.Write("> ");
-                exprText = Console.ReadLine();
-            }
+            //if (string.IsNullOrWhiteSpace(exprText))
+            //{
+            //    Console.Write("> ");
+            //    exprText = Console.ReadLine();
+            //}
 
-            if (string.IsNullOrWhiteSpace(exprText))
-                    return;
+            //if (string.IsNullOrWhiteSpace(exprText))
+            //        return;
 
             var inputStream = new AntlrInputStream(new StringReader(exprText));
             var lexer = new ExprLexer(inputStream);
