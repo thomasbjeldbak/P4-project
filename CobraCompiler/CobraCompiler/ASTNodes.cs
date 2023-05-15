@@ -43,7 +43,7 @@ public class ASTNodes
     }
 
     //Statement can be many things: functions, control structures etc,
-    public abstract class StatementNode : CommandNode { }
+    public class StatementNode : CommandNode { }
 
     //Assignment contains reference to declaration and an expression
     //Identifier = Expression;

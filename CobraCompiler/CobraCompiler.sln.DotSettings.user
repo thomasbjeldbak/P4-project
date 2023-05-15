@@ -2,12 +2,20 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=CB037BB0_002D7CCD_002D48B2_002D898C_002DCA82D4E5BEF9_002Ff_003AProgram_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String>
 	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">/Users/eshes/Library/Caches/JetBrains/Rider2023.1/resharper-host/temp/Rider/vAny/CoverageData/_CobraCompiler.1776414150/Snapshot/snapshot.utdcvr</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3431facd_002D8049_002D4a34_002D9f78_002D66a48abe721b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Solution /&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5e1cf15f_002D3ac5_002D4963_002Dacff_002D72bddee77c01/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Visit_ProgramNode_CallsVisitMethodsForCommands" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.TypeCheckerIntegrationTest.Visit_ProgramNode_CallsVisitMethodsForCommands&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.TypeCheckerIntegrationTest.Visit_BlockNode_CallsVisitMethodsForCommands&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.TypeCheckerIntegrationTest.Visit_DeclarationNode_UpdatesSymbolAndChecksExpression&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.SymbolTableUnitTest.NewScope_SetsCurrentBlockToBlockOfNewScope&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=83c8f024_002D2460_002D4952_002D92dd_002D8f98578f4991/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Solution /&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=90a255fa_002D5c84_002D4e84_002D92e2_002Dbc8b7070fbf3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TypeCheckerIntegrationTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.TypeCheckerIntegrationTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b9850c64_002D9aea_002D4ff9_002D8a53_002Dbba19f901f51/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Solution /&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+	
+	
+	
+	</wpf:ResourceDictionary>

@@ -114,7 +114,7 @@ namespace CobraCompiler
             return null;
         }
 
-        private void addIDToFunctionBlock(string name, BlockNode blockNode)
+        public void addIDToFunctionBlock(string name, BlockNode blockNode)
         {
             FunctionBlockNode fBlockNode = null;
 
