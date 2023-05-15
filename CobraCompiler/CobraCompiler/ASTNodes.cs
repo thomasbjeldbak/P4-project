@@ -66,7 +66,7 @@ public class ASTNodes
 
     //Any expression can have a value (except infixExpressions shouldn't have)
     //e.g. if (true) {}
-    public abstract class ExpressionNode : ASTNode
+    public class ExpressionNode : ASTNode
     {
         public TypeEnum Type { get; set; }
         public dynamic Value { get; set; }

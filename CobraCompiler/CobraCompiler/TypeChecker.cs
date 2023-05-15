@@ -302,7 +302,7 @@ namespace CobraCompiler
             else if (leftType == TypeEnum._decimal || rightType == TypeEnum._decimal)
                 return TypeEnum._decimal;
             else
-                throw new Exception();
+                throw new Exception(); 
         }
 
         //SubtractionNode -> Left, Right

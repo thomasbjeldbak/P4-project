@@ -14,7 +14,9 @@
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6059c281_002Dc0c8_002D4589_002D94e6_002D78800131361f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Visit_BlockNode_CallsVisitMethodsForCommands" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.TypeCheckerIntegrationTest.Visit_BlockNode_CallsVisitMethodsForCommands&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.TypeCheckerIntegrationTest.Visit_DeclarationNode_UpdatesSymbolAndChecksExpression&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.TypeCheckerIntegrationTest.TestVisitAssignNode&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::84EFC19C-CCE5-4B36-8E65-7D7CD66B9875::net7.0::PEAKCompilerTesting.TypeCheckerIntegrationTest.TestVisitAdditionNode&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7e1f89f8_002D02f5_002D414f_002D92d7_002D0bd8ec327567/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AddIDToFunctionBlock_AddsVariableToUsedVariables #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
