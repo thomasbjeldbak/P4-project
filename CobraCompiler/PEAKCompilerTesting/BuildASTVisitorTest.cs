@@ -1,5 +1,5 @@
 using Antlr4.Runtime;
-using NUnit.Framework;
+using static NUnit.Framework.Assert;
 using System;
 
 namespace PEAKCompilerTesting;

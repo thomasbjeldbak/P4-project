@@ -1382,19 +1382,19 @@
     ]
   },
   "packageFolders": {
-    "/home/bartho1omay/.nuget/packages/": {}
+    "/Users/eshes/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/PEAKCompilerTesting/PEAKCompilerTesting.csproj",
+      "projectUniqueName": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/PEAKCompilerTesting.csproj",
       "projectName": "PEAKCompilerTesting",
-      "projectPath": "/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/PEAKCompilerTesting/PEAKCompilerTesting.csproj",
-      "packagesPath": "/home/bartho1omay/.nuget/packages/",
-      "outputPath": "/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/PEAKCompilerTesting/obj/",
+      "projectPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/PEAKCompilerTesting.csproj",
+      "packagesPath": "/Users/eshes/.nuget/packages/",
+      "outputPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/bartho1omay/.nuget/NuGet/NuGet.Config"
+        "/Users/eshes/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
@@ -1406,8 +1406,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj": {
-              "projectPath": "/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj"
+            "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj": {
+              "projectPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj"
             }
           }
         }
@@ -1459,7 +1459,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
       }
     }
   }
