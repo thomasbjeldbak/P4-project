@@ -234,7 +234,7 @@ public class TypeCheckerIntegrationTest
         // Assert
         That(result1, Is.EqualTo(ASTNodes.TypeEnum.boolean));
     }
-    
+
     [Test]
     public void TestVisitLessEqualNode()
     {
