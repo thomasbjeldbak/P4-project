@@ -1,6 +1,6 @@
-/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprLexer.cs
-/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParser.cs
-/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserListener.cs
-/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserBaseListener.cs
-/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserVisitor.cs
-/home/bartho1omay/Documents/P4/P4-project/CobraCompiler/CobraCompiler/obj/Debug/net7.0/ExprParserBaseVisitor.cs
+C:\Users\Borup\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprLexer.cs
+C:\Users\Borup\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParser.cs
+C:\Users\Borup\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserListener.cs
+C:\Users\Borup\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseListener.cs
+C:\Users\Borup\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserVisitor.cs
+C:\Users\Borup\P4-project\CobraCompiler\CobraCompiler\obj\Debug\net7.0\ExprParserBaseVisitor.cs

@@ -85,5 +85,12 @@ void *ValueOfList(struct node *list, int index)
  }
  return curr_node->value;
 }
+int f(int x)
+{
+return (x + 5);}
 void main(){
+if((5 > 4))
+{
+f(10);
+}
 }

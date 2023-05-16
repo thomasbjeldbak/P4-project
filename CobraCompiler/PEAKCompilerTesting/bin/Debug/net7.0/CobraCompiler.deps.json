@@ -11,6 +11,7 @@
           "Antlr4": "4.6.6",
           "Antlr4.Runtime": "4.6.6",
           "Microsoft.CSharp": "4.7.0",
+          "Microsoft.CodeCoverage": "17.5.0",
           "System.CodeDom": "7.0.0",
           "System.Globalization": "4.3.0"
         },
@@ -33,6 +34,14 @@
           "lib/netstandard1.1/Antlr4.Runtime.dll": {
             "assemblyVersion": "4.6.0.0",
             "fileVersion": "4.6.6.0"
+          }
+        }
+      },
+      "Microsoft.CodeCoverage/17.5.0": {
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.VisualStudio.CodeCoverage.Shim.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "17.500.222.62001"
           }
         }
       },
@@ -718,6 +727,13 @@
       "sha512": "sha512-NlbRjkTCidRh1QeWvGfFPKq0sqpPZrAwGaSTV0X2jL8buZxTf9/aQ7PehFAmc7erXLUQ3YMZEVZU86aQwma2+w==",
       "path": "antlr4.runtime/4.6.6",
       "hashPath": "antlr4.runtime.4.6.6.nupkg.sha512"
+    },
+    "Microsoft.CodeCoverage/17.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6FQo0O6LKDqbCiIgVQhJAf810HSjFlOj7FunWaeOGDKxy8DAbpHzPk4SfBTXz9ytaaceuIIeR6hZgplt09m+ig==",
+      "path": "microsoft.codecoverage/17.5.0",
+      "hashPath": "microsoft.codecoverage.17.5.0.nupkg.sha512"
     },
     "Microsoft.CSharp/4.7.0": {
       "type": "package",
