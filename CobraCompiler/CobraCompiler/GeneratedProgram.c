@@ -85,74 +85,29 @@ void *ValueOfList(struct node *list, int index)
  }
  return curr_node->value;
 }
-int mod(int a, int b)
+void print_(int y)
 {
-int remainder = a;
-while((remainder >= b))
-{
-remainder = (remainder - b);
+printf("%d\n", y);
 }
-return remainder;}
-int GetMax(int input_a, int input_b)
-{
-if((input_a > input_b))
-{
-return input_a;}
-else
-{
-return input_b;}
-return -1;}
-int GetMin(int input_a, int input_b)
-{
-if((input_a < input_b))
-{
-return input_a;}
-else
-{
-return input_b;}
-return -1;}
 void main(){
-int divisor = 0;
-int input_a = 0;
-int input_b = 0;
-int min = 0;
-int max = 0;
-int remainder = 0;
-char * tryAgain = "y";
-while(0 == strcmp(tryAgain, "y"))
+int y = 10;
+printf("%d\n", y);
+if(1)
 {
-printf("%s\n", "Enter two positive integers:");
-int continue_ = 0;
-while((continue_ == 0))
+print_(y);
+printf("%d\n", y);
+int y_ = 12;
+print_(y);
+printf("%d\n", y_);
+if(1)
 {
-input_a = *(int *)input("%d", sizeof(int));
-input_b = *(int *)input("%d", sizeof(int));
-if(((input_a <= 0) || (input_b <= 0)))
-{
-printf("%s\n", "Please enter two positive integers:");
-continue_ = 0;
-}
-else
-{
-continue_ = 1;
+print_(y);
+printf("%d\n", y_);
+int y__ = 15;
+print_(y);
+printf("%d\n", y__);
 }
 }
-max = GetMax(input_a, input_b);
-min = GetMin(input_a, input_b);
-continue_ = 0;
-int i = min;
-while(((i > 0) && (continue_ == 0)))
-{
-if(((mod(max, i) == 0) && (mod(min, i) == 0)))
-{
-divisor = i;
-continue_ = 1;
-}
-i = (i - 1);
-}
-printf("%s\n", "The biggest divisor is:");
-printf("%d\n", divisor);
-printf("%s\n", "Would you like to try again? (y/n)");
-tryAgain = (char *)input("%s", sizeof(char *));
-}
+print_(y);
+printf("%d\n", y);
 }

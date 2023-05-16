@@ -234,6 +234,16 @@ namespace CobraCompiler
             if (_reservedKeywords.Contains(node.Identifier.Name))
                 node.Identifier.Name = $"{node.Identifier.Name}_";
 
+            var sym = Lookup(node.Identifier.Name, _currentBlock);
+
+            string underscores = "";
+            while (sym != null)
+            {
+                underscores += "_";
+                sym = Lookup($"{node.Identifier.Name}{underscores}", _currentBlock);
+            }
+
+            node.Identifier.Name += underscores;
             Insert(node.Identifier.Name, node.Identifier.TypeNode.Type, node);
             Visit(node.Expression);
             return null;
@@ -679,6 +689,7 @@ namespace CobraCompiler
         {
             foreach (var expr in node.Arguments.Expressions)
                 Visit(expr);
+
             return null;
         }
 
@@ -758,12 +769,23 @@ namespace CobraCompiler
             if (_reservedKeywords.Contains(node.Name))
                 node.Name = $"{node.Name}_";
 
-            var sym = Lookup(node.Name, _currentBlock);
+            var prevSym = Lookup(node.Name, _currentBlock);
+            var currSym = Lookup($"{node.Name}_", _currentBlock);
 
-            if (sym != null)
-                AddIDToFunctionBlock(sym, _currentBlock);
+            string underscores = "_";
+            while (currSym != null)
+            {
+                prevSym = currSym;
+                currSym = Lookup($"{node.Name}{underscores}", _currentBlock);
+                underscores += "_";
+            }
 
-            if (sym == null)
+            node.Name = prevSym.Name;
+
+            if (prevSym != null)
+                AddIDToFunctionBlock(prevSym, _currentBlock);
+
+            if (prevSym == null)
             {
                 SymbolError(node, $"{node.Name} is not found. Declare your variable before use.");
             }
