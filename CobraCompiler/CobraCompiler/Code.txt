@@ -1,2 +1,1 @@
-function print() return nothing { }
-function print_() return nothing { }
+decimal test = 5 / (20 * 0);

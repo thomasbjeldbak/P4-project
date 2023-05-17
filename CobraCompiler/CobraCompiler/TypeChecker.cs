@@ -296,13 +296,15 @@ namespace CobraCompiler
             }
 
             if (leftType == TypeEnum.number && rightType == TypeEnum.number)
-                return TypeEnum.number;
+                node.Type = TypeEnum.number;
             else if (leftType == TypeEnum.text && rightType == TypeEnum.text)
-                return TypeEnum.text;
+                node.Type = TypeEnum.text;
             else if (leftType == TypeEnum._decimal || rightType == TypeEnum._decimal)
-                return TypeEnum._decimal;
+                node.Type = TypeEnum._decimal;
             else
                 throw new Exception();
+
+            return node.Type;
         }
 
         //SubtractionNode -> Left, Right
@@ -331,11 +333,13 @@ namespace CobraCompiler
             }
 
             if (leftType == TypeEnum.number && rightType == TypeEnum.number)
-                return TypeEnum.number;
+                node.Type = TypeEnum.number;
             else if (leftType == TypeEnum._decimal || rightType == TypeEnum._decimal)
-                return TypeEnum._decimal;
+                node.Type = TypeEnum._decimal;
             else
                 throw new Exception();
+
+            return node.Type;
         }
 
         //MultiplicationNode -> Left, Right
@@ -364,11 +368,13 @@ namespace CobraCompiler
             }
 
             if (leftType == TypeEnum.number && rightType == TypeEnum.number)
-                return TypeEnum.number;
+                node.Type = TypeEnum.number;
             else if (leftType == TypeEnum._decimal || rightType == TypeEnum._decimal)
-                return TypeEnum._decimal;
+                node.Type = TypeEnum._decimal;
             else
                 throw new Exception();
+
+            return node.Type;
         }
 
         //DivisionNode -> Left, Right
@@ -390,12 +396,9 @@ namespace CobraCompiler
                 TypeError(node, $"Division of type 'list' is not allowed.");
                 return null;
             }
-            else if (rightType.Value == 0)
-            {
-                TypeError(node, $"Dividing by 0 is not allowed.");
-                return null;
-            }
-            return TypeEnum._decimal;
+
+            node.Type = TypeEnum._decimal;
+            return node.Type;
         }
 
         //AndNode -> Left, Right
@@ -417,7 +420,8 @@ namespace CobraCompiler
                 TypeError(node, $"Type '{rightType}' does not match type 'boolean' on the right hand side of the logic 'and' expression.");
                 return null;
             }
-            return TypeEnum.boolean;
+            node.Type = TypeEnum.boolean;
+            return node.Type;
         }
 
         //OrNode -> Left, Right
@@ -439,7 +443,8 @@ namespace CobraCompiler
                 TypeError(node, $"Type '{leftType}' does not match type 'boolean' on the right hand side of the logic 'or' expression.");
                 return null;
             }
-            return TypeEnum.boolean;
+            node.Type = TypeEnum.boolean;
+            return node.Type;
         }
 
         //EqualNode -> Left, Right
@@ -468,7 +473,8 @@ namespace CobraCompiler
                 TypeError(node, $"Type 'text' can only use 'equal' with another value of type 'text'.");
                 return null;
             }
-            return TypeEnum.boolean;
+            node.Type = TypeEnum.boolean;
+            return node.Type;
         }
 
         //NotEqualNode -> Left, Right
@@ -497,7 +503,8 @@ namespace CobraCompiler
                 TypeError(node, $"Type 'text' can only use 'not equal' with another value of type 'text'.");
                 return null;
             }
-            return TypeEnum.boolean;
+            node.Type = TypeEnum.boolean;
+            return node.Type;
         }
 
         //GreaterNode -> Left, Right
@@ -524,7 +531,8 @@ namespace CobraCompiler
                 TypeError(node, $"Type 'text' is not allowed in a 'greater' expression.");
                 return null;
             }
-            return TypeEnum.boolean;
+            node.Type = TypeEnum.boolean;
+            return node.Type;
         }
 
         //LessNode -> Left, Right
@@ -551,7 +559,8 @@ namespace CobraCompiler
                 TypeError(node, $"Type 'text' is not allowed in a 'less' expression.");
                 return null;
             }
-            return TypeEnum.boolean;
+            node.Type = TypeEnum.boolean;
+            return node.Type;
         }
 
         //GreaterEqualNode -> Left, Right
@@ -578,7 +587,8 @@ namespace CobraCompiler
                 TypeError(node, $"Type 'text' is not allowed in a 'greater or equal' expression.");
                 return null;
             }
-            return TypeEnum.boolean;
+            node.Type = TypeEnum.boolean;
+            return node.Type;
         }
 
         //LessEqualNode -> Left, Right
@@ -605,7 +615,8 @@ namespace CobraCompiler
                 TypeError(node, $"Type 'text' is not allowed in a 'less or equal' expression.");
                 return null;
             }
-            return TypeEnum.boolean;
+            node.Type = TypeEnum.boolean;
+            return node.Type;
         }
 
         #endregion

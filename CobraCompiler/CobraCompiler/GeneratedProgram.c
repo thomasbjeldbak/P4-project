@@ -9,6 +9,10 @@ char* concat(const char *str1, const char *str2) {
  strcat(result, str2);
  return result;
 }
+float divide(float left, float right) {
+if (right != 0) return left / right; 
+else { printf("Error: Division by zero!\n"); exit(EXIT_FAILURE); }
+}
 void* input(char* format, size_t size) {
  void* input = malloc(size);
  int result = scanf(format, input);
@@ -85,29 +89,6 @@ void *ValueOfList(struct node *list, int index)
  }
  return curr_node->value;
 }
-void print_(int y)
-{
-printf("%d\n", y);
-}
 void main(){
-int y = 10;
-printf("%d\n", y);
-if(1)
-{
-print_(y);
-printf("%d\n", y);
-int y_ = 12;
-print_(y);
-printf("%d\n", y_);
-if(1)
-{
-print_(y);
-printf("%d\n", y_);
-int y__ = 15;
-print_(y);
-printf("%d\n", y__);
-}
-}
-print_(y);
-printf("%d\n", y);
+float test = (divide(5, (20 * 0)));
 }
