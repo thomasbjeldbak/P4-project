@@ -42,6 +42,11 @@ namespace CobraCompiler
             stringBuilder.AppendLine(" strcat(result, str2);");
             stringBuilder.AppendLine(" return result;");
             stringBuilder.AppendLine("}");
+            //divide function:
+            stringBuilder.AppendLine("float divide(float left, float right) {");
+            stringBuilder.AppendLine("if (right != 0) return left / right; ");
+            stringBuilder.AppendLine("else { printf(\"Error: Division by zero!\\n\"); exit(EXIT_FAILURE); }");
+            stringBuilder.AppendLine("}");
             //Scan in a value:
             stringBuilder.AppendLine("void* input(char* format, size_t size) {");
             stringBuilder.AppendLine(" void* input = malloc(size);");
@@ -346,21 +351,10 @@ namespace CobraCompiler
         {
             var stringBuilder = new StringBuilder();
 
-            stringBuilder.Append("(");
-            stringBuilder.Append(Visit(node.Left));
-
             switch (node)
             {
                 case AdditionNode additionNode:
-                    if (additionNode.Type is not TypeEnum.text)
-                        stringBuilder.Append(Visit(additionNode));
-                    else
-                    {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.Append($"concat(");
-                        stringBuilder.Append(Visit(node.Left));
-                        stringBuilder.Append(", ");
-                    }
+                    stringBuilder.Append(Visit(additionNode));
                     break;
                 case SubtractionNode subtractionNode:
                     stringBuilder.Append(Visit(subtractionNode));
@@ -378,37 +372,10 @@ namespace CobraCompiler
                     stringBuilder.Append(Visit(orNode));
                     break;
                 case EqualNode equalNode:
-                    TypeEnum? type;
-                    if (equalNode.Left is IdentifierNode)
-                        type = _symbolTable.Lookup(((IdentifierNode)equalNode.Left).Name, _currentBlock).Type;
-                    else
-                        type = equalNode.Left.Type;
-
-                    if (type is not TypeEnum.text)
-                        stringBuilder.Append(Visit(equalNode));
-                    else
-                    {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.Append($"0 == strcmp(");
-                        stringBuilder.Append(Visit(node.Left));
-                        stringBuilder.Append(", ");
-                    }
+                    stringBuilder.Append(Visit(equalNode));
                     break;
                 case NotEqualNode notEqualNode:
-                    if (notEqualNode.Left is IdentifierNode)
-                        type = _symbolTable.Lookup(((IdentifierNode)notEqualNode.Left).Name, _currentBlock).Type;
-                    else
-                        type = notEqualNode.Left.Type;
-
-                    if (type is not TypeEnum.text)
-                        stringBuilder.Append(Visit(notEqualNode));
-                    else
-                    {
-                        stringBuilder = new StringBuilder();
-                        stringBuilder.Append($"0 == strcmp(");
-                        stringBuilder.Append(Visit(node.Left));
-                        stringBuilder.Append(", ");
-                    }
+                    stringBuilder.Append(Visit(notEqualNode));
                     break;
                 case GreaterNode greaterNode:
                     stringBuilder.Append(Visit(greaterNode));
@@ -425,9 +392,6 @@ namespace CobraCompiler
                 default:
                     throw new Exception();
             }
-
-            stringBuilder.Append(Visit(node.Right));
-            stringBuilder.Append(")");
 
             return stringBuilder;
         }
@@ -777,7 +741,13 @@ namespace CobraCompiler
         public override StringBuilder Visit(AdditionNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" + ");
+
+            if (node.Type is not TypeEnum.text)
+            {
+                stringBuilder.Append($"({Visit(node.Left)} + {Visit(node.Right)})");
+            }
+            else
+                stringBuilder.Append($"concat({Visit(node.Left)}, {Visit(node.Right)})");
 
             return stringBuilder;
         }
@@ -785,7 +755,7 @@ namespace CobraCompiler
         public override StringBuilder Visit(SubtractionNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" - ");
+            stringBuilder.Append($"({Visit(node.Left)} - {Visit(node.Right)})");
 
             return stringBuilder;
         }
@@ -793,7 +763,7 @@ namespace CobraCompiler
         public override StringBuilder Visit(MultiplicationNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" * ");
+            stringBuilder.Append($"({Visit(node.Left)} * {Visit(node.Right)})");
 
             return stringBuilder;
         }
@@ -801,7 +771,8 @@ namespace CobraCompiler
         public override StringBuilder Visit(DivisionNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" / ");
+            // Check if the right side of the division evaluates to zero
+            stringBuilder.Append($"(divide({Visit(node.Left)}, {Visit(node.Right)}))");
 
             return stringBuilder;
         }
@@ -809,7 +780,7 @@ namespace CobraCompiler
         public override StringBuilder Visit(AndNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" && ");
+            stringBuilder.Append($"({Visit(node.Left)} && {Visit(node.Right)})");
 
             return stringBuilder;
         }
@@ -817,7 +788,7 @@ namespace CobraCompiler
         public override StringBuilder Visit(OrNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" || ");
+            stringBuilder.Append($"({Visit(node.Left)} || {Visit(node.Right)})");
 
             return stringBuilder;
         }
@@ -825,7 +796,7 @@ namespace CobraCompiler
         public override StringBuilder Visit(GreaterNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" > ");
+            stringBuilder.Append($"({Visit(node.Left)} > {Visit(node.Right)})");
 
             return stringBuilder;
         }
@@ -833,7 +804,7 @@ namespace CobraCompiler
         public override StringBuilder Visit(LessNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" < ");
+            stringBuilder.Append($"({Visit(node.Left)} < {Visit(node.Right)})");
 
             return stringBuilder;
         }
@@ -841,7 +812,7 @@ namespace CobraCompiler
         public override StringBuilder Visit(GreaterEqualNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" >= ");
+            stringBuilder.Append($"({Visit(node.Left)} >= {Visit(node.Right)})");
 
             return stringBuilder;
         }
@@ -849,7 +820,7 @@ namespace CobraCompiler
         public override StringBuilder Visit(LessEqualNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" <= ");
+            stringBuilder.Append($"({Visit(node.Left)} <= {Visit(node.Right)})");
 
             return stringBuilder;
         }
@@ -857,7 +828,17 @@ namespace CobraCompiler
         public override StringBuilder Visit(EqualNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" == ");
+            TypeEnum type = TypeEnum.nothing;
+
+            if (node.Left is IdentifierNode)
+                type = _symbolTable.Lookup(((IdentifierNode)node.Left).Name, _currentBlock).Type;
+            else
+                type = node.Left.Type;
+
+            if (type is not TypeEnum.text)
+                stringBuilder.Append($"({Visit(node.Left)} != {Visit(node.Right)})");
+            else
+                stringBuilder.Append($"(0 == strcmp({Visit(node.Left)}, {Visit(node.Right)}))");
 
             return stringBuilder;
         }
@@ -865,7 +846,17 @@ namespace CobraCompiler
         public override StringBuilder Visit(NotEqualNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(" != ");
+            TypeEnum type = TypeEnum.nothing;
+
+            if (node.Left is IdentifierNode)
+                type = _symbolTable.Lookup(((IdentifierNode)node.Left).Name, _currentBlock).Type;
+            else
+                type = node.Left.Type;
+
+            if (type is not TypeEnum.text)
+                stringBuilder.Append($"({Visit(node.Left)} != {Visit(node.Right)})");
+            else
+                stringBuilder.Append($"(0 != strcmp({Visit(node.Left)}, {Visit(node.Right)}))");
 
             return stringBuilder;
         }

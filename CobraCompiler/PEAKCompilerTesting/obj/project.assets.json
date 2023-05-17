@@ -1383,32 +1383,40 @@
     ]
   },
   "packageFolders": {
-    "/Users/eshes/.nuget/packages/": {}
+    "C:\\Users\\chris\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/PEAKCompilerTesting.csproj",
+      "projectUniqueName": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\PEAKCompilerTesting\\PEAKCompilerTesting.csproj",
       "projectName": "PEAKCompilerTesting",
-      "projectPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/PEAKCompilerTesting.csproj",
-      "packagesPath": "/Users/eshes/.nuget/packages/",
-      "outputPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/obj/",
+      "projectPath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\PEAKCompilerTesting\\PEAKCompilerTesting.csproj",
+      "packagesPath": "C:\\Users\\chris\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\PEAKCompilerTesting\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/eshes/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\chris\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "http://teamcity.monogame.net/guestAuth/app/nuget/feed/_Root/default/v3/index.json": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj": {
-              "projectPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj"
+            "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj": {
+              "projectPath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj"
             }
           }
         }
@@ -1460,8 +1468,16 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1803",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "You are running the 'restore' operation with an 'HTTP' source, 'http://teamcity.monogame.net/guestAuth/app/nuget/feed/_Root/default/v3/index.json'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source."
+    }
+  ]
 }
