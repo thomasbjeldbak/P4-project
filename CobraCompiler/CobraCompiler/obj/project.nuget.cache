@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "W6US8ojvNzrBqzD7lVK5Xs8vkfQiTGwKbNYriajUHN3pcSwN00CRDShjSEqgXuP/KhFmTO4xTYXDRrONxux0Xg==",
+  "dgSpecHash": "UtDqKhRR+o8iCCsjmmDbnqexq5SjmjTkwJzEjyBnq9FHO0dMqtcyV9e9m2ig7/HP0xrLoRstO6SkOy3OC/5G0A==",
   "success": true,
   "projectFilePath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
   "expectedPackageFiles": [
     "/Users/eshes/.nuget/packages/antlr4/4.6.6/antlr4.4.6.6.nupkg.sha512",
     "/Users/eshes/.nuget/packages/antlr4.codegenerator/4.6.6/antlr4.codegenerator.4.6.6.nupkg.sha512",
     "/Users/eshes/.nuget/packages/antlr4.runtime/4.6.6/antlr4.runtime.4.6.6.nupkg.sha512",
+    "/Users/eshes/.nuget/packages/microsoft.codecoverage/17.5.0/microsoft.codecoverage.17.5.0.nupkg.sha512",
     "/Users/eshes/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
     "/Users/eshes/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "/Users/eshes/.nuget/packages/microsoft.netcore.targets/1.1.0/microsoft.netcore.targets.1.1.0.nupkg.sha512",

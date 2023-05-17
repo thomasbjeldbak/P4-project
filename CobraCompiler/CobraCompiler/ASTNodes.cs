@@ -43,7 +43,7 @@ public class ASTNodes
     }
 
     //Statement can be many things: functions, control structures etc,
-    public abstract class StatementNode : CommandNode { }
+    public class StatementNode : CommandNode { }
 
     //Assignment contains reference to declaration and an expression
     //Identifier = Expression;
@@ -66,7 +66,7 @@ public class ASTNodes
 
     //Any expression can have a value (except infixExpressions shouldn't have)
     //e.g. if (true) {}
-    public abstract class ExpressionNode : ASTNode
+    public class ExpressionNode : ASTNode
     {
         public TypeEnum Type { get; set; }
         public dynamic Value { get; set; }

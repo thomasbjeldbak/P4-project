@@ -355,6 +355,7 @@
         "dependencies": {
           "Antlr4.Runtime": "4.6.6",
           "Microsoft.CSharp": "4.7.0",
+          "Microsoft.CodeCoverage": "17.5.0",
           "System.CodeDom": "7.0.0",
           "System.Globalization": "4.3.0"
         },
