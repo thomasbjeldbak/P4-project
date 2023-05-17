@@ -747,7 +747,7 @@ namespace CobraCompiler
                 stringBuilder.Append($"({Visit(node.Left)} + {Visit(node.Right)})");
             }
             else
-                stringBuilder.Append($"concat({Visit(node.Left)}, {Visit(node.Right)}");
+                stringBuilder.Append($"concat({Visit(node.Left)}, {Visit(node.Right)})");
 
             return stringBuilder;
         }

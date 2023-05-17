@@ -90,5 +90,5 @@ void *ValueOfList(struct node *list, int index)
  return curr_node->value;
 }
 void main(){
-float test = (divide(5, (20 * 0)));
+char * hej = concat("gem", "fem");
 }

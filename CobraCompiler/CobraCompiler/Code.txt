@@ -1,1 +1,1 @@
-decimal test = 5 / (20 * 0);
+text hej = "gem" + "fem";
