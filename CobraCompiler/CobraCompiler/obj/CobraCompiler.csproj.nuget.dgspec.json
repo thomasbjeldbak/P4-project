@@ -59,6 +59,10 @@
               "target": "Package",
               "version": "[4.7.0, )"
             },
+            "Microsoft.CodeCoverage": {
+              "target": "Package",
+              "version": "[17.5.0, )"
+            },
             "System.CodeDom": {
               "target": "Package",
               "version": "[7.0.0, )"

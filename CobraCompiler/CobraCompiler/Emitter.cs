@@ -14,7 +14,7 @@ using static ASTNodes;
 
 namespace CobraCompiler
 {
-    internal class Emitter : ASTVisitor<StringBuilder>
+    public class Emitter : ASTVisitor<StringBuilder>
     {
 
         private readonly SymbolTable _symbolTable;
