@@ -1,0 +1,206 @@
+\chapter{Discussion}
+This chapter will discuss the development of the \lang compiler, as well as reflect on the extent to which \lang meets the requirements. 
+
+\section{Language Revisions}
+The goal with \lang's syntax is to balance the readable concepts from block-based languages, with the industry standards. The three criteria we followed in regard to designing a programming language were as described in section \ref{languageCriteriaForLang}: Readability, Writability, and Reliability.
+
+\subsubsection{Readability:}
+Based on the analysis, it was decided that \lang should have high readability because new concepts are harder to understand for beginners. After reflection, it can be asserted that this goal was met with \lang because the syntax described in the Syntax Design section \ref{sec:SyntaxDesign}, is arguably highly readable because it is closely related to natural language. This is highlighted in table \ref{tab:peaklanguageCriteria}, where simplicity, Data Types, and Syntax design all are check-marked, under the readability column.\\
+
+However, it could be argued that some parts of \lang could be more readable. Because the goal for \lang is to become a language for transitioning to industry standard languages, some of the syntax is less readable.\\
+Taking the list helper function into consideration, the "\textit{list}:add(\textit{x})" is more readable and related to the English language if it is instead written as: "add \textit{x} to \textit{list}". Another example of less readable syntax is the use of curly brackets to define scopes in \lang. Alternatively, a more readable approach would have been to use "begin" and "end", like used in Quroum. However, our own experience when learning to program was that using curly brackets for defining scopes, was not difficult to understand. Most popular programming language (except Python) uses curly brackets \cite{TopProgrammingLanguages2022}, and therefore curly brackets were included in \lang. 
+
+
+\subsubsection{Writability:} 
+The aim for \lang was to have fairly low writability, as high writability is often associated with shorter syntax and faster-to-write features, which can lead to confusion for beginners. This goal was arguably met, as much of the syntax in \lang was not compromised in terms of simplifying certain features. An example of this is the implementation of function declarations seen in semantic definition \ref{funcDec_BS}, where keywords such as \textit{function} and \textit{return} are used, in order to increase readability, but compromise writability. In the criteria table \ref{tab:peaklanguageCriteria} below, the lack of writability is shown in the majority of crosses under the writability column. 
+
+ \subsubsection{Reliability} We wanted high reliability in \lang because a clear understanding of what is happening when programming will help beginner programmers develop. In order to achieve this, complex concepts such as pointers and exception handling, are excluded from \lang. Additionally \lang uses a static type binding, which promotes scope rule understanding. In general, these features were implemented as set out. Table \ref{tab:peaklanguageCriteria} highlights that reliability was significant under multiple categories, as seen by the checkmarks shown under Type Checking, Restricted Aliasing, Simplicity, etc.
+
+Based on these reflections the following criteria table \ref{tab:peaklanguageCriteria} was created, which highlights how \lang turned out in terms of the different criteria. The table was created based on how the \lang turned out. A checkmark (\checkmark) means \lang expresses a high significance within that category, and a cross (X) means that \lang lacks implementation or priority within that category.
+
+\begin{table}[H]
+\centering
+\resizebox{0.75\textwidth}{!}{%
+\begin{tabular}{l|lll}
+                    & Readability               & Writability & Reliability               \\ \hline
+Simplicity              & \checkmark & \checkmark & \checkmark \\
+Orthogonality       & X                         & X           & X                         \\
+Data Types          & \checkmark & X           & \checkmark \\
+Syntax Design       & \checkmark & X           & \checkmark \\
+Support for Abstraction &                           & \checkmark & \checkmark \\
+Expressivity        &                           & X          & X                         \\
+Type Checking       &                           &             & \checkmark \\
+Exception Handling  &                           &             & X                         \\
+Restricted Aliasing &                           &             & \checkmark
+\end{tabular}%
+}
+\caption{Language Criteria for PEAK+}
+\label{tab:peaklanguageCriteria}
+\end{table}
+
+Throughout the process, \lang went through two iterations. The first iteration was much simpler, but still took the majority of the time, simply because there was a learning curve to developing a compiler. Once the first iteration was finished, a template existed for implementing many of the additional features that were needed to meet the requirements set out in table \ref{tab:requirements}.
+
+\subsection{Compiler revisions} \label{Diss:CompilerRev}
+\subsubsection{Compiler Language}
+The first iteration compiled to C\# as the target code. This was because initially we had more experience with C\#, but through the process, it became more clear that C was a better language to target. This was realized with instances such as the static binding rules in C, as well as the general flexibility. Therefore the second iteration was developed with C as the target language. With these reflections in mind, the following subsection will describe in detail to what extent the requirements of \lang have been met. \\
+
+\subsubsection{Decorated AST}
+In section \ref{peakCompiler} of the implementation chapter, it was stated that the \lang compiler did not ever decorate the AST. When testing string concatenation in the emitter, this needed to change because of an issue. Adding two \textit{text} values in an addition node has to be handled differently than adding numbers in the emitter. Therefore infix-expression nodes in the AST needed to store the type to which the node evaluates to, resulting in the AST being decorated. This happens in the type checker. 
+
+\subsubsection{Decimal to float}
+During testing, we discovered, that values of type \textit{decimal} with many decimal numbers, would be rounded down to 7 decimals in the target code. This is because when trying to store a \textit{decimal} value in \lang in the AST, it gets stored as a float, which automatically is rounded up to 7 decimals. Alternatively, it could have been stored as a double instead. Float was chosen as \lang is not designed for creating large precise calculations. However, choosing double could have increased \lang's reliability as it might not be clear to the user that the \textit{decimal} value is rounded up.\\
+
+\newpage
+\section{Requirement evaluation} % Eventuelt tilføje en requirement fulfillment table som vi lavede i P3 s. 97
+All requirements in table \ref{tab:requirements} will be evaluated in order to assess whether \lang has successfully achieved all of the desired requirements. 
+
+\subsubsection{Must have requirements evaluation}
+In this section, all the must-have requirements from table \ref{tab:requirements} will be assessed in order to evaluate if they have been fulfilled and that \lang has all the features deemed essential.
+\begin{itemize}
+    \item M1 - Declaration and assignment of number, decimal, text, and boolean variables.
+\end{itemize}
+The must-have requirement \textit{M1} has been fulfilled by making it possible to declare and assign variables of the types: \textit{number}, \textit{decimal}, \textit{text}, and \textit{boolean}. An example of this can be seen in the code example section \ref{test_UpdateVar}. In this code example, a \textit{number}, \textit{text}, and \textit{decimal} variable are declared and give the correct output. For this reason requirement \textit{M1} has been fulfilled.
+\\
+\begin{itemize}
+    \item M2 - Display output and take keyboard input in the console.
+\end{itemize}
+This must-have requirement states that \lang should be able to display output in the console and receive inputs. This has been done by creating the \textit{"call output()"} and \textit{"call input()"} methods. An example of this can be seen in listing \ref{list:acceptance_test_input_update_test} which shows that both input and output works as intended. Because of this the must-have requirement \textit{M2} has been fulfilled
+\\
+\begin{itemize}
+    \item M3 - Basic iterative and selective control structures
+\end{itemize}
+This must-have requirement says that \lang should contain both iterative and selective control structures. The iterative control structures was added through the implementation of a while loop and for loop. An example of this can be seen in the appendix chapter in section \ref{acc_test_Seconds}. The selective control structure has been implemented by the use of if-else statement. An example of an if-else statement can also be seen in the appendix chapter in section \ref{acc_test_Calcc}. Because \lang has both iterative and selective control structures the \textit{M3} requirement has been fulfilled.\\
+
+
+\begin{itemize}
+    \item M4 - Basic arithmetic \& logical operations.
+\end{itemize}
+This must-have requirement requires \lang to include basic mathematical operations. This is done by implementing the infix operators "+, -, *, /" and parenthesis operators "(" and ")" , and the logical operators "<, >, <=, >=, and, or, is, is not" (as mentioned in section \ref{OrderPrec}. An example program of mathematical operations can be seen in the appendix chapter \ref{Appendix:acceptance_test} in figure \ref{test_MathExpr}. In this code example all the mathematical operations have been implemented. This can be seen in the result of figure \ref{test_MathExpr}. For this reason, the \textit{M3} must-have requirement has been fulfilled.
+\\
+\begin{itemize}
+    \item M5 - Syntax which resembles concepts and terminology used in
+high school education.
+\end{itemize}
+As mentioned in table \ref{tab:requirements}, the syntax has to resemble concepts and terminology used in high school, for example the use of fully spelled words and basic math symbols. This can be seen in the code examples in section \ref{AccTest} and the appendix chapter \ref{Appendix:acceptance_test}. \lang uses fully spelled words as \textit{number} or \textit{text}. By doing this the must-have requirement has been fulfilled.
+\\
+\begin{itemize}
+    \item M6 - Error messages at compile time.
+\end{itemize}
+This must-have requirement states that \lang must have error messages at compile time. This has been done by outputting error-messages in the terminal during compilation. An example of this can be seen in the appendix chapter \ref{Appendix:acceptance_test} in figure \ref{test_MissingSemi}, where an error message is being displayed in the terminal due to a missing semicolon. Another example can also be seen in the appendix chapter \ref{Appendix:acceptance_test} in the figure \ref{test_TypeErr}, displaying a type error, due to the type being \textit{text}, but the value is of type \textit{number}. Because of this the must-have requirement \textit{M5} has been fulfilled.
+
+\subsubsection{Should have requirement evaluation}
+In this section, all the should-have requirements from table \ref{tab:requirements} will be evaluated.
+\begin{itemize}
+    \item S1 - A for each loop.
+\end{itemize}
+This requirement states that \lang should contain a way to create a for each loop similar to the one used in a language like C\#. In \lang, this has been done by using the keyword \textit{repeat} followed by \textit{for each}. The way it was implemented in C can be seen in the implementation chapter in section \ref{for each impl}. An example of a for each loop in \lang can be seen in the appendix chapter \ref{Appendix:acceptance_test} in figure \ref{test_insertion}. By implementing the \textit{for each} loop in \lang, the should-have requirement \textit{S1} has been fulfilled.
+\\
+\begin{itemize}
+    \item S2 - String concatenation.
+\end{itemize}
+This requirement states that \lang should contain the possibility to do string concatenation. An example of how string concatenation has been achieved in \lang can be seen in the appendix chapter \ref{Appendix:acceptance_test} in figure \ref{test_stringconc}. By being able to do string concatenation, the \textit{S2} requirement has been fulfilled.
+\\
+\begin{itemize}
+    \item S3 - Declaration and assignment of lists
+\end{itemize}
+To complete this should-have requirement \lang should have the feature of declaring and assigning lists. The way the declaration and assignments of lists have been implemented can be seen in the implementation chapter \ref{ch:implementation} in section \ref{implement list}. Some code examples for declaring and assigning lists can be seen in the appendix chapter \ref{Appendix:acceptance_test} in figure \ref{test_insertion}. As can be seen in the figure, by being able to declare and add values to a list, the should-have requirement \textit{S3} has been fulfilled.
+\\
+\begin{itemize}
+    \item S4 - List helper functions like add and remove from the lists.
+\end{itemize}
+To complete the should-have requirement \textit{S4}, list helper functions like \textit{Add()} or \textit{Remove()} should be added. Like the should-have requirement \textit{S3}, the implementation for this can be seen in the implementation chapter \ref{ch:implementation} in section \ref{implement list}. In figure \ref{test_insertion} in the appendix chapter \ref{Appendix:acceptance_test}, it is possible to see the helper function \textit{Add()} in the code example. Under development, it was decided to replace the \textit{Remove()} helper function with a \textit{Replace()} instead and add the \textit{ValueOf()} and \textit{IndexOf()} operators. The reason for not including a \textit{Remove()} operator was because of the difficulty of deleting an element in the middle of a list. This is because in \lang no value for null exists, so it was unclear what to do with a missing element, even though, a \textit{Remove()} operator is very intuitive and well-suited for a beginner programmer. By having the \textit{Add()}, \textit{Replace()}, \textit{ValueOf()}, and \textit{IndexOf()} list helper functions are implemented in \lang. However, since the \textit{Remove()} is not implemented the should-have requirement \textit{S4} has not been fully completed.
+\\
+\subsubsection{Could have requirement evaluation}
+\begin{itemize}
+    \item C1 - Support for abstraction in the form of methods
+\end{itemize}
+This could-have requirement states that \lang could include the feature of being able to create methods. The implementation of methods can be seen in the implementation chapter \ref{ch:implementation} in section \ref{emitter:functions}. An example of a method being created in \lang can be seen in figure \ref{test_scopee} in the acceptance test chapter \ref{AccTest}. For this reason the could-have requirement \textit{C1} has been fulfilled.
+\\
+\\
+\begin{table}[H]
+\centering
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\begin{tabular}{|l|llllll}
+\cline{1-1}
+\textbf{Requirements overview} &                                                 &  &  &  &  &  \\ \hline
+\textbf{Must have} &
+  \multicolumn{1}{l|}{\cellcolor[HTML]{32CB00}{\color[HTML]{333333} M1}} &
+  \multicolumn{1}{l|}{\cellcolor[HTML]{32CB00}M2} &
+  \multicolumn{1}{l|}{\cellcolor[HTML]{32CB00}M3} &
+  \multicolumn{1}{l|}{\cellcolor[HTML]{32CB00}M4} &
+  \multicolumn{1}{l|}{\cellcolor[HTML]{32CB00}M5} &
+  \multicolumn{1}{l|}{\cellcolor[HTML]{32CB00}M6} \\ \hline
+\textbf{Should have} &
+  \multicolumn{1}{l|}{\cellcolor[HTML]{32CB00}S1} &
+  \multicolumn{1}{l|}{\cellcolor[HTML]{32CB00}S2} &
+  \multicolumn{1}{l|}{\cellcolor[HTML]{32CB00}S3} &
+  \multicolumn{1}{l|}{\cellcolor[HTML]{FFFF00}S4} &
+   &
+   \\ \cline{1-5}
+\textbf{Could have}            & \multicolumn{1}{l|}{\cellcolor[HTML]{32CB00}C1} &  &  &  &  &  \\ \cline{1-2}
+
+\end{tabular}
+\caption{An overview of each individual requirement.}
+\label{tab:reqfulfillmentoverview}
+\end{table}
+\noindent
+Through this requirement evaluation all must-have, should-have \& could-have requirements have been evaluated as well as fulfilled, except for the S4 requirement. By having most requirements fulfilled in the above-mentioned requirements it is deemed that \lang has the most essential features implemented and usable in the language.
+\\
+
+However, it is important to consider the development of these requirements was based on the problem analysis. Even though our own experiences also have been taken into consideration, as experienced programmers, we have a bias towards what we believe to be hard and easy concepts to understand in programming. This could result in us having created a language that is not actually beginner-friendly, as our understanding of a beginner-friendly language may differ from an actual beginner's perspective on what they find more educational. Because of this, it can be argued that we have no confirmation on the claim that \lang is a good tool for beginner programmers to learn to code. Therefore user testing would be fairly wanted, however, this was not conducted due to time loss, as touched upon in section \ref{usertesting} and \ref{futurework:Usertesting}.
+
+\section{Time Management} \label{discussion:Time}
+%Hvorfor var det lige at vi blev forsinket med testing pga. 2. code generation - forklar her hvorfor vi ikke nåede alt det vi skulle mht til testing osv. Lang tid på ANTLR, lang tid på CodeGen fejl.  Generelt svært at planlægge når alt i dette projekt var ny viden.  
+%Måske noget med valg af parser? ANTLR var hurtig at starte, men langsom at fuldføre. Betød det noget for vores compiler at vi bruger LL og ikke LR?
+One of the first decisions that we made was to use ANTLR for scanning and parsing the initial program. ANTLR's intuitive introduction and graphical interface caught our eye and seemed to be the best tool for first-time compiler developers. However, ANTLR turned out to be more difficult than expected to get used to and time consuming. In general, we needed to weigh the options on whether it was more worth to develop the parser ourselves or use a tool. In both scenarios, there was a learning curve with the process. \\
+
+The decision to use ANTLR also led to the need of converting our CFG to LL(k) grammar. Ultimately the LL(k) parsing approach is less powerful than an LR(K) approach, however, it was easier to design the grammar so that it met the requirements for LL(k), which saved us time. \\
+
+We decided to use an iterative model for the development of the compiler, and it was split into 2 iterations. Overall it was a good decision since it led us to a much stronger language. It was also a very natural decision in the context of developing a compiler since a compiler has concrete phases that all need to be updated to handle new feature or fixes. However, the 2nd iteration did take more time than we initially wanted, which led to some shortcomings that we had to be aware of. Mainly it was the testing of the compiler, which had to be pushed back. This inevitably led us to have a less complete testing section than we would have wanted, meaning not everything in the compiler ended up being tested. It would have been smarter to leave out some less important features of the language, which delayed the completion time of the 2nd iteration. In general, it was hard to plan ahead in detailed time increments, because of how new everything within this project was.
+
+\section{Tests}
+Testing was done after the compiler was finished with the 2nd iteration, which is not the most effective testing strategy. Optimally we would have used a Test-driven development (TDD) design process in order to be able to more definitively ensure that the code written was correct, and also in order to be able to test that the changes made to the existing constructs would not break existing functionality \cite{TDD}. Testing this way would give defined parameters to develop within, which potentially could have saved time. However, this idea of writing tests first is hard to do, because it requires a more structured approach, which can be difficult when developing a compiler for the first time. If tests were written beforehand, they would likely have taken just as long, if not longer to accurately write, and there is a good chance they would have had to be rewritten as the process moved along.
+
+%Unit testing was a smaller part of testing than expected because most parts of the compiler were heavily integrated with each other, and there were only a few individual units that could be tested by themselves. Most of the unit tests were done on the symbol table, as it contained methods that were separate from the rest of the compiler. Instead, most of the remaining testing was done through integration testing.
+%As seen in figure \ref{fig:code_coverage} the code coverage of tests reflects a time management issue, that resulted in us not being able to completely test all the code. Therefore, a few cases were covered per phase of the compiler, in order to argue that to a smaller extent, all phases of the compiler were tested. Much of the reason why testing could not be covered fully, was because multiple visitor patterns for different phases of the compiler contain over a thousand lines of code each, which gets expanded the more features are implemented in the language, meaning there simply was too much code to cover with the given time frame. \\
+
+%Acceptance testing helped discover problems with the language, by writing small programs which tested the different constructs and their interactions after compilation. For example, during acceptance testing, problems were discovered, such as string concatenation not working as intended, functions using the wrong variables in specific cases, division by 0 being possible when it should not, etc. Hence, acceptance testing was a way of ensuring that the resulting code looked as expected after compilation and that the programs behaved as expected when running them. \\
+% Decorated AST - to keep the type of strings to concatenation. 
+
+\section{Future Work}
+As this project is subject to deadlines, some aspects of the project will not be fulfilled to perfection. This section will cover the future works of this project, and what particular components could be added or worked on, to improve the overall result.
+
+\subsection{User Test} \label{futurework:Usertesting}
+A form of testing we did not get to cover was user testing. In order to better conclude that \lang was suitable for the set-out target audience, it would have been advantageous to let a group of beginner programmers, preferably high school students, test \lang. \\
+Regarding which users to test on, first-semester software students of Aalborg University seemed evident. This is because these students are motivated to learn programming and have gone to high-school, as well as having just started to learn to code. The test that should be conducted is explained in \ref{usertesting}.\\
+%The first tasks that should be tested in \lang by a user, should be simple programming tasks, such as those we encountered when we started on our first semester of software. This is because we ourselves found these tasks helpful in learning the basics of programming.\\
+
+\subsection{Code Functionality}
+
+%Functions in functions - not allowed.
+%Helper functions ? (Basics to lists as length, slice so on) 
+%- Comments ending with semicolon
+%- Index strings
+%- Typecasting
+%- Structs
+%- recursive functions
+%- Concatenating a string with a number (In general, auto type conversion in specific cases)
+%- Ability to copy lists (You have to create a loop in order to get the values of a list returned from a function into a list in your program. Otherwise you will only be able to use the list returned from the function at the point where you call the function and then it's lost after.)
+
+While developing and testing the \lang compiler, some of the inconveniences with \lang were discovered, as well as missing features which were planned at first but were forgotten early on. These features made some of the programmer tasks we originally wanted beginner programmers to execute, impossible. This included:
+
+\subsubsection{Indexing strings:}
+While writing tests, an attempt of making a program that was able to detect whether a given string input was a palindrome was made. This programming task came from when we were learning to program ourselves in the "imperative programming" course \cite{C-CourseExercises}. This required a for-loop to go through the string and check whether a character in the front, matched a character at the end of the string. String indexing is often used in other languages like Python, C\#, or C and gives access to multiple ways of string manipulation. Alternatively, some of the list operations could have been made to also apply to \lang's \textit{text} type, like \textit{IndexOf()}.
+    
+\subsubsection{Built-in Operations:} In \lang, many components have to be built from the ground up. An example of this is getting the length of a list, which in \lang requires a for-each loop in order to iterate through the list and count the number of elements. For beginner programmers, this can seem tedious as many additional small functions are often needed in a program, which by default exist as constructs in other languages like C\#, python and C. Examples of built-in operations could be: \textit{number:Max()}, \textit{text:Length()}, \textit{list(text):Length()}, \textit{Decimal:Round()}. 
+
+\subsubsection{Structs:} In order to teach the beginner programmer about object-like programming, structs were considered before making the first iteration. Structs would have made it possible for the beginner programmer to store values of certain types together. This would have made it possible for the beginner programmer to solve programming tasks such as creating a family tree, where each family member is of a "Person" struct. Alternatively, these kinds of tasks could be solved in \lang using multiple lists and indexes. For example a \textit{list(text) family} where [0] = "your name", [1] = "mom's name" and [2] = "dad's name" and a seperate list of \textit{list(boolean) isMale} where [0] = true, [1] = false.
+
+\subsubsection{Typecasting:}
+ The ability to typecast is also something that was discussed early on. This was one of the features which was only going to be added if any extra time was left. In \lang, you are not able to convert for example \textit{decimal} to \textit{numbers} or \textit{text} to \textit{numbers}. Being able to cast a string to an integer is often used in programming tasks. When learning about programming in the "imperative programming" course, we had a task, about calculating the overall scores of football teams. As input, a large text file about football scores was provided, which had to be converted to numbers in order to calculate the total scores \cite{C-CourseExercises}. In order to solve this task, typecasting would need to be available to the programmer. Alternatively, you can sometimes work around explicit typecasting in \lang. For example, by adding a \textit{number} together with "0.0", you would receive a \textit{decimal} value.
+
+\subsubsection{Recursive functions:} Recursive functions were never discussed but are something that is often used in beginner tasks in order to teach the concept of recursion. Given more time, the recursive functions should be added to \lang, as it is an important concept in programming. The palindrome task mentioned earlier when talking about indexing strings also applies here. In the original task from the "imperative programming" course \cite{C-CourseExercises}, the goal was to solve this task first without using recursion, and then with, in order to see the difference.
+
+\subsubsection{Arithmetic Operators:} Including a modulo arithmetic operator was never discussed and therefore forgotten. As modulo is an important tool in programming it should have been included, as the alternative is to create a \textit{mod()} function, calculating the modulo of two numbers. This is an extra step in \lang but is provided in other languages like C\#, C, and Python. An exponent operator using the symbol \^ was discussed shortly, as when the group recalled using math tools in high school, this way of creating exponents was natural for them. With this, the transition from high-school maths to programming would be smoother. 

@@ -1,0 +1,52 @@
+%  A simple AAU report template.
+%  2015-05-08 v. 1.2.0
+%  Copyright 2010-2015 by Jesper Kjær Nielsen <jkn@es.aau.dk>
+%http://www.pedigreequery.com/generator/%
+%  This is free software: you can redistribute it and/or modify
+%  it under the terms of the GNU General Public License as published by
+%  the Free Software Foundation, either version 3 of the License, or
+%  (at your option) any later version.
+%
+%  This is distributed in the hope that it will be useful,
+%  but WITHOUT ANY WARRANTY; without even the implied warranty of
+%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%  GNU General Public License for more details.
+%
+%  You can find the GNU General Public License at <http://www.gnu.org/licenses/>.
+
+% Variable for vores sprog navn
+\newcommand\lang{PEAK+ }
+
+\input{setup/preamble.tex}% package inclusion and set up of the document
+\input{setup/hyphenations.tex}% 
+\input{setup/macros.tex}% my new macros
+\usepackage{enumitem}
+
+\begin{document}
+%frontmatter
+\pagestyle{empty} %disable headers and footers
+\pagenumbering{roman} %use roman page numbering in the frontmatter
+\input{sections/frontpage.tex}
+\input{sections/colophon.tex}
+\input{sections/titlepages.tex}
+\cleardoublepage
+\pdfbookmark[0]{Contents}{label:contents}
+\pagestyle{fancy} %enable headers and footers again
+\input{sections/preface.tex}
+\tableofcontents
+\cleardoublepage
+%mainmatter
+\pagenumbering{arabic} %use arabic page numbering in the mainmatter
+\input{sections/1.introduction}
+\input{sections/2.Problemanalysis}
+\input{sections/3.Configuration Management}
+\input{sections/4.Language_Design}
+\input{sections/5.Implementation}
+\input{sections/6.Test}
+\input{sections/7.Discussion}
+\input{sections/8.Conclusion}
+\printbibliography[heading=bibintoc]
+\label{bib:mybiblio}
+\appendix
+\input{sections/Appendix.tex}
+\end{document}
