@@ -836,7 +836,7 @@ namespace CobraCompiler
                 type = node.Left.Type;
 
             if (type is not TypeEnum.text)
-                stringBuilder.Append($"({Visit(node.Left)} != {Visit(node.Right)})");
+                stringBuilder.Append($"({Visit(node.Left)} == {Visit(node.Right)})");
             else
                 stringBuilder.Append($"(0 == strcmp({Visit(node.Left)}, {Visit(node.Right)}))");
 
