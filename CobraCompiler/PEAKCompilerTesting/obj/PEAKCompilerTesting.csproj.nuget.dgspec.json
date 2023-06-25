@@ -1,32 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\PEAKCompilerTesting\\PEAKCompilerTesting.csproj": {}
+    "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/PEAKCompilerTesting.csproj": {}
   },
   "projects": {
-    "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj": {
+    "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj",
+        "projectUniqueName": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
         "projectName": "CobraCompiler",
-        "projectPath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj",
-        "packagesPath": "C:\\Users\\chris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\obj\\",
+        "projectPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj",
+        "packagesPath": "/Users/eshes/.nuget/packages/",
+        "outputPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\chris\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/eshes/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "http://teamcity.monogame.net/guestAuth/app/nuget/feed/_Root/default/v3/index.json": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -88,41 +81,34 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\PEAKCompilerTesting\\PEAKCompilerTesting.csproj": {
+    "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/PEAKCompilerTesting.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\PEAKCompilerTesting\\PEAKCompilerTesting.csproj",
+        "projectUniqueName": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/PEAKCompilerTesting.csproj",
         "projectName": "PEAKCompilerTesting",
-        "projectPath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\PEAKCompilerTesting\\PEAKCompilerTesting.csproj",
-        "packagesPath": "C:\\Users\\chris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\PEAKCompilerTesting\\obj\\",
+        "projectPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/PEAKCompilerTesting.csproj",
+        "packagesPath": "/Users/eshes/.nuget/packages/",
+        "outputPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/PEAKCompilerTesting/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\chris\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/eshes/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "http://teamcity.monogame.net/guestAuth/app/nuget/feed/_Root/default/v3/index.json": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj": {
-                "projectPath": "C:\\Users\\chris\\OneDrive\\Dokumenter\\GitHub\\P4-project\\CobraCompiler\\CobraCompiler\\CobraCompiler.csproj"
+              "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj": {
+                "projectPath": "/Users/eshes/Desktop/Software/VSCode/P4-project/P4-project/CobraCompiler/CobraCompiler/CobraCompiler.csproj"
               }
             }
           }
@@ -174,7 +160,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
         }
       }
     }
