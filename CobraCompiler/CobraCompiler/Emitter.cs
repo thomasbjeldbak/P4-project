@@ -216,7 +216,12 @@ namespace CobraCompiler
             var symbol = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
             var stringBuilder = new StringBuilder();
 
-            stringBuilder.Append($"{getTypeInC(symbol.Type)} {symbol.Name}");
+            stringBuilder.Append($"{getTypeInC(symbol.Type)} ");
+           
+            if (isFunctionReference(symbol.Name))
+                stringBuilder.Append($"*");
+
+            stringBuilder.Append($"{symbol.Name}");
 
             if (!isList(symbol.Type) && node.Expression != null)
             {
@@ -293,7 +298,12 @@ namespace CobraCompiler
         public override StringBuilder Visit(AssignNode node)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append(node.Identifier.Name);
+            var symbol = _symbolTable.Lookup(node.Identifier.Name, _currentBlock);
+
+            if (isFunctionReference(symbol.Name))
+                stringBuilder.Append("*");
+
+            stringBuilder.Append(symbol.Name);
             stringBuilder.Append(" = ");
             stringBuilder.Append(Visit(node.Expression));
             stringBuilder.AppendLine(";");
@@ -324,6 +334,10 @@ namespace CobraCompiler
                     break;
                 case IdentifierNode identifierNode:
                     Symbol symbol = _symbolTable.Lookup(identifierNode.Name, _currentBlock);
+
+                    if (isFunctionReference(symbol.Name))
+                        stringBuilder.Append("*");
+
                     stringBuilder.Append(symbol.Name); //stringBuilder.Append(identifierNode.Value.ToString());
                     break;
                 case ListNode listNode:
@@ -883,7 +897,11 @@ namespace CobraCompiler
 
             foreach(var name in node.UsedVariables.Keys)
             {
-                arguments.Add($"{getTypeInC(node.UsedVariables[name])} {name}");
+                if (node.UsedVariables[name] == TypeEnum.text ||
+                    isList(node.UsedVariables[name]))
+                    arguments.Add($"{getTypeInC(node.UsedVariables[name])} {name}");
+                else
+                    arguments.Add($"{getTypeInC(node.UsedVariables[name])} *{name}");
             }
             stringBuilder.AppendLine($"{string.Join(", ", arguments)})");
 
@@ -942,7 +960,17 @@ namespace CobraCompiler
 
             foreach(var name in declaration.Block.UsedVariables.Keys)
             {
-                arguments.Add($"{name}");
+                var usedVariableType = declaration.Block.UsedVariables[name];
+
+                if (_currentBlock is ProgramNode && (
+                    usedVariableType == TypeEnum.number ||
+                    usedVariableType == TypeEnum._decimal ||
+                    usedVariableType == TypeEnum.boolean ))
+                {
+                    arguments.Add($"&{name}");
+                }
+                else
+                    arguments.Add($"{name}");
             }
 
             stringBuilder.Append($"{string.Join(", ", arguments)})");
@@ -965,7 +993,17 @@ namespace CobraCompiler
 
             foreach(var name in declaration.Block.UsedVariables.Keys)
             {
-                arguments.Add($"{name}");
+                var usedVariableType = declaration.Block.UsedVariables[name];
+
+                if (_currentBlock is ProgramNode && (
+                    usedVariableType == TypeEnum.number ||
+                    usedVariableType == TypeEnum._decimal ||
+                    usedVariableType == TypeEnum.boolean))
+                {
+                    arguments.Add($"&{name}");
+                }
+                else
+                    arguments.Add($"{name}");
             }
 
             stringBuilder.AppendLine($"{string.Join(", ", arguments)});");
@@ -1223,6 +1261,24 @@ namespace CobraCompiler
                     throw new Exception();
 
             }
+        }
+
+        public bool isFunctionReference(string name)
+        {
+            var scope = _symbolTable._scopes[_currentBlock];
+
+            while (scope.Parent != null)
+            {
+                if (scope.Block is FunctionBlockNode)
+                {
+                    var functionBlock = (FunctionBlockNode)scope.Block;
+
+                    if (functionBlock.UsedVariables.ContainsKey(name))
+                        return true;
+                }
+                scope = scope.Parent;
+            }
+            return false;
         }
     }
 }

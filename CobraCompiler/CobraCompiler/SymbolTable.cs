@@ -587,9 +587,6 @@ namespace CobraCompiler
 
             var sym = Lookup(node.Name, _currentBlock);
 
-            if (sym != null)
-                AddIDToFunctionBlock(sym, _currentBlock);
-
             if (sym == null)
             {
                 SymbolError(node, $"{node.Name} is not found. Declare your function before calling. Recursive functions are not supported");
@@ -653,9 +650,6 @@ namespace CobraCompiler
 
             var sym = Lookup(node.Name, _currentBlock);
 
-            if (sym != null)
-                AddIDToFunctionBlock(sym, _currentBlock);
-
             if (sym == null)
             {
                 SymbolError(node, $"{node.Name} is not found. Declare your function before calling. Recursive functions are not supported");
@@ -663,6 +657,15 @@ namespace CobraCompiler
             }
 
             var declaration = (FunctionDeclarationNode)sym.Reference;
+
+            if (_currentBlock is FunctionBlockNode)
+            {
+                var functionBlock = (FunctionBlockNode)_currentBlock;
+                foreach (var usedVariable in declaration.Block.UsedVariables)
+                {
+                    functionBlock.UsedVariables.Add(usedVariable.Key, usedVariable.Value);
+                }
+            }
 
             foreach (var expr in node.Arguments.Expressions)
             {
@@ -780,15 +783,17 @@ namespace CobraCompiler
                 underscores += "_";
             }
 
-            node.Name = prevSym.Name;
-
-            if (prevSym != null)
-                AddIDToFunctionBlock(prevSym, _currentBlock);
-
             if (prevSym == null)
             {
                 SymbolError(node, $"{node.Name} is not found. Declare your variable before use.");
             }
+
+            if (prevSym != null)
+            {
+                node.Name = prevSym.Name;
+                AddIDToFunctionBlock(prevSym, _currentBlock);
+            }
+
         }
 
         public void SymbolError(ASTNode node, string error)

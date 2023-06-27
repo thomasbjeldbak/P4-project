@@ -1,1 +1,1 @@
-text hej = "gem" + "fem";
+x = 5;
