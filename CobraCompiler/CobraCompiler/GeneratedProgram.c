@@ -89,6 +89,19 @@ void *ValueOfList(struct node *list, int index)
  }
  return curr_node->value;
 }
+void p(int *x)
+{
+*x = (*x + 3);
+}
+void q(int *x, int *y)
+{
+int x_ = 5;
+p(x);
+*y = x_;
+}
 void main(){
-char * hej = concat("gem", "fem");
+int x = 1;
+int y = 2;
+q(&x, &y);
+printf("%d\n", y);
 }
