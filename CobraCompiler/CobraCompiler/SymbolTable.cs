@@ -43,20 +43,16 @@ namespace CobraCompiler
         private ErrorHandler symbolErrorhandler;
         public BlockNode _currentBlock;
 
-        List<string> _reservedFunctionNames = new List<string>()
-            {
-                "concat", "AddToList", "ReplaceInList", "IndexOfList", "ValueOfList", "input",
-                "print", "printf", "scanf", "strcmp", "strlen", "malloc", "calloc", "realloc",
-                "free", "abs", "abort", "exit", "system", "memchr", "memcmp", "memcpy", "memmove",
-                "memset", "strcat", "strncat", "strcmp", "strcpy", "strlen", "strcoll", "strerror"
-            };
-
         List<string> _reservedKeywords = new List<string>()
             {
                 "auto", "break", "case", "char", "const", "continue", "default", "do", "double",
                 "else", "enum", "extern", "float", "for", "goto", "if", "int", "long", "register",
                 "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef",
-                "union", "unsigned", "void", "volatile", "while",
+                "union", "unsigned", "void", "volatile", "while", "concat", "AddToList", "ReplaceInList", 
+                "IndexOfList", "ValueOfList", "input", "print", "printf", "scanf", "strcmp", "strlen", 
+                "malloc", "calloc", "realloc", "free", "abs", "abort", "exit", "system", "memchr", 
+                "memcmp", "memcpy", "memmove", "memset", "strcat", "strncat", "strcmp", "strcpy", "strlen", 
+                "strcoll", "strerror"
             };
         public SymbolTable(ErrorHandler errorHandler)
         {
@@ -231,19 +227,22 @@ namespace CobraCompiler
 
         public override ASTNode? Visit(DeclarationNode node)
         {
+            if (node.Identifier.Name.Contains("___________________________________"))
+                SymbolError(node, "Invalid variable name");  
+
             if (_reservedKeywords.Contains(node.Identifier.Name))
-                node.Identifier.Name = $"{node.Identifier.Name}_";
+                node.Identifier.Name = $"{node.Identifier.Name}___________________________________";
 
-            var sym = Lookup(node.Identifier.Name, _currentBlock);
+            //var sym = Lookup(node.Identifier.Name, _currentBlock);
 
-            string underscores = "";
-            while (sym != null)
-            {
-                underscores += "_";
-                sym = Lookup($"{node.Identifier.Name}{underscores}", _currentBlock);
-            }
+            //string underscores = "";
+            //while (sym != null)
+            //{
+            //    underscores += "_";
+            //    sym = Lookup($"{node.Identifier.Name}{underscores}", _currentBlock);
+            //}
 
-            node.Identifier.Name += underscores;
+            //node.Identifier.Name += underscores;
             Insert(node.Identifier.Name, node.Identifier.TypeNode.Type, node);
             Visit(node.Expression);
             return null;
@@ -582,8 +581,11 @@ namespace CobraCompiler
 
         public override ASTNode Visit(FunctionCallExprNode node)
         {
-            if (_reservedFunctionNames.Contains(node.Name))
-                node.Name = $"{node.Name}_";
+            if (node.Name.Contains("___________________________________"))
+                SymbolError(node, "Invalid function name");
+
+            if (_reservedKeywords.Contains(node.Name))
+                node.Name = $"{node.Name}___________________________________";
 
             var sym = Lookup(node.Name, _currentBlock);
 
@@ -612,8 +614,11 @@ namespace CobraCompiler
 
         public override ASTNode Visit(FunctionDeclarationNode node)
         {
-            if (_reservedFunctionNames.Contains(node.Name))
-                node.Name = $"{node.Name}_";
+            if (node.Name.Contains("___________________________________"))
+                SymbolError(node, "Invalid function name");
+
+            if (_reservedKeywords.Contains(node.Name))
+                node.Name = $"{node.Name}___________________________________";
 
             if (_currentBlock is not ProgramNode)
             {
@@ -645,8 +650,11 @@ namespace CobraCompiler
 
         public override ASTNode? Visit(FunctionCallStmtNode node)
         {
-            if (_reservedFunctionNames.Contains(node.Name))
-                node.Name = $"{node.Name}_";
+            if (node.Name.Contains("___________________________________"))
+                SymbolError(node, "Invalid function name");
+
+            if (_reservedKeywords.Contains(node.Name))
+                node.Name = $"{node.Name}___________________________________";
 
             var sym = Lookup(node.Name, _currentBlock);
 
@@ -769,30 +777,44 @@ namespace CobraCompiler
         }
         public void Visit(IdentifierNode node)
         {
+            if (node.Name.Contains("___________________________________"))
+                SymbolError(node, "Invalid variable name");
+
             if (_reservedKeywords.Contains(node.Name))
-                node.Name = $"{node.Name}_";
+                node.Name = $"{node.Name}___________________________________";
 
-            var prevSym = Lookup(node.Name, _currentBlock);
-            var currSym = Lookup($"{node.Name}_", _currentBlock);
+            var sym = Lookup(node.Name, _currentBlock);
 
-            string underscores = "_";
-            while (currSym != null)
-            {
-                prevSym = currSym;
-                currSym = Lookup($"{node.Name}{underscores}", _currentBlock);
-                underscores += "_";
-            }
-
-            if (prevSym == null)
+            if (sym == null)
             {
                 SymbolError(node, $"{node.Name} is not found. Declare your variable before use.");
             }
-
-            if (prevSym != null)
+            else
             {
-                node.Name = prevSym.Name;
-                AddIDToFunctionBlock(prevSym, _currentBlock);
+                AddIDToFunctionBlock(sym, _currentBlock);
             }
+
+            //var prevSym = Lookup(node.Name, _currentBlock);
+            //var currSym = Lookup($"{node.Name}_", _currentBlock);
+
+            //string underscores = "_";
+            //while (currSym != null)
+            //{
+            //    prevSym = currSym;
+            //    currSym = Lookup($"{node.Name}{underscores}", _currentBlock);
+            //    underscores += "_";
+            //}
+
+            //if (prevSym == null)
+            //{
+            //    SymbolError(node, $"{node.Name} is not found. Declare your variable before use.");
+            //}
+
+            //if (prevSym != null)
+            //{
+            //    node.Name = prevSym.Name;
+            //    AddIDToFunctionBlock(prevSym, _currentBlock);
+            //}
 
         }
 
